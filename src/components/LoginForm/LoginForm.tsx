@@ -65,7 +65,10 @@ export default function LoginForm() {
                         <Checkbox>Remember me</Checkbox>
                     </Form.Item>
                     <Form.Item<Fields>>
-                        <Button type="link">Forgot password?</Button>
+                        <Button style={{
+                            padding: 0,
+                            textAlign: "right",
+                        }} type="link">Forgot password?</Button>
                     </Form.Item>
                 </Flex>
                 <Form.Item<Fields>>
