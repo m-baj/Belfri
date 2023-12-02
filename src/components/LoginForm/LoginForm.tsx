@@ -13,6 +13,7 @@ interface Fields {
 
 export default function LoginForm() {
     const [form] = Form.useForm();
+    
     const handleForm = (values: any) => {
         console.log(values);
     };
@@ -59,7 +60,7 @@ export default function LoginForm() {
                         prefix={<LockOutlined color="blue" />}
                     />
                 </Form.Item>
-                <Flex>
+                <Flex justify="space-evenly">
                     <Form.Item<Fields> name="remember" valuePropName="checked">
                         <Checkbox>Remember me</Checkbox>
                     </Form.Item>
@@ -67,14 +68,14 @@ export default function LoginForm() {
                         <Button type="link">Forgot password?</Button>
                     </Form.Item>
                 </Flex>
-                <Flex vertical>
-                    <Form.Item<Fields>>
+                <Form.Item<Fields>>
+                    <Flex vertical>
                         <Button type="primary" htmlType="submit">
                             Submit
                         </Button>
                         <Button type="link">Register</Button>
-                    </Form.Item>
-                </Flex>
+                    </Flex>
+                </Form.Item>
             </Form>
         </Flex>
     );
