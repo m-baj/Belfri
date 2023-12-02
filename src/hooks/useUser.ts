@@ -6,7 +6,9 @@ import { useRouter } from "next/router";
  * the user to a specified page if they are not logged in.
  * @param {useUserProps.redirectTo}: The URL to redirect to if the user is (not) logged in. The default value is "/login".
  * @param {useUserProps.loggedIn}: A boolean value that determines whether the user should be logged in or not. The default value is true.
- * @returns The `useUser` function returns an object with two properties: `token` and `username`.
+ * @returns {token}: The token of the user.
+ * @returns {username}: The username of the user.
+ * @returns {loading}: A boolean value that determines whether the user is loading or not.
  */
 interface useUserProps {
     redirectTo?: string;
