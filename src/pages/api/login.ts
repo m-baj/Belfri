@@ -1,7 +1,6 @@
-import type { NextApiRequest, NextApiResponse } from 'next'
-import {sha256} from 'js-sha256';
-import Connection from '@/utils/database/Connection';
-import { getToken } from '@/utils/database/queries/login';
+import type { NextApiRequest, NextApiResponse } from "next";
+import Connection from "@/utils/database/Connection";
+import { getToken } from "@/utils/database/queries/login";
 
 interface LoginData {
     username: string;
@@ -9,16 +8,44 @@ interface LoginData {
     remember: boolean;
 }
 
-export default function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
-  Connection.connect().then(async connection => {
-    const data = req.body as LoginData;
-    const result = await getToken(connection, data.username, data.passHash);
-    res.status(200).json(result);
+export default function handler(req: NextApiRequest, res: NextApiResponse) {
+    if (req.method !== "POST") {
+        res.status(405).json({
+            message: "Method not allowed",
+        });
+        return;
+    }
+    
+    Connection.connect()
+        .then(async (connection) => {
+            const data = req.body as LoginData;
 
-  }).catch(err => {
-    console.log(err);
-  });
+            if (!data.username || !data.passHash) {
+                res.status(400).json({
+                    message: "Invalid request",
+                });
+                return;
+            }
+
+            const result = await getToken(
+                connection,
+                data.username,
+                data.passHash
+            );
+
+            if (result) {
+                res.status(200).json({
+                    token: result,
+                });
+            } else {
+                res.status(401).json({
+                    message: "Invalid username or password",
+                });
+            }
+        })
+        .catch((err) => {
+            res.status(500).json({
+                message: err.message,
+            });
+        });
 }

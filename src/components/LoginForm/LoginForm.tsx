@@ -1,11 +1,10 @@
 import style from "./LoginForm.module.css";
-import { Form, Flex, Button, Checkbox, Typography, Input } from "antd";
+import { Form, Flex, Button, Checkbox, Typography, Input, message } from "antd";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { blue } from "@ant-design/colors";
 import config from "@/configs/app.config";
 import axios from "axios";
 import {sha256,} from 'js-sha256'
-import message from "antd";
 import { useRouter } from "next/router";
 
 interface Fields {
@@ -19,30 +18,33 @@ export default function LoginForm() {
     const router = useRouter();
     
     const handleForm = (values: any) => {
-        axios.get("/api/login/", {
-            data: {
-                username: values.username,
-                passwordHash: sha256(values.password),
-            },
+        console.log(sha256(values.password));
+        axios.post("/api/login/", {
+            username: values.username,
+            passHash: sha256(values.password),
         }).then((res) => {
             if(res.status == 200){
                 const token = res.data.token;
                 sessionStorage.setItem("token", token);
+                sessionStorage.setItem("username", values.username);
                 router.push("/");
-            } else if (res.status == 401) {
-                form.setFields([
-                    {
-                        name: "password",
-                        errors: [res.data.message],
-                    },
-                ]);
-            }
+            } 
             else {
-                // message.error(res.data.message)
+                message.error("Login failed");
             }
         }
         ).catch((err) => {
-            // message.error(err);
+            if (err.response.status == 401) {
+                form.setFields([
+                    {
+                        name: "password",
+                        errors: [err.response.data.message],
+                    },
+                ]);
+            } else {
+                message.error("Login failed due to server error: " + err.response.status + " " + err.response.data.message);
+            }
+     
         });
     };
 

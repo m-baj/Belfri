@@ -59,11 +59,9 @@ describe("LoginForm", () => {
         user.type(passwordInput, testPassword);
         await user.click(submitButton);
 
-        expect(mockAxios.get).toHaveBeenCalledWith("/api/login/", {
-            data: {
+        expect(mockAxios.post).toHaveBeenCalledWith("/api/login/", {
                 username: testUsername,
-                passwordHash: sha256(testPassword),
-            },
+                passHash: sha256(testPassword),
         });
 
         mockAxios.mockResponse({
