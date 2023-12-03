@@ -56,4 +56,8 @@ export default class Connection{
     public isAuthorized(leastLevel: AuthLevel = AuthLevel.STUDENT): boolean {
         return this.authLevel >= leastLevel;
     }
+
+    public getUsername(): string | null {
+        return this.username;
+    }
 }

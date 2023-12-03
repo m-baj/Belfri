@@ -6,6 +6,7 @@ import config from "@/configs/app.config";
 import axios from "axios";
 import {sha256,} from 'js-sha256'
 import { useRouter } from "next/router";
+import jscookie from 'js-cookie'
 
 interface Fields {
     username?: string;
@@ -24,9 +25,9 @@ export default function LoginForm() {
             passHash: sha256(values.password),
         }).then((res) => {
             if(res.status == 200){
-                const token = res.data.token;
-                sessionStorage.setItem("token", token);
-                sessionStorage.setItem("username", values.username);
+                const token = res.data.token;            
+                jscookie.set('token', token, {expires: 1});
+                jscookie.set('username', values.username), {expires: 1};
                 router.push("/");
             } 
             else {

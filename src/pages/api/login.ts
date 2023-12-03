@@ -15,18 +15,18 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
         });
         return;
     }
-    
+
+    const data = req.body as LoginData;
+
+    if (!data.username || !data.passHash) {
+        res.status(400).json({
+            message: "Invalid request",
+        });
+        return;
+    }
+
     Connection.connect()
         .then(async (connection) => {
-            const data = req.body as LoginData;
-
-            if (!data.username || !data.passHash) {
-                res.status(400).json({
-                    message: "Invalid request",
-                });
-                return;
-            }
-
             const result = await getToken(
                 connection,
                 data.username,

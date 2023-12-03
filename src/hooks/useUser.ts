@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
+import jscookie from "js-cookie";
 
 /**
  * The `useUser` function is a custom hook in TypeScript that manages user authentication and redirects
@@ -25,8 +26,8 @@ export function useUser({
     const router = useRouter();
 
     useEffect(() => {
-        const sessionToken = sessionStorage.getItem("token");
-        const sessionUsername = sessionStorage.getItem("username");
+        const sessionToken = jscookie.get("token");
+        const sessionUsername = jscookie.get("username");
 
         if (loggedIn) {
             if (sessionToken && sessionUsername) {
