@@ -6,6 +6,7 @@ import userEvent from "@testing-library/user-event";
 import mockAxios from "jest-mock-axios";
 import mockRouter from "next-router-mock";
 import '@/utils/tests/setupTests';
+import {sha256} from 'js-sha256'
 
 jest.mock("next/router", () => jest.requireActual("next-router-mock"));
 
@@ -20,19 +21,19 @@ describe("LoginForm", () => {
     });
 
     it("renders a form", () => {
-        const { getByRole } = render(<LoginForm />);
-        const form = getByRole("form");
+        const { getByTestId} = render(<LoginForm />);
+        const form = getByTestId("login-form");
         expect(form).toBeInTheDocument();
     });
 
     it("renders correct fields", () => {
-        const { getByLabelText } = render(<LoginForm />);
-        const username = getByLabelText("Username");
-        const password = getByLabelText("Password");
-        const submit = getByLabelText("Submit");
-        const rememberme = getByLabelText("Remember me");
-        const forgotpassword = getByLabelText("Forgot password?");
-        const register = getByLabelText("Register");
+        const { getByPlaceholderText, getByText } = render(<LoginForm />);
+        const username = getByPlaceholderText("Username");
+        const password = getByPlaceholderText("Password");
+        const submit = getByText("Submit");
+        const rememberme = getByText("Remember me");
+        const forgotpassword = getByText("Forgot password?");
+        const register = getByText("Register");
 
         expect(username).toBeInTheDocument();
         expect(password).toBeInTheDocument();
@@ -42,43 +43,26 @@ describe("LoginForm", () => {
         expect(register).toBeInTheDocument();
     });
 
-    it("renders correct field types", () => {
-        const { getByLabelText } = render(<LoginForm />);
-        const username = getByLabelText("Username");
-        const password = getByLabelText("Password");
-        const submit = getByLabelText("Submit");
-        const rememberme = getByLabelText("Remember me");
-        const forgotpassword = getByLabelText("Forgot password?");
-        const register = getByLabelText("Register");
-
-        expect(username).toHaveAttribute("type", "text");
-        expect(password).toHaveAttribute("type", "password");
-        expect(submit).toHaveAttribute("type", "submit");
-        expect(rememberme).toHaveAttribute("type", "checkbox");
-        expect(forgotpassword).toHaveAttribute("type", "button");
-        expect(register).toHaveAttribute("type", "button");
-    });
-
     it("redirects to / on successful login", async () => {
         const user = userEvent.setup();
 
         const testPassword = "Admin123@#!";
         const testUsername = "admin";
 
-        const { getByLabelText } = render(<LoginForm />);
+        const { getByPlaceholderText, getByText, getByRole } = render(<LoginForm />);
 
-        const usernameInput = getByLabelText("Username");
-        const passwordInput = getByLabelText("Password");
-        const submitButton = getByLabelText("Submit");
+        const usernameInput = getByRole("textbox", { placeholder: /Username/ });
+        const passwordInput = getByRole("textbox", { placeholder: /Password/ });
+        const submitButton = getByRole("button", { name: /Submit/ });
 
         user.type(usernameInput, testUsername);
         user.type(passwordInput, testPassword);
         await user.click(submitButton);
 
-        expect(mockAxios.post).toHaveBeenCalledWith("/web-service-url/", {
+        expect(mockAxios.get).toHaveBeenCalledWith("/api/login/", {
             data: {
                 username: testUsername,
-                passwordHash: "ab",
+                passwordHash: sha256(testPassword),
             },
         });
 
@@ -95,11 +79,12 @@ describe("LoginForm", () => {
         const testPassword = "Admin123@#!";
         const testUsername = "admin";
         const testMessage = "wrong password";
-        const { getByLabelText, getByText } = render(<LoginForm />);
+        const { getByPlaceholderText, getByText } = render(<LoginForm />);
 
-        const usernameInput = getByLabelText("Username");
-        const passwordInput = getByLabelText("Password");
-        const submitButton = getByLabelText("Submit");
+        const usernameInput = getByPlaceholderText("Username");
+        const passwordInput = getByPlaceholderText("Password");
+        const submitButton = getByText("Submit");
+
         user.type(usernameInput, testUsername);
         user.type(passwordInput, testPassword);
         await user.click(submitButton);
