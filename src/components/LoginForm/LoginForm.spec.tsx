@@ -5,12 +5,14 @@ import { render } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import mockAxios from "jest-mock-axios";
 import mockRouter from "next-router-mock";
+import '@/utils/tests/setupTests';
 
 jest.mock("next/router", () => jest.requireActual("next-router-mock"));
 
 afterEach(() => {
     mockAxios.reset();
 });
+
 
 describe("LoginForm", () => {
     it("renders", () => {
