@@ -1,20 +1,24 @@
 import PageHeader from "@/components/PageHeader/PageHeader";
 import { useUser } from "@/hooks/useUser";
-import { Flex } from "antd";
+import { blue } from "@ant-design/colors";
+import { Flex, Layout } from "antd";
 import Link from "next/link";
+
+
+const { Header, Footer, Content } = Layout;
 
 
 export default function Home() {
     const { token, username } = useUser();
     return (
         <body style={{ margin: 0 }}>
-            <Flex vertical>
+            <Header style={{ height: '100px', background: blue[1], padding: 0 }}>
                 <PageHeader />
-                <Flex>
-                    {username} : {token}<br />
-                    <Link href="/logout">Logout</Link>
-                </Flex>
-            </Flex>
+            </Header>
+            <Content>
+                {username} : {token}<br />
+                <Link href="/logout">Logout</Link>
+            </Content>
         </body>
     );
 }
