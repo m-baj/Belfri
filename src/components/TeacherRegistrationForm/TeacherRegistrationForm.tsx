@@ -1,6 +1,6 @@
 import style from "./TeacherRegistrationForm.module.css";
-import { Form, Flex, Button, Checkbox, Typography, Input, message } from "antd";
-import { LockOutlined, UserOutlined } from "@ant-design/icons";
+import { Form, Flex, Button, Checkbox, Typography, Input, message, Select, DatePicker, Upload } from "antd";
+import { LockOutlined, MailOutlined, PhoneOutlined, UnlockOutlined, UserOutlined, UserAddOutlined, PictureOutlined } from "@ant-design/icons";
 import { blue } from "@ant-design/colors";
 
 interface Fields {
@@ -8,13 +8,17 @@ interface Fields {
     surname?: string;
     email?: string;
     phoneNumber?: string;
+    username?: string;
     password?: string;
     repeatPassword?: string;
     subject?: string;
     education?: string;
     teachingLevel?: string;
     dateOfBirth?: string;
+    accessCode?: string;
     acceptTerms?: boolean;
+    acceptPrivacyPolicy?: boolean;
+    acceptMarketing?: boolean;
 }
 
 export default function TeacherRegistrationForm() {
@@ -27,7 +31,7 @@ export default function TeacherRegistrationForm() {
     return (
         <Flex vertical>
             <Typography.Title style={{ color: blue[4], textAlign: "center" }}>
-                <h1>Teacher Registration</h1>
+                Teacher Registration
             </Typography.Title>
 
             <Form
@@ -81,7 +85,7 @@ export default function TeacherRegistrationForm() {
                     <Input
                         size="large"
                         placeholder="Email"
-                        prefix={<UserOutlined color="blue" />}
+                        prefix={<MailOutlined color="blue" />}
                     />
                 </Form.Item>
                 <Form.Item<Fields>
@@ -96,7 +100,22 @@ export default function TeacherRegistrationForm() {
                     <Input
                         size="large"
                         placeholder="Phone number"
-                        prefix={<UserOutlined color="blue" />}
+                        prefix={<PhoneOutlined color="blue" />}
+                    />
+                </Form.Item>
+                <Form.Item<Fields>
+                    name="username"
+                    rules={[
+                        {
+                            required: true,
+                            message: "Please input your username!",
+                        },
+                    ]}
+                >
+                    <Input
+                        size="large"
+                        placeholder="Username"
+                        prefix={<UserAddOutlined color="blue" />}
                     />
                 </Form.Item>
                 <Form.Item<Fields>
@@ -138,10 +157,24 @@ export default function TeacherRegistrationForm() {
                         },
                     ]}
                 >
-                    <Input
+                    <Select
+                        mode="multiple"
+                        style={{ width: 360 }}
+                        placeholder="Select subjects"
                         size="large"
-                        placeholder="Subject"
-                        prefix={<UserOutlined color="blue" />}
+                        onChange={handleForm}
+                        options={[
+                            { value: "math", label: "Math" },
+                            { value: "science", label: "Science" },
+                            { value: "english", label: "English" },
+                            { value: "history", label: "History" },
+                            { value: "geography", label: "Geography" },
+                            { value: "music", label: "Music" },
+                            { value: "art", label: "Art" },
+                            { value: "computerScience", label: "Computer Science" },
+                            { value: "physicalEducation", label: "Physical Education" },
+                            { value: "other", label: "Other" },
+                        ]}
                     />
                 </Form.Item>
                 <Form.Item<Fields>
@@ -153,6 +186,18 @@ export default function TeacherRegistrationForm() {
                         },
                     ]}
                 >
+                    <Select
+                        style={{ width: 360 }}
+                        placeholder="Select education"
+                        size="large"
+                        onChange={handleForm}
+                        options={[
+                            { value: "primary", label: "Primary" },
+                            { value: "secondary", label: "Secondary" },
+                            { value: "high", label: "High" },
+                        ]}
+
+                    />
                 </Form.Item>
                 <Form.Item<Fields>
                     name="teachingLevel"
@@ -163,6 +208,18 @@ export default function TeacherRegistrationForm() {
                         },
                     ]}
                 >
+                    <Select
+                        mode="multiple"
+                        style={{ width: 360 }}
+                        placeholder="Select teaching level"
+                        size="large"
+                        onChange={handleForm}
+                        options={[
+                            { value: "primary", label: "Primary" },
+                            { value: "secondary", label: "Secondary" },
+                            { value: "high", label: "High" },
+                        ]}
+                    />
                 </Form.Item>
                 <Form.Item<Fields>
                     name="dateOfBirth"
@@ -173,8 +230,100 @@ export default function TeacherRegistrationForm() {
                         },
                     ]}
                 >
-                </Form.Item>
+                    <DatePicker
+                        size="large"
+                        placeholder="Date of birth"
+                        onChange={handleForm}
+                        style={{ width: 360 }}
+                        prefixCls="ant-picker"
+                    />
 
+                </Form.Item>
+                <Form.Item
+                    name="uploadProfilePicture"
+                    rules={[
+                        {
+                            required: true,
+                            message: "Please upload your profile picture!",
+                        },
+                    ]}
+                >
+                    <Upload
+                        name="profilePicture"
+                        action="/upload.do"
+                        listType="picture"
+                        maxCount={1}
+                        onChange={handleForm}
+                        style={{ width: 360 }}
+                    >
+                        <Button icon={<PictureOutlined />}>Upload profile picture</Button>
+                    </Upload>
+                </Form.Item>
+                <Form.Item<Fields>
+                    name="accessCode"
+                    rules={[
+                        {
+                            required: true,
+                            message: "Please input your access code!",
+                        },
+                    ]}
+                >
+                    <Input
+                        size="large"
+                        placeholder="Access code"
+                        prefix={<UnlockOutlined color="blue" />}
+                    />
+                </Form.Item>
+                <Form.Item<Fields>
+                    name="acceptTerms"
+                    valuePropName="checked"
+                    rules={[
+                        {
+                            required: true,
+                            message: "Please accept terms and conditions!",
+                        },
+                    ]}
+                >
+                    <Checkbox>
+                        I have read the <a href="#">agreement</a>
+                    </Checkbox>
+                </Form.Item>
+                <Form.Item<Fields>
+                    name="acceptPrivacyPolicy"
+                    valuePropName="checked"
+                    rules={[
+                        {
+                            required: true,
+                            message: "Please accept privacy policy!",
+                        },
+                    ]}
+                >
+                    <Checkbox>
+                        I have read the <a href="#">privacy policy</a>
+                    </Checkbox>
+                </Form.Item>
+                <Form.Item<Fields>
+                    name="acceptMarketing"
+                    valuePropName="checked"
+                    rules={[
+                        {
+                            required: true,
+                            message: "Please accept marketing!",
+                        },
+                    ]}
+                >
+                    <Checkbox>
+                        I have read the <a href="#">marketing policy</a>
+                    </Checkbox>
+                </Form.Item>
+                <Form.Item<Fields>>
+                    <Flex vertical>
+                        <Button type="primary" htmlType="submit">
+                            Submit
+                        </Button>
+                        <Button type="link">Login</Button>
+                    </Flex>
+                </Form.Item>
             </Form>
         </Flex>
     );
