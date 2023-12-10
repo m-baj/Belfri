@@ -1,0 +1,10 @@
+.studentRegForm {
+    max-width: 600;
+}
+
+.datePicker {
+  margin-left: 1px;
+  margin-right: 10px;
+  order: -1;
+  width: 100%;
+}
