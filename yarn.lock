@@ -2010,6 +2010,13 @@ ansi-styles@^5.0.0:
   resolved "https://registry.npmjs.org/ansi-styles/-/ansi-styles-5.2.0.tgz"
   integrity sha512-Cxwpt2SfTzTtXcfOlzGEee8O+c+MmUgGrNiBcXnuWxuFJHe6a5Hz7qwhwe5OgaSYI0IJvkLqWX1ASG+cJOkEiA==
 
+antd-password-input-strength@^2.0.1:
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/antd-password-input-strength/-/antd-password-input-strength-2.0.1.tgz#364ff337850fe550e209ca1d5ea8a6561b7c2508"
+  integrity sha512-cvNGwjsjajDXWwlLtQYQrAM1vPZxOxYOf/CqsVK5zQPznWQc0lw9rtd/lXnd+a2wcM9VpdAn1mTkfUBcwetEQg==
+  dependencies:
+    tai-password-strength "^1.1.3"
+
 antd@^5.11.5:
   version "5.11.5"
   resolved "https://registry.npmjs.org/antd/-/antd-5.11.5.tgz"
@@ -7384,6 +7391,11 @@ synchronous-promise@^2.0.17:
   version "2.0.17"
   resolved "https://registry.npmjs.org/synchronous-promise/-/synchronous-promise-2.0.17.tgz"
   integrity sha512-AsS729u2RHUfEra9xJrE39peJcc2stq2+poBXX8bcM08Y6g9j/i/PUzwNQqkaJde7Ntg1TO7bSREbR5sdosQ+g==
+
+tai-password-strength@^1.1.3:
+  version "1.1.3"
+  resolved "https://registry.yarnpkg.com/tai-password-strength/-/tai-password-strength-1.1.3.tgz#acb0c09edd982a3eac0659b06faaf0d09389fc63"
+  integrity sha512-GZVtM7wEbgp9IZ9CkdGbpnx0MflFDonzehQIPO0tx3KXMq1ImLiLK33N+ziC4rm8BVd7jrq93kBCOP6VJ4DdzA==
 
 tapable@^2.2.0:
   version "2.2.1"
