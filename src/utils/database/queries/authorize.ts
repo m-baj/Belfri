@@ -19,11 +19,16 @@ export async function getUserAuth(
 } | null> {
     try {
         const result = await connection.execute(
-            "SELECT USERNAME, AUTH_LEVEL FROM TOKENS JOIN USERS USING(USER_ID) WHERE TOKEN = :token",
+            "SELECT USERNAME, AUTH_LEVEL, EXPIRATION FROM TOKENS JOIN USERS USING(USER_ID) WHERE TOKEN = :token",
             [token]
         );
 
         if (result && result.rows && result.rows.length > 0) {
+            const expiration = result.rows[0][2];
+            if (expiration < Date.now()) {
+                //logout
+                return null;
+            }
             return {
                 username: result.rows[0][0],
                 authLevel: result.rows[0][1],
