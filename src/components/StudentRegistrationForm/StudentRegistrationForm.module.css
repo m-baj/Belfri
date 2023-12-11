@@ -1,5 +1,5 @@
 .studentRegForm {
-    max-width: 600;
+    width: 800;
 }
 
 .datePicker {
@@ -8,3 +8,20 @@
   order: -1;
   width: 100%;
 }
+
+.input {
+  width: 400px;
+}
+
+@media(max-width: 600px) {
+  .input{
+    width: 300px;
+  }
+}
+
+@media(max-width: 400px) {
+  .input{
+    width: 200px;
+  }
+}
+

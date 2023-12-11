@@ -19,6 +19,7 @@ import {
 import { blue } from "@ant-design/colors";
 import config from "@/configs/app.config";
 import { PasswordInput } from "antd-password-input-strength";
+import axios from "axios";
 
 interface Fields {
     username?: string;
@@ -50,6 +51,49 @@ export default function StudentRegistrationForm() {
         }
     };
 
+    const checkboxesValidator = (_: any, value: any) => {
+        if (value) {
+            return Promise.resolve();
+        } else {
+            return Promise.reject(
+                new Error("You must accept terms and conditions")
+            );
+        }
+    };
+
+    const handleForm = (values: any) => {
+        axios
+            .post("/api/register/", {
+                username: values.username,
+                name: values.name,
+                surname: values.surname,
+                email: values.email,
+                password: values.password,
+                accessKey: values.accessKey,
+                birthdate: values.birthdate,
+            })
+            .then((res) => {
+                console.log(res);
+                if (res.status == 200) {
+                    router.push("/login");
+                } else {
+                    console.log(res);
+                }
+            })
+            .catch((err) => {
+                if (err.response.status == 400) {
+                    form.setFields([
+                        {
+                            name: "accessKey",
+                            errors: [err.response.data.message],
+                        },
+                    ]);
+                } else {
+                    console.log(err.response);
+                }
+            });
+    };
+
     return (
         <Flex vertical>
             <Typography.Title style={{ color: blue[4], textAlign: "center" }}>
@@ -62,6 +106,7 @@ export default function StudentRegistrationForm() {
                 initialValues={{ remember: true }}
                 autoCapitalize="off"
                 className={style.studentRegForm}
+                onFinish={handleForm}
             >
                 <Form.Item<Fields>
                     name="username"
@@ -73,6 +118,7 @@ export default function StudentRegistrationForm() {
                     ]}
                 >
                     <Input
+                        className={style.input}
                         placeholder="Username"
                         size="large"
                         prefix={<UserOutlined style={{ color: blue[4] }} />}
@@ -88,6 +134,7 @@ export default function StudentRegistrationForm() {
                     ]}
                 >
                     <Input
+                        className={style.input}
                         placeholder="Name"
                         size="large"
                         prefix={<EditOutlined style={{ color: blue[4] }} />}
@@ -103,6 +150,7 @@ export default function StudentRegistrationForm() {
                     ]}
                 >
                     <Input
+                        className={style.input}
                         placeholder="Surname"
                         size="large"
                         prefix={<EditOutlined style={{ color: blue[4] }} />}
@@ -122,6 +170,7 @@ export default function StudentRegistrationForm() {
                     ]}
                 >
                     <Input
+                        className={style.input}
                         placeholder="Email"
                         size="large"
                         prefix={<MailOutlined style={{ color: blue[4] }} />}
@@ -138,8 +187,10 @@ export default function StudentRegistrationForm() {
                             validator: validatePassword,
                         },
                     ]}
+                    style={{ width: "100%" }}
                 >
                     <PasswordInput
+                        className={style.input}
                         placeholder="Password"
                         size="large"
                         prefix={<LockOutlined style={{ color: blue[4] }} />}
@@ -169,6 +220,7 @@ export default function StudentRegistrationForm() {
                     dependencies={["password"]}
                 >
                     <Input.Password
+                        className={style.input}
                         placeholder="Confirm password"
                         size="large"
                         prefix={<LockOutlined style={{ color: blue[4] }} />}
@@ -184,6 +236,7 @@ export default function StudentRegistrationForm() {
                     ]}
                 >
                     <Input
+                        className={style.input}
                         placeholder="Access key"
                         size="large"
                         prefix={<KeyOutlined style={{ color: blue[4] }} />}
@@ -199,40 +252,67 @@ export default function StudentRegistrationForm() {
                     ]}
                 >
                     <DatePicker
+                        className={style.input}
                         placeholder="Birth date"
                         size="large"
                         format={config.dateFormat}
                         style={{ width: "100%" }}
                     />
                 </Form.Item>
-                <Form.Item<Fields>
-                    name="acceptTerms"
-                    valuePropName="checked"
-                    rules={[
-                        {
-                            required: true,
-                            message: "Please accept terms",
-                        },
-                    ]}
-                >
-                    {" "}
-                    <Flex vertical align="center">
-                        <Flex vertical align="left">
-                            <Checkbox>
-                                I accept
-                                <a href="/terms-and-conditions">
-                                    {" "}
-                                    Terms and Conditions
-                                </a>
-                            </Checkbox>
-
-                            <Checkbox>
-                                I accept
-                                <a href="/privacy-policy"> Privacy Policy</a>
-                            </Checkbox>
-                        </Flex>
-                    </Flex>
-                </Form.Item>
+                <Flex vertical align="left">
+                    <Form.Item<Fields>
+                        style={{ marginBottom: "0px" }}
+                        name="acceptTerms"
+                        valuePropName="checked"
+                        rules={[
+                            {
+                                validator: (_, value) => {
+                                    if (value) {
+                                        return Promise.resolve();
+                                    } else {
+                                        return Promise.reject(
+                                            new Error(
+                                                "You must accept terms and conditions"
+                                            )
+                                        );
+                                    }
+                                },
+                            },
+                        ]}
+                    >
+                        <Checkbox>
+                            I accept
+                            <a href="/terms-and-conditions">
+                                {" "}
+                                Terms and Conditions
+                            </a>
+                        </Checkbox>
+                    </Form.Item>
+                    <Form.Item<Fields>
+                        name="acceptTerms"
+                        valuePropName="checked"
+                        rules={[
+                            {
+                                validator: (_, value) => {
+                                    if (value) {
+                                        return Promise.resolve();
+                                    } else {
+                                        return Promise.reject(
+                                            new Error(
+                                                "You must accept privacy policy"
+                                            )
+                                        );
+                                    }
+                                },
+                            },
+                        ]}
+                    >
+                        <Checkbox>
+                            I accept
+                            <a href="/privacy-policy"> Privacy Policy</a>
+                        </Checkbox>
+                    </Form.Item>
+                </Flex>
                 <Form.Item>
                     <Flex justify="center">
                         <Form.Item style={{ width: "100%" }}>
@@ -243,6 +323,19 @@ export default function StudentRegistrationForm() {
                                 block
                             >
                                 Register
+                            </Button>
+                        </Form.Item>
+                    </Flex>
+                </Form.Item>
+                <Form.Item>
+                    <Flex justify="space-evenly">
+                        <Form.Item>
+                            <Button
+                                className={style.rightAlignButton}
+                                type="link"
+                                onClick={() => router.push("/login")}
+                            >
+                                Already have an account?
                             </Button>
                         </Form.Item>
                     </Flex>
