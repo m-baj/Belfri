@@ -1168,6 +1168,18 @@ ansi-styles@^5.0.0:
   resolved "https://registry.npmjs.org/ansi-styles/-/ansi-styles-5.2.0.tgz"
   integrity sha512-Cxwpt2SfTzTtXcfOlzGEee8O+c+MmUgGrNiBcXnuWxuFJHe6a5Hz7qwhwe5OgaSYI0IJvkLqWX1ASG+cJOkEiA==
 
+antd-password-input-strength@^2.0.1:
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/antd-password-input-strength/-/antd-password-input-strength-2.0.1.tgz#364ff337850fe550e209ca1d5ea8a6561b7c2508"
+  integrity sha512-cvNGwjsjajDXWwlLtQYQrAM1vPZxOxYOf/CqsVK5zQPznWQc0lw9rtd/lXnd+a2wcM9VpdAn1mTkfUBcwetEQg==
+  dependencies:
+    tai-password-strength "^1.1.3"
+
+antd-phone-input@^0.3.3:
+  version "0.3.3"
+  resolved "https://registry.yarnpkg.com/antd-phone-input/-/antd-phone-input-0.3.3.tgz#9c9795cdfc46761c590ff99645d90952e13a1cd5"
+  integrity sha512-8UvnQKi3VtW+0WNViIE4XoCT+IEhtO50UghwQAfiy71tJNaUldOPUIceIRWIrQQEzQzFzSFyNEaZoeGyv6P4rQ==
+
 antd@^5.11.5:
   version "5.11.5"
   resolved "https://registry.npmjs.org/antd/-/antd-5.11.5.tgz"
@@ -1657,6 +1669,11 @@ core-util-is@~1.0.0:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/core-util-is/-/core-util-is-1.0.3.tgz#a6042d3634c2b27e9328f837b965fac83808db85"
   integrity sha512-ZQBvi1DcpJ4GDqanjucZ2Hj3wEO5pZDS89BWbkcrvdxksJorwUDDZamX9ldFkp9aw2lmBDLgkObEA4DWNJ9FYQ==
+
+country-flag-icons@^1.5.4:
+  version "1.5.9"
+  resolved "https://registry.yarnpkg.com/country-flag-icons/-/country-flag-icons-1.5.9.tgz#5ee10d9c8c1dcfb031724121b2adecdf166996cd"
+  integrity sha512-9jrjv2w7kRbqNtdtMdK2j3gmDIZzd5l9L2pZiQjF9J0mUcB+NKIGDNADTDHBEp8EQtjOkCOcciJGGSOpERdXPQ==
 
 create-jest@^29.7.0:
   version "29.7.0"
@@ -2675,6 +2692,13 @@ inherits@2, inherits@~2.0.3:
   resolved "https://registry.npmjs.org/inherits/-/inherits-2.0.4.tgz"
   integrity sha512-k/vGaX4/Yla3WzyMCvTQOXYeIHvqOKtnqBduzTHpzpQZzAskKMhZ2K+EnBiSM9zGSoIFeMpXKxa4dYeZIQqewQ==
 
+input-format@^0.3.8:
+  version "0.3.8"
+  resolved "https://registry.yarnpkg.com/input-format/-/input-format-0.3.8.tgz#9445b0cab2f0457fbe36d77d607e942fd37345c5"
+  integrity sha512-tLR0XRig1xIcG1PtIpMd/uoltvkAI62CN9OIbtj4/tEJAkqTCQLNHUZ9N4M46w0dopny7Rlt/lRH5Xzp7e6F+g==
+  dependencies:
+    prop-types "^15.8.1"
+
 internal-slot@^1.0.4, internal-slot@^1.0.5:
   version "1.0.6"
   resolved "https://registry.npmjs.org/internal-slot/-/internal-slot-1.0.6.tgz"
@@ -3493,6 +3517,11 @@ levn@^0.4.1:
   dependencies:
     prelude-ls "^1.2.1"
     type-check "~0.4.0"
+
+libphonenumber-js@^1.10.48:
+  version "1.10.51"
+  resolved "https://registry.yarnpkg.com/libphonenumber-js/-/libphonenumber-js-1.10.51.tgz#a3b8c15db2721c3e5f7fe6759e2a524712b578e6"
+  integrity sha512-vY2I+rQwrDQzoPds0JeTEpeWzbUJgqoV0O4v31PauHBb/e+1KCXKylHcDnBMgJZ9fH9mErsEbROJY3Z3JtqEmg==
 
 lines-and-columns@^1.1.6:
   version "1.2.4"
@@ -4386,6 +4415,17 @@ react-is@^18.0.0, react-is@^18.2.0:
   resolved "https://registry.npmjs.org/react-is/-/react-is-18.2.0.tgz"
   integrity sha512-xWGDIW6x921xtzPkhiULtthJHoJvBbF3q26fzloPCK0hsvxtPVelvftw3zjbHWSkR2km9Z+4uxbDDK/6Zw9B8w==
 
+react-phone-number-input@^3.3.7:
+  version "3.3.7"
+  resolved "https://registry.yarnpkg.com/react-phone-number-input/-/react-phone-number-input-3.3.7.tgz#2925340c0aa260df549d2bf9f91f0d0c67b421ee"
+  integrity sha512-/yusEJl2oJA5rTRtny59pf7T1gg/whmfhdZsgrZaL063KEx6FFnmwTskTJ9yR4lYgzj2GyUjXpnA3O9d+ZTHwA==
+  dependencies:
+    classnames "^2.3.1"
+    country-flag-icons "^1.5.4"
+    input-format "^0.3.8"
+    libphonenumber-js "^1.10.48"
+    prop-types "^15.8.1"
+
 react@^18:
   version "18.2.0"
   resolved "https://registry.npmjs.org/react/-/react-18.2.0.tgz"
@@ -4835,6 +4875,11 @@ synchronous-promise@^2.0.17:
   version "2.0.17"
   resolved "https://registry.npmjs.org/synchronous-promise/-/synchronous-promise-2.0.17.tgz"
   integrity sha512-AsS729u2RHUfEra9xJrE39peJcc2stq2+poBXX8bcM08Y6g9j/i/PUzwNQqkaJde7Ntg1TO7bSREbR5sdosQ+g==
+
+tai-password-strength@^1.1.3:
+  version "1.1.3"
+  resolved "https://registry.yarnpkg.com/tai-password-strength/-/tai-password-strength-1.1.3.tgz#acb0c09edd982a3eac0659b06faaf0d09389fc63"
+  integrity sha512-GZVtM7wEbgp9IZ9CkdGbpnx0MflFDonzehQIPO0tx3KXMq1ImLiLK33N+ziC4rm8BVd7jrq93kBCOP6VJ4DdzA==
 
 tapable@^2.2.0:
   version "2.2.1"

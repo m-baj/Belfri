@@ -17,6 +17,8 @@
     "@types/js-cookie": "^3.0.6",
     "@types/oracledb": "^6.0.4",
     "antd": "^5.11.5",
+    "antd-password-input-strength": "^2.0.1",
+    "antd-phone-input": "^0.3.3",
     "axios": "^1.6.2",
     "babel-jest": "^29.7.0",
     "identity-obj-proxy": "^3.0.0",
@@ -32,6 +34,7 @@
     "oracledb": "^6.2.0",
     "react": "^18",
     "react-dom": "^18",
+    "react-phone-number-input": "^3.3.7",
     "yarn": "^1.22.21"
   },
   "devDependencies": {
