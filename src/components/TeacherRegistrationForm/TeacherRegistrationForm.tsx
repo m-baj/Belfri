@@ -25,6 +25,8 @@ import { blue } from "@ant-design/colors";
 import { useRouter } from "next/router";
 import Password from "antd/es/input/Password";
 import { PasswordInput } from "antd-password-input-strength";
+import { useState } from "react";
+import { Option } from "antd/lib/mentions";
 
 interface Fields {
     name?: string;
@@ -50,12 +52,17 @@ export default function TeacherRegistrationForm() {
 
     const handleForm = (values: any) => {
         console.log(values);
-        //router.push("/login");
+        router.push("/login");
     };
 
-    const onFinish = (values: any) => {
-        router.push("/login");
-    }
+    const prefixSelector = (
+        <Form.Item name="prefix" noStyle>
+            <Select style={{ width: 70 }}>
+                <Option value="48">+48</Option>
+                <Option value="49">+49</Option>
+            </Select>
+        </Form.Item>
+    );
 
     const validatePassword = (rule: any, value: any, callback: any) => {
         if (value && value.length < 8) {
@@ -70,6 +77,15 @@ export default function TeacherRegistrationForm() {
             callback();
         }
     };
+
+    const validateEmail = (rule: any, value: any, callback: any) => {
+        if (value && !/^[a-zA-Z0-9]+@[a-zA-Z0-9]+\.[A-Za-z]+$/.test(value)) {
+            callback("Invalid email address");
+        } else {
+            callback();
+        }
+    }
+
 
     return (
         <Flex vertical>
@@ -123,6 +139,9 @@ export default function TeacherRegistrationForm() {
                             required: true,
                             message: "Please input your email!",
                         },
+                        {
+                            validator: validateEmail,
+                        },
                     ]}
                 >
                     <Input
@@ -141,6 +160,8 @@ export default function TeacherRegistrationForm() {
                     ]}
                 >
                     <Input
+                        addonBefore={prefixSelector}
+                        style={{ width: "100%" }}
                         size="large"
                         placeholder="Phone number"
                         prefix={<PhoneOutlined style={{ color: blue[4] }} />}
@@ -276,7 +297,7 @@ export default function TeacherRegistrationForm() {
                 >
                     <Select
                         mode="multiple"
-                        style={{ width: 360 }}
+                        style={{ width: style.width }}
                         placeholder="Select teaching level"
                         size="large"
                         onChange={handleForm}
@@ -289,6 +310,7 @@ export default function TeacherRegistrationForm() {
                 </Form.Item>
                 <Form.Item<Fields>
                     name="dateOfBirth"
+                    style={{ width: style.width }}
                     rules={[
                         {
                             required: true,
@@ -300,7 +322,7 @@ export default function TeacherRegistrationForm() {
                         size="large"
                         placeholder="Date of birth"
                         onChange={handleForm}
-                        style={{ width: style.width }}
+                        style={{ width: "100%" }}
                         prefixCls="ant-picker"
                     />
                 </Form.Item>
@@ -330,43 +352,53 @@ export default function TeacherRegistrationForm() {
                         </Button>
                     </Upload>
                 </Form.Item>
-                <Form.Item<Fields>
-                    name="accessCode"
-                    rules={[
-                        {
-                            required: true,
-                            message: "Please input your access code!",
-                        },
-                    ]}
-                >
-                    <Input
-                        size="large"
-                        placeholder="Access code"
-                        prefix={<UnlockOutlined style={{ color: blue[4] }} />}
-                    />
-                </Form.Item>
-                <Form.Item<Fields>
-                    name="acceptPrivacyPolicy"
-                    valuePropName="checked"
-                    rules={[
-                        {
-                            required: true,
-                            message: "Please accept privacy policy!",
-                        },
-                    ]}
-                >
-                    <Flex vertical>
+                <Flex vertical align="left">
+                    <Form.Item<Fields>
+                        style={{ marginBottom: "0px" }}
+                        name="acceptPrivacyPolicy"
+                        valuePropName="checked"
+                        rules={[
+                            {
+                                required: true,
+                                message: "Please accept privacy policy!",
+                            },
+                        ]}
+                    >
                         <Checkbox required>
                             I accept the <a href="#">privacy policy</a>
                         </Checkbox>
+                    </Form.Item>
+                    <Form.Item<Fields>
+                        style={{ marginBottom: "0px" }}
+                        name="acceptTerms"
+                        valuePropName="checked"
+                        rules={[
+                            {
+                                required: true,
+                                message: "Please accept terms!",
+                            },
+                        ]}
+                    >
                         <Checkbox required>
-                            I accept the <a href="#">marketing policy</a>
+                            I accept the <a href="#">terms and conditions</a>
                         </Checkbox>
-                        <Checkbox required>
-                            I accept the <a href="#">marketing policy</a>
+                    </Form.Item>
+                    <Form.Item<Fields>
+                        name="acceptMarketing"
+                        valuePropName="checked"
+                        rules={[
+                            {
+                                required: true,
+                                message: "Please accept marketing!",
+                            },
+                        ]}
+                    >
+                        <Checkbox>
+                            I accept to receive marketing information
                         </Checkbox>
-                    </Flex>
-                </Form.Item>
+                    </Form.Item>
+                </Flex>
+
                 <Form.Item<Fields>>
                     <Flex vertical>
                         <Button type="primary" htmlType="submit">
