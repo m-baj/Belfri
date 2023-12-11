@@ -6,6 +6,7 @@ import {
     Input,
     Button,
     Typography,
+    Space,
 } from "antd";
 import { useRouter } from "next/router";
 import style from "./StudentRegistrationForm.module.css";
@@ -20,6 +21,9 @@ import { blue } from "@ant-design/colors";
 import config from "@/configs/app.config";
 import { PasswordInput } from "antd-password-input-strength";
 import axios from "axios";
+import { useState } from "react";
+import { RangePickerProps } from "antd/es/date-picker";
+import dayjs from "dayjs";
 
 interface Fields {
     username?: string;
@@ -31,6 +35,7 @@ interface Fields {
     accessKey?: string;
     birthdate?: string;
     acceptTerms?: boolean;
+    acceptPrivacy?: boolean;
 }
 
 export default function StudentRegistrationForm() {
@@ -51,14 +56,9 @@ export default function StudentRegistrationForm() {
         }
     };
 
-    const checkboxesValidator = (_: any, value: any) => {
-        if (value) {
-            return Promise.resolve();
-        } else {
-            return Promise.reject(
-                new Error("You must accept terms and conditions")
-            );
-        }
+    const disabledDate: RangePickerProps["disabledDate"] = (current) => {
+        // Can not select after today and today
+        return current && current >= dayjs().endOf("day");
     };
 
     const handleForm = (values: any) => {
@@ -257,6 +257,7 @@ export default function StudentRegistrationForm() {
                         size="large"
                         format={config.dateFormat}
                         style={{ width: "100%" }}
+                        disabledDate={disabledDate}
                     />
                 </Form.Item>
                 <Flex vertical align="left">
@@ -266,17 +267,14 @@ export default function StudentRegistrationForm() {
                         valuePropName="checked"
                         rules={[
                             {
-                                validator: (_, value) => {
-                                    if (value) {
-                                        return Promise.resolve();
-                                    } else {
-                                        return Promise.reject(
-                                            new Error(
-                                                "You must accept terms and conditions"
-                                            )
-                                        );
-                                    }
-                                },
+                                validator: (_, value) =>
+                                    value
+                                        ? Promise.resolve()
+                                        : Promise.reject(
+                                              new Error(
+                                                  "Should accept agreement"
+                                              )
+                                          ),
                             },
                         ]}
                     >
@@ -289,21 +287,18 @@ export default function StudentRegistrationForm() {
                         </Checkbox>
                     </Form.Item>
                     <Form.Item<Fields>
-                        name="acceptTerms"
                         valuePropName="checked"
+                        name="acceptPrivacy"
                         rules={[
                             {
-                                validator: (_, value) => {
-                                    if (value) {
-                                        return Promise.resolve();
-                                    } else {
-                                        return Promise.reject(
-                                            new Error(
-                                                "You must accept privacy policy"
-                                            )
-                                        );
-                                    }
-                                },
+                                validator: (_, value) =>
+                                    value
+                                        ? Promise.resolve()
+                                        : Promise.reject(
+                                              new Error(
+                                                  "Should accept agreement"
+                                              )
+                                          ),
                             },
                         ]}
                     >
@@ -313,35 +308,42 @@ export default function StudentRegistrationForm() {
                         </Checkbox>
                     </Form.Item>
                 </Flex>
-                <Form.Item>
-                    <Flex justify="center">
-                        <Form.Item
-                            style={{ width: "100%", marginBottom: "0px" }}
-                        >
-                            <Button
-                                type="primary"
-                                htmlType="submit"
-                                size="large"
-                                block
+                <Space direction="vertical" size={5} style={{ width: "100%" }}>
+                    <Form.Item>
+                        <Flex justify="center">
+                            <Form.Item
+                                style={{
+                                    width: "100%",
+                                    marginBottom: "0px",
+                                    border: "none",
+                                }}
                             >
-                                Register
-                            </Button>
-                        </Form.Item>
-                    </Flex>
-                </Form.Item>
-                <Form.Item>
-                    <Flex justify="space-evenly">
-                        <Form.Item>
-                            <Button
-                                className={style.rightAlignButton}
-                                type="link"
-                                onClick={() => router.push("/login")}
-                            >
-                                Already have an account?
-                            </Button>
-                        </Form.Item>
-                    </Flex>
-                </Form.Item>
+                                <Button
+                                    type="primary"
+                                    htmlType="submit"
+                                    size="large"
+                                    block
+                                >
+                                    Register
+                                </Button>
+                            </Form.Item>
+                        </Flex>
+                    </Form.Item>
+                    <Form.Item>
+                        <Flex justify="space-evenly">
+                            <Form.Item>
+                                <Button
+                                    className={style.rightAlignButton}
+                                    type="link"
+                                    onClick={() => router.push("/login")}
+                                    style={{ marginTop: "0px" }}
+                                >
+                                    Already have an account?
+                                </Button>
+                            </Form.Item>
+                        </Flex>
+                    </Form.Item>
+                </Space>
             </Form>
         </Flex>
     );
