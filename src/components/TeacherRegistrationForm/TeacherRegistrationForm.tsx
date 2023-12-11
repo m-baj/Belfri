@@ -31,6 +31,7 @@ import { Option } from "antd/lib/mentions";
 interface Fields {
     name?: string;
     surname?: string;
+    gender?: string;
     email?: string;
     phoneNumber?: string;
     username?: string;
@@ -52,7 +53,7 @@ export default function TeacherRegistrationForm() {
 
     const handleForm = (values: any) => {
         console.log(values);
-        router.push("/login");
+        // router.push("/login");
     };
 
     const prefixSelector = (
@@ -130,6 +131,26 @@ export default function TeacherRegistrationForm() {
                         size="large"
                         placeholder="Surname"
                         prefix={<EditOutlined style={{ color: blue[4] }} />}
+                    />
+                </Form.Item>
+                <Form.Item<Fields>
+                    name="gender"
+                    rules={[
+                        {
+                            required: true,
+                            message: "Please input your gender!",
+                        },
+                    ]}
+                >
+                    <Select
+                        placeholder="Select your gender"
+                        size="large"
+                        onChange={handleForm}
+                        options={[
+                            { value: "male", label: "Male" },
+                            { value: "female", label: "Female" },
+                            { value: "other", label: "Other" },
+                        ]}
                     />
                 </Form.Item>
                 <Form.Item<Fields>
