@@ -95,9 +95,9 @@ export default function StudentRegistrationForm() {
     };
 
     return (
-        <Flex vertical>
+        <Flex vertical align="center">
             <Typography.Title style={{ color: blue[4], textAlign: "center" }}>
-                Register
+                Create student account
             </Typography.Title>
             <Form
                 data-testid="studentRegistrationForm"
@@ -315,7 +315,9 @@ export default function StudentRegistrationForm() {
                 </Flex>
                 <Form.Item>
                     <Flex justify="center">
-                        <Form.Item style={{ width: "100%" }}>
+                        <Form.Item
+                            style={{ width: "100%", marginBottom: "0px" }}
+                        >
                             <Button
                                 type="primary"
                                 htmlType="submit"
