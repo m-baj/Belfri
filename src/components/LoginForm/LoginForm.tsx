@@ -4,9 +4,9 @@ import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { blue } from "@ant-design/colors";
 import config from "@/configs/app.config";
 import axios from "axios";
-import { sha256 } from "js-sha256";
+import {sha256,} from 'js-sha256'
 import { useRouter } from "next/router";
-import jscookie from "js-cookie";
+import jscookie from 'js-cookie'
 
 interface Fields {
     username?: string;
@@ -17,41 +17,36 @@ interface Fields {
 export default function LoginForm() {
     const [form] = Form.useForm();
     const router = useRouter();
-
+    
     const handleForm = (values: any) => {
         console.log(sha256(values.password));
-        axios
-            .post("/api/login/", {
-                username: values.username,
-                passHash: sha256(values.password),
-            })
-            .then((res) => {
-                if (res.status == 200) {
-                    const token = res.data.token;
-                    jscookie.set("token", token, { expires: 1 });
-                    jscookie.set("username", values.username), { expires: 1 };
-                    router.push("/");
-                } else {
-                    message.error("Login failed");
-                }
-            })
-            .catch((err) => {
-                if (err.response.status == 401) {
-                    form.setFields([
-                        {
-                            name: "password",
-                            errors: [err.response.data.message],
-                        },
-                    ]);
-                } else {
-                    message.error(
-                        "Login failed due to server error: " +
-                            err.response.status +
-                            " " +
-                            err.response.data.message
-                    );
-                }
-            });
+        axios.post("/api/login/", {
+            username: values.username,
+            passHash: sha256(values.password),
+        }).then((res) => {
+            if(res.status == 200){
+                const token = res.data.token;            
+                jscookie.set('token', token, {expires: 1});
+                jscookie.set('username', values.username), {expires: 1};
+                router.push("/");
+            } 
+            else {
+                message.error("Login failed");
+            }
+        }
+        ).catch((err) => {
+            if (err.response.status == 401) {
+                form.setFields([
+                    {
+                        name: "password",
+                        errors: [err.response.data.message],
+                    },
+                ]);
+            } else {
+                message.error("Login failed due to server error: " + err.response.status + " " + err.response.data.message);
+            }
+     
+        });
     };
 
     return (
@@ -63,7 +58,7 @@ export default function LoginForm() {
             <Form
                 data-testid="login-form"
                 form={form}
-                name="loginform"
+                name="loginorm"
                 className={style.LoginForm}
                 initialValues={{ remember: true }}
                 autoCapitalize="off"
@@ -81,7 +76,7 @@ export default function LoginForm() {
                     <Input
                         size="large"
                         placeholder="Username"
-                        prefix={<UserOutlined style={{ color: blue[4] }} />}
+                        prefix={<UserOutlined color="blue" />}
                     />
                 </Form.Item>
                 <Form.Item<Fields>
@@ -96,7 +91,7 @@ export default function LoginForm() {
                     <Input.Password
                         size="large"
                         placeholder="Password"
-                        prefix={<LockOutlined style={{ color: blue[4] }} />}
+                        prefix={<LockOutlined color="blue" />}
                     />
                 </Form.Item>
                 <Flex justify="space-evenly">
@@ -104,9 +99,7 @@ export default function LoginForm() {
                         <Checkbox>Remember me</Checkbox>
                     </Form.Item>
                     <Form.Item<Fields>>
-                        <Button className={style.rightAlignButton} type="link">
-                            Forgot password?
-                        </Button>
+                        <Button className={style.rightAlignButton}type="link">Forgot password?</Button>
                     </Form.Item>
                 </Flex>
                 <Form.Item<Fields>>
