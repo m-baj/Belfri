@@ -12,8 +12,8 @@ const options = [
       label: 'Warszawa',
     },
     {
-      value: 'gdynia',
-      label: 'Gdynia',
+      value: 'grodzisk mazowiecki',
+      label: 'Grodzisk Mazowiecki',
     },
   ];
 
@@ -31,12 +31,14 @@ export default function PageHeader() {
                 </Space.Compact>
             </Flex>
             <Flex gap='small' style={{ paddingRight: 16 }}>
-                <Tooltip title="Notifications">
-                    <Button type="default" icon={<BellOutlined />} shape='circle' size='large' />
-                </Tooltip>
-                <Tooltip title="Settings">
-                    <Button type="default" icon={<SettingOutlined />} shape='circle' size='large' />
-                </Tooltip>
+                <Space.Compact>
+                    <Tooltip title="Notifications">
+                        <Button type="default" icon={<BellOutlined />} shape='circle' size='large' />
+                    </Tooltip>
+                    <Tooltip title="Settings">
+                        <Button type="default" icon={<SettingOutlined />} shape='circle' size='large' />
+                    </Tooltip>
+                </Space.Compact>
             </Flex>
         </Flex>
     );
