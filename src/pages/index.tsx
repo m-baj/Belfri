@@ -3,6 +3,7 @@ import { useUser } from "@/hooks/useUser";
 import { blue } from "@ant-design/colors";
 import { Flex, Layout } from "antd";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 
 
 const { Header, Footer, Content } = Layout;
@@ -10,6 +11,16 @@ const { Header, Footer, Content } = Layout;
 
 export default function Home() {
     // const { token, username } = useUser();
+    const [small, setSmall] = useState(false);
+
+    useEffect(() => {
+        if (typeof window !== "undefined") {
+            window.addEventListener("scroll", () =>
+                setSmall(window.scrollY > 200)
+            );
+        }
+    }, []);
+
     return (
         <body style={{ margin: 0 }}>
             <Header style={{ height: '100px', background: blue[1], padding: 0 }}>

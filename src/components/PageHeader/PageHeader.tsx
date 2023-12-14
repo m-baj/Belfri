@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Flex, Typography, Button, Select, Input, Tooltip, Space } from "antd";
 import { blue } from "@ant-design/colors";
 import config from "@/configs/app.config";
@@ -26,11 +26,11 @@ export default function PageHeader() {
             </Typography.Title>
             <Flex>
                 <Space.Compact>
-                    <Select showSearch placeholder='Select city' options={options} />
-                    <Search placeholder="Enter subject" onSearch={value => console.log(value)} style={{ maxWidth: 'fit-content' }} />
+                    <Select showSearch placeholder='Select city' options={options} style={{ width: '200px' }}/>
+                    <Search placeholder="Enter subject" onSearch={value => console.log(value)} style={{ width: '500px' }}/>
                 </Space.Compact>
             </Flex>
-            <Flex gap='small' style={{ paddingRight: 16 }}>
+            <Flex style={{ paddingRight: 16 }}>
                 <Space.Compact>
                     <Tooltip title="Notifications">
                         <Button type="default" icon={<BellOutlined />} shape='circle' size='large' />
