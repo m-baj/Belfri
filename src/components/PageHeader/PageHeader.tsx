@@ -19,27 +19,71 @@ const options = [
 
 
 export default function PageHeader() {
-    return (
-        <Flex justify='space-between' align='center' style={{ width: '100%', height: '100%' }}>
-            <Typography.Title style={{ color: blue[4], textAlign: "left", paddingLeft: 16 }}>
-                {config.appName}
-            </Typography.Title>
-            <Flex>
-                <Space.Compact>
-                    <Select showSearch placeholder='Select city' options={options} style={{ width: '200px' }}/>
-                    <Search placeholder="Enter subject" onSearch={value => console.log(value)} style={{ width: '500px' }}/>
-                </Space.Compact>
+    const [screenWidth, setScreenWidth] = useState<number>(0);
+
+    useEffect(() => {
+        const handleResize = () => {
+            setScreenWidth(window.innerWidth);
+        };
+
+        if (typeof window !== 'undefined') {
+            handleResize();
+
+            window.addEventListener('resize', handleResize);
+
+            return () => {
+                window.removeEventListener('resize', handleResize);
+            };
+        }
+    } , []);
+
+    if (screenWidth >= 850) {
+        return (
+            <Flex justify='space-evenly' align='center' style={{ width: '100%', height: '100%' }}>
+                <Typography.Title style={{ color: blue[4], paddingRight: '3%' }}>
+                    {config.appName}
+                </Typography.Title>
+                <Flex style={{ width: '40%' }}>
+                    <Space.Compact style={{ width: '100%' }}>
+                        <Select showSearch placeholder='Select city' options={options} style={{ width: '30%' }} />
+                        <Search placeholder='Enter subject' onSearch={value => console.log(value)} style={{ width: '70%' }} />
+                    </Space.Compact>
+                </Flex>
+                <Flex style={{ paddingLeft: '3%' }}>
+                    <Space.Compact>
+                        <Tooltip title="Notifications">
+                            <Button type="default" icon={<BellOutlined />} shape='round' size='large' />
+                        </Tooltip>
+                        <Tooltip title="Settings">
+                            <Button type="default" icon={<SettingOutlined />} shape='round' size='large' />
+                        </Tooltip>
+                    </Space.Compact>
+                </Flex>
             </Flex>
-            <Flex style={{ paddingRight: 16 }}>
-                <Space.Compact>
-                    <Tooltip title="Notifications">
-                        <Button type="default" icon={<BellOutlined />} shape='circle' size='large' />
-                    </Tooltip>
-                    <Tooltip title="Settings">
-                        <Button type="default" icon={<SettingOutlined />} shape='circle' size='large' />
-                    </Tooltip>
-                </Space.Compact>
+        );
+    } else {
+        return (
+            <Flex vertical>
+                <Flex justify='space-evenly' align='center' style={{ width: '100%', height: 70 }}>
+                    <Typography.Title style={{ color: blue[4] }}>
+                        {config.appName}
+                    </Typography.Title>
+                    <Space.Compact>
+                        <Tooltip title="Notifications">
+                            <Button type="default" icon={<BellOutlined />} shape='circle' />
+                        </Tooltip>
+                        <Tooltip title="Settings">
+                            <Button type="default" icon={<SettingOutlined />} shape='circle' />
+                        </Tooltip>
+                    </Space.Compact>
+                </Flex>
+                <Flex justify='center'>
+                    <Space.Compact style={{ width: '85%' }}>
+                        <Select showSearch placeholder='Select city' options={options} style={{ width: '30%' }} />
+                        <Search placeholder='Enter subject' onSearch={value => console.log(value)} style={{ width: '70%' }} />
+                    </Space.Compact>
+                </Flex>
             </Flex>
-        </Flex>
-    );
+        );
+    }
 }

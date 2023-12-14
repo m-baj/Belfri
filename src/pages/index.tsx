@@ -11,19 +11,10 @@ const { Header, Footer, Content } = Layout;
 
 export default function Home() {
     // const { token, username } = useUser();
-    const [small, setSmall] = useState(false);
-
-    useEffect(() => {
-        if (typeof window !== "undefined") {
-            window.addEventListener("scroll", () =>
-                setSmall(window.scrollY > 200)
-            );
-        }
-    }, []);
 
     return (
         <body style={{ margin: 0 }}>
-            <Header style={{ height: '100px', background: blue[1], padding: 0 }}>
+            <Header style={{ height: '120px', background: blue[1], padding: 0 }}>
                 <PageHeader />
             </Header>
             <Content>
