@@ -11,10 +11,13 @@
   },
   "dependencies": {
     "@ant-design/icons": "^5.2.6",
+    "@react-buddy/ide-toolbox-next": "^2.4.1",
+    "@react-buddy/palette-antd": "^5.3.1",
     "@testing-library/jest-dom": "^6.1.5",
     "@testing-library/react": "^14.1.2",
     "@types/jest": "^29.5.10",
     "@types/js-cookie": "^3.0.6",
+    "@types/nodemailer": "^6.4.14",
     "@types/oracledb": "^6.0.4",
     "antd": "^5.11.5",
     "antd-password-input-strength": "^2.0.1",
@@ -30,7 +33,9 @@
     "next-router-mock": "^0.9.10",
     "node": "^21.2.0",
     "node-oracledb": "^1.0.2",
+    "nodemailer": "^6.9.7",
     "oracledb": "^6.2.0",
+    "raw-loader": "^4.0.2",
     "react": "^18",
     "react-dom": "^18",
     "yarn": "^1.22.21"

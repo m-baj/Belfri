@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import Connection from "@/utils/database/Connection";
-import { getToken } from "@/utils/database/queries/login";
+import { getToken } from "@/utils/database/queries/user/login/login";
 
 interface LoginData {
     username: string;
@@ -11,7 +11,7 @@ interface LoginData {
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method !== "POST") {
         res.status(405).json({
-            message: "Method not allowed",
+            message: "Method not allowed"
         });
         return;
     }
@@ -20,7 +20,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
 
     if (!data.username || !data.passHash) {
         res.status(400).json({
-            message: "Invalid request",
+            message: "Invalid request"
         });
         return;
     }
@@ -35,17 +35,19 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
 
             if (result) {
                 res.status(200).json({
-                    token: result,
+                    token: result
                 });
             } else {
                 res.status(401).json({
-                    message: "Invalid username or password",
+                    message: "Invalid username or password / account not activated"
                 });
             }
+
+            await connection.commit();
         })
         .catch((err) => {
             res.status(500).json({
-                message: err.message,
+                message: err.message
             });
         });
 }
