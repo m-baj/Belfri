@@ -51,8 +51,8 @@ describe("LoginForm", () => {
 
         const { getByPlaceholderText, getByText, getByRole } = render(<LoginForm />);
 
-        const usernameInput = getByRole("textbox", { placeholder: /Username/ });
-        const passwordInput = getByRole("textbox", { placeholder: /Password/ });
+        const usernameInput = getByRole("textbox", { name: /Username/ });
+        const passwordInput = getByRole("textbox", { name: /Password/ });
         const submitButton = getByRole("button", { name: /Submit/ });
 
         user.type(usernameInput, testUsername);

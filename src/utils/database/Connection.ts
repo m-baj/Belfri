@@ -1,5 +1,5 @@
 import OracleDB from "oracledb";
-import { getUserAuth } from "./queries/authorize";
+import { getUserAuth } from "@/utils/database/queries/user/authorize/authorize";
 
 // Define the database connection details
 const dbConfig: OracleDB.ConnectionAttributes = {
