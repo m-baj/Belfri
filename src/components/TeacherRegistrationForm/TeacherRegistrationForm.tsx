@@ -87,11 +87,16 @@ export default function TeacherRegistrationForm() {
         }
     }
 
+    const disabledDate = (current: any) => {
+        // Can not select days before today and today
+        return current && current > new Date();
+    };
+
 
     return (
         <Flex vertical>
             <Typography.Title style={{ color: blue[4], textAlign: "center" }}>
-                Create new teacher account
+                Create teacher account
             </Typography.Title>
 
             <Form
@@ -345,6 +350,7 @@ export default function TeacherRegistrationForm() {
                         onChange={handleForm}
                         style={{ width: "100%" }}
                         prefixCls="ant-picker"
+                        disabledDate={disabledDate}
                     />
                 </Form.Item>
                 <Form.Item
@@ -425,7 +431,14 @@ export default function TeacherRegistrationForm() {
                         <Button type="primary" htmlType="submit">
                             Submit
                         </Button>
-                        <Button type="link">Login</Button>
+                        <Button
+                            className={style.rightAlignButton}
+                            type="link"
+                            onClick={() => router.push("/login")}
+                            style={{ marginTop: "0px" }}
+                        >
+                            Login
+                        </Button>
                     </Flex>
                 </Form.Item>
             </Form>
