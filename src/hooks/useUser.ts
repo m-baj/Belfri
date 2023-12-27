@@ -64,7 +64,7 @@ export function useUser({
                 setLoading(false);
             }
         }
-    }, [token, username, router, redirectTo, loggedIn]);
+    }, [token, username, router, redirectTo, loggedIn, requiredAuthLevel]);
 
     return { token, username, loading };
 }
