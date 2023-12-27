@@ -36,8 +36,18 @@ npx dotenv-vault@latest pull
 yarn dev
 ```
 
+#### Admin account
+
+- Username: `admin`
+- Password: `admin`
+
 ### Production
 
 ```bash
 make
 ```
+
+### API documentation
+
+When logged in as admin, you can access the API documentation
+at [`localhost:3000/api-docs`](http://localhost:3000/api-docs)
