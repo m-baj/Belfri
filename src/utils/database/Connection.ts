@@ -1,53 +1,38 @@
-import OracleDB from "oracledb";
 import { getUserAuth } from "@/utils/database/queries/user/authorize/authorize";
-
-// Define the database connection details
-const dbConfig: OracleDB.ConnectionAttributes = {
-    user: "aszokals",
-    password: "aszokals",
-    connectString: "ora4.ii.pw.edu.pl:1521/pdb1.ii.pw.edu.pl",
-};
-
-enum AuthLevel {
-    ADMIN = 3,
-    TUTOR = 2,
-    STUDENT = 1,
-    GUEST = 0,
-}
+import { AuthLevel } from "@/utils/etc/AuthLevel";
+import * as PostgreSQL from "@vercel/postgres";
 
 /* The Connection class is a TypeScript class that represents a connection to an Oracle database and
 provides methods for executing SQL queries and managing authorization levels. */
 
 export default class Connection {
-    private connection: OracleDB.Connection;
+    private connection: PostgreSQL.VercelPoolClient;
     private authLevel: AuthLevel = AuthLevel.GUEST;
     private username: string | null = null;
 
-    constructor(connection: OracleDB.Connection) {
+    constructor(connection: PostgreSQL.VercelPoolClient) {
         this.connection = connection;
     }
 
     public static async connect(): Promise<Connection> {
-        const connection = await OracleDB.getConnection(dbConfig);
+        const connection = await PostgreSQL.db.connect();
         return new Connection(connection);
     }
 
-    public async close(): Promise<void> {
-        await this.connection.close();
+    public close() {
+        this.connection.release();
     }
 
-    public async execute(
-        sql: string,
-        bindParams?: OracleDB.BindParameters
-    ): Promise<OracleDB.Result<any>> {
-        if (bindParams === undefined) {
-            return await this.connection.execute(sql);
-        }
-        return await this.connection.execute(sql, bindParams);
+    public async execute(query: TemplateStringsArray, ...params: any[]): Promise<PostgreSQL.QueryResult<PostgreSQL.QueryResultRow>> {
+        return await this.connection.sql(query, ...params);
     }
 
     public async commit(): Promise<void> {
-        await this.connection.commit();
+        await this.connection.query("COMMIT");
+    }
+
+    public async rollback(): Promise<void> {
+        await this.connection.query("ROLLBACK");
     }
 
     public async authorize(token: string): Promise<boolean> {

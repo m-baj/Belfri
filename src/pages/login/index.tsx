@@ -5,7 +5,7 @@ import LoadingComponent from "@/components/LoadingComponent/LoadingComponent";
 export default function Loader() {
     const { loading } = useUser({
         loggedIn: false,
-        redirectTo: "/",
+        redirectTo: "/"
     });
 
     if (loading) return <LoadingComponent />;

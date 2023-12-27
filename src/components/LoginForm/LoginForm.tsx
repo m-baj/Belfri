@@ -23,12 +23,26 @@ export default function LoginForm() {
             .post("/api/login/", {
                 username: values.username,
                 passHash: sha256(values.password),
+                remember: values.remember
             })
             .then((res) => {
                 if (res.status == 200) {
                     const token = res.data.token;
-                    jscookie.set("token", token, { expires: 1 });
-                    jscookie.set("username", values.username), { expires: 1 };
+                    const expiration_date = res.data.expiration_date;
+                    const auth_level = res.data.auth_level;
+                    const options = {
+                        expires: values.remember ? 7 : undefined
+                    };
+                    jscookie.set("token", token, options);
+                    jscookie.set("username", values.username, options);
+                    jscookie.set("expiration", expiration_date, options);
+                    jscookie.set("auth_level", auth_level, options);
+
+                    const next = router.query.next;
+                    if (next) {
+                        router.push(next as string);
+                        return;
+                    }
                     router.push("/");
                 } else {
                     message.error("Login failed");
@@ -39,15 +53,15 @@ export default function LoginForm() {
                     form.setFields([
                         {
                             name: "password",
-                            errors: [err.response.data.message],
-                        },
+                            errors: [err.response.data.message]
+                        }
                     ]);
                 } else {
                     message.error(
                         "Login failed due to server error: " +
-                            err.response.status +
-                            " " +
-                            err.response.data.message
+                        err.response.status +
+                        " " +
+                        err.response.data.message
                     );
                 }
             });
@@ -73,8 +87,8 @@ export default function LoginForm() {
                     rules={[
                         {
                             required: true,
-                            message: "Please input your username!",
-                        },
+                            message: "Please input your username!"
+                        }
                     ]}
                 >
                     <Input
@@ -88,8 +102,8 @@ export default function LoginForm() {
                     rules={[
                         {
                             required: true,
-                            message: "Please input your password!",
-                        },
+                            message: "Please input your password!"
+                        }
                     ]}
                 >
                     <Input.Password
