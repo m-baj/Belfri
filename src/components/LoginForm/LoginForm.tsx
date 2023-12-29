@@ -127,7 +127,18 @@ export default function LoginForm() {
                         <Button type="primary" htmlType="submit">
                             Submit
                         </Button>
-                        <Button type="link">Register</Button>
+                        <Button
+                            type="link"
+                            onClick={() => router.push("/register/student")}
+                        >
+                            Register as a student
+                        </Button>
+                        <Button
+                            type="link"
+                            onClick={() => router.push("/register/teacher")}
+                        >
+                            Register as a teacher
+                        </Button>
                     </Flex>
                 </Form.Item>
             </Form>
