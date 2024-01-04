@@ -44,7 +44,7 @@ interface Response {
  */
 
 
-export default function handler(
+export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse<Response>
 ) {
@@ -62,7 +62,8 @@ export default function handler(
         return;
     }
 
-    Connection.connect().then(async (connection) => {
+    try {
+        const connection = await Connection.connect()
         try {
             await connection.authorize(req.cookies.token as string);
             const result = await getSecret(connection);
@@ -81,10 +82,9 @@ export default function handler(
                 message: err.message
             });
         }
-    }).catch((err) => {
+    }catch (err:any) {
         res.status(500).json({
             message: err.message
-        });
-    });
-
+        })
+    }
 }

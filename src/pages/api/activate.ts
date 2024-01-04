@@ -47,7 +47,7 @@ interface ActivationResponse {
  *         description: An error occurred while connecting to the database or during the activation process.
  */
 
-export default function handler(req: NextApiRequest, res: NextApiResponse<ActivationResponse>) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse<ActivationResponse>) {
     if (req.method !== "POST") {
         res.status(405).json({
             message: "Method not allowed"
@@ -64,8 +64,8 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<Activa
         return;
     }
 
-    Connection.connect()
-        .then(async (connection) => {
+    try {
+        const connection = await Connection.connect()
             try {
                 await activateUser(connection, data.token);
 
@@ -82,10 +82,9 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<Activa
                 });
             }
 
+        } catch (err:any){
+        res.status(500).json({
+            message: err.message
         })
-        .catch((err) => {
-            res.status(500).json({
-                message: err.message
-            });
-        });
+    }
 }

@@ -72,7 +72,7 @@ interface RegistrationResponse {
  *         description: An error occurred while connecting to the database or during the registration process.
  */
 
-export default function handler(req: NextApiRequest, res: NextApiResponse<RegistrationResponse>) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse<RegistrationResponse>) {
     if (req.method !== "POST") {
         res.status(405).json({
             message: "Method not allowed"
@@ -96,37 +96,36 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<Regist
         return;
     }
 
-    Connection.connect()
-        .then(async (connection) => {
-            try {
-                const activation_token = await registerUser(
-                    connection,
-                    data.username,
-                    data.passHash,
-                    data.email,
-                    data.name,
-                    data.surname,
-                    data.dateOfBirth
-                );
+    try {
+        const connection = await Connection.connect()
+        try {
+            const activation_token = await registerUser(
+                connection,
+                data.username,
+                data.passHash,
+                data.email,
+                data.name,
+                data.surname,
+                data.dateOfBirth
+            );
 
-                await connection.commit();
+            await connection.commit();
 
-                res.status(200).json({
-                    message: "User registered",
-                    activation_token: activation_token
-                });
-            } catch (err: any) {
-                await connection.rollback();
+            res.status(200).json({
+                message: "User registered",
+                activation_token: activation_token
+            });
+        } catch (err: any) {
+            await connection.rollback();
 
-                res.status(500).json({
-                    message: err.message
-                });
-            }
-
-        })
-        .catch((err) => {
             res.status(500).json({
                 message: err.message
             });
+        }
+    } catch(err: any){
+        res.status(500).json({
+            message: err.message
         });
+    }
+
 }

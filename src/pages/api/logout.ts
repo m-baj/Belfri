@@ -41,7 +41,7 @@ interface Response {
  *       in: cookie
  *       name: token
  */
-export default function handler(
+export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse<Response>
 ) {
@@ -59,8 +59,9 @@ export default function handler(
         return;
     }
 
-    Connection.connect()
-        .then(async (connection) => {
+    try {
+        const connection = await Connection.connect()
+        try {
             await connection.authorize(req.cookies.token as string);
             await removeToken(connection, req.cookies.token as string);
 
@@ -68,10 +69,16 @@ export default function handler(
             res.status(200).json({
                 message: "Logged out"
             });
-        })
-        .catch((err) => {
+        } catch (err: any) {
+            await connection.rollback()
             res.status(500).json({
                 message: err.message
+                })
+        }
+    } catch (err:any){
+        res.status(500).json({
+                message: err.message
             });
-        });
+    }
+
 }

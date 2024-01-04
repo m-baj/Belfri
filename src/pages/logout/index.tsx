@@ -15,8 +15,10 @@ export default function Logout() {
 
                 router.push("/login");
             })
-            .catch((e) => {
-                message.error("Couldn't logout: ", e.response.data.message);
+            .catch((err) => {
+                jscookie.remove("token");
+                jscookie.remove("username");
+                message.error("Error: ", err.response.data.message)
             });
     }, [router]);
     return <></>;
