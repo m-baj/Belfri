@@ -56,7 +56,7 @@ interface ActivationEmailData {
  *       500:
  *         description: An error occurred while connecting to the database or during the email sending process.
  */
-export default function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method !== "POST") {
         res.status(405).json({
             message: "Method not allowed"
@@ -78,9 +78,9 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
     }
 
 
-    Connection.connect()
-        .then(async (connection) => {
-            try {
+    try {
+        const connection = await Connection.connect()
+        try {
                 const email_contents = await generateEmailText(activationEmailTemplate, {
                     username: data.name,
                     activation_url: "http://localhost:3000/activate?token=" + data.activation_token
@@ -100,10 +100,9 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
                     message: err.message
                 });
             }
+    } catch (err: any){
+        res.status(500).json({
+            message: err.message
         })
-        .catch((err: any) => {
-            res.status(500).json({
-                message: err.message
-            });
-        });
+    }
 }

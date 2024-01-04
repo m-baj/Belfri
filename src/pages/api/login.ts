@@ -63,7 +63,7 @@ interface LoginResponse {
  *       500:
  *         description: An error occurred while connecting to the database or during the login process.
  */
-export default function handler(req: NextApiRequest, res: NextApiResponse<LoginResponse>) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse<LoginResponse>) {
     if (req.method !== "POST") {
         res.status(405).json({
             message: "Method not allowed"
@@ -80,43 +80,41 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<LoginR
         return;
     }
 
-    Connection.connect()
-        .then(async (connection) => {
-            try {
-                const result = await getToken(
-                    connection,
-                    data.username,
-                    data.passHash,
-                    data.remember
-                );
+    try {
+        const connection = await Connection.connect()
+        try {
+            const result = await getToken(
+                connection,
+                data.username,
+                data.passHash,
+                data.remember
+            );
 
-                if (result) {
-                    const [token, authLevel, expirationDate] = result;
-                    res.status(200).json({
-                        message: "Login successful",
-                        token: token,
-                        auth_level: authLevel,
-                        expiration_date: expirationDate
-                    });
-                } else {
-                    res.status(401).json({
-                        message: "Invalid username or password / account not activated"
-                    });
-                }
-
-                await connection.commit();
-            } catch (err: any) {
-                await connection.rollback();
-
-                res.status(500).json({
-                    message: err.message
+            if (result) {
+                const [token, authLevel, expirationDate] = result;
+                res.status(200).json({
+                    message: "Login successful",
+                    token: token,
+                    auth_level: authLevel,
+                    expiration_date: expirationDate
+                });
+            } else {
+                res.status(401).json({
+                    message: "Invalid username or password / account not activated"
                 });
             }
 
-        })
-        .catch((err) => {
+            await connection.commit();
+        } catch (err: any) {
+            await connection.rollback();
+
             res.status(500).json({
                 message: err.message
             });
+        }
+    } catch (err: any){
+        res.status(500).json({
+            message: err.message
         });
+    }
 }

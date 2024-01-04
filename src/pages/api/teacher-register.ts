@@ -84,7 +84,7 @@ interface RegistrationResponse {
  *         description: An error occurred while connecting to the database or during the registration process.
  */
 
-export default function handler(req: NextApiRequest, res: NextApiResponse<RegistrationResponse>) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse<RegistrationResponse>) {
     if (req.method !== "POST") {
         res.status(405).json({
             message: "Method not allowed"
@@ -111,11 +111,9 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<Regist
         return;
     }
 
-    Connection.connect()
-        .then(async (connection) => {
-            try {
-                console.log("here1");
-
+    try {
+        const connection = await Connection.connect()
+        try {
                 // profile picture URL to blob
                 const response = await fetch(data.profilePictureUrl);
                 const blob = new Buffer(await response.arrayBuffer());
@@ -151,10 +149,9 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<Regist
                 });
             }
 
-        })
-        .catch((err) => {
+        } catch(err: any){
             res.status(500).json({
                 message: err.message
-            });
-        });
+            })
+    }
 }
