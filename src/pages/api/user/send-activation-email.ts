@@ -1,5 +1,4 @@
-import type { NextApiRequest, NextApiResponse } from "next";
-import Connection from "@/utils/database/Connection";
+import { createApiRoute } from "@/utils/api/createApiRoute";
 import { sendEmail } from "@/utils/etc/email/sendEmail";
 import { activationEmailTemplate, generateEmailText } from "@/utils/etc/email/generateEmailText";
 
@@ -56,53 +55,20 @@ interface ActivationEmailData {
  *       500:
  *         description: An error occurred while connecting to the database or during the email sending process.
  */
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-    if (req.method !== "POST") {
-        res.status(405).json({
-            message: "Method not allowed"
+
+export default createApiRoute<ActivationEmailData, { message: string }>(
+    "POST",
+    (data) => data.name !== undefined && data.email !== undefined && data.activation_token !== undefined,
+    async (connection, data) => {
+        const email_contents = await generateEmailText(activationEmailTemplate, {
+            username: data.name,
+            activation_url: "http://localhost:3000/activate?token=" + data.activation_token
         });
-        return;
+
+        await sendEmail(data.email, "Belfri Account Activation", email_contents);
+
+        return {
+            message: "Email sent"
+        };
     }
-
-    const data = req.body as ActivationEmailData;
-
-    if (
-        !data.name ||
-        !data.email ||
-        !data.activation_token
-    ) {
-        res.status(400).json({
-            message: "Invalid request"
-        });
-        return;
-    }
-
-
-    try {
-        const connection = await Connection.connect()
-        try {
-                const email_contents = await generateEmailText(activationEmailTemplate, {
-                    username: data.name,
-                    activation_url: "http://localhost:3000/activate?token=" + data.activation_token
-                });
-
-                await sendEmail(data.email, "Belfri Account Activation", email_contents);
-
-                await connection.commit();
-
-                res.status(200).json({
-                    message: "Email sent"
-                });
-            } catch (err: any) {
-                await connection.rollback();
-
-                res.status(500).json({
-                    message: err.message
-                });
-            }
-    } catch (err: any){
-        res.status(500).json({
-            message: err.message
-        })
-    }
-}
+);

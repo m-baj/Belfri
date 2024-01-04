@@ -1,7 +1,6 @@
-import Connection from "@/utils/database/Connection";
-import type { NextApiRequest, NextApiResponse } from "next";
+import { createApiRoute } from "@/utils/api/createApiRoute";
 import { removeUser } from "@/utils/database/queries/user/remove/remove";
-
+import { AuthLevel } from "@/utils/etc/AuthLevel";
 
 interface Response {
     message: string;
@@ -41,41 +40,16 @@ interface Response {
  *       in: cookie
  *       name: token
  */
-export default async function handler(
-    req: NextApiRequest,
-    res: NextApiResponse<Response>
-) {
-    if (req.method !== "DELETE") {
-        return res.status(405).json({
-            message: "Method not allowed"
-        });
-    }
 
-    if (!req.cookies.token) {
-        return res.status(401).json({
-            message: "Unauthorized"
-        });
-    }
 
-    try {
-        const connection = await Connection.connect();
-        try {
-            await connection.authorize(req.cookies.token as string);
-            await removeUser(connection);
-            await connection.commit();
-
-            return res.status(200).json({
-                message: "User removed successfully"
-            });
-        } catch (err: any) {
-            await connection.rollback();
-            return res.status(500).json({
-                message: err.message
-            });
-        }
-    } catch (err: any) {
-        return res.status(500).json({
-            message: err.message
-        });
-    }
-}
+export default createApiRoute<{}, Response>(
+    "DELETE",
+    () => true,
+    async (connection, data) => {
+        await removeUser(connection);
+        return {
+            message: "User removed successfully"
+        };
+    },
+    AuthLevel.STUDENT
+);

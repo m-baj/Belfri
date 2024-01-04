@@ -1,6 +1,6 @@
-import Connection from "@/utils/database/Connection";
-import type { NextApiRequest, NextApiResponse } from "next";
+import { createApiRoute } from "@/utils/api/createApiRoute";
 import { updateUserData } from "@/utils/database/queries/user/update/update";
+import { AuthLevel } from "@/utils/etc/AuthLevel";
 
 interface Response {
     message: string;
@@ -91,55 +91,15 @@ interface UserData {
  *       in: cookie
  *       name: token
  */
-export default async function handler(
-    req: NextApiRequest,
-    res: NextApiResponse<Response>
-) {
-    if (req.method !== "PUT") {
-        res.status(405).json({
-            message: "Method not allowed"
-        });
-        return;
-    }
 
-    if (!req.cookies.token) {
-        res.status(401).json({
-            message: "Unauthorized"
-        });
-        return;
-    }
-
-    const data = req.body as UserData;
-
-    if (!data.name && !data.surname && !data.email && !data.dateOfBirth && !data.iban && !data.phoneNumber && !data.profilePicture) {
-        res.status(400).json({
-            message: "Invalid request"
-        });
-        return;
-    }
-
-    try {
-        const connection = await Connection.connect();
-        try {
-            await connection.authorize(req.cookies.token as string);
-
-            await updateUserData(connection, req.body as UserData);
-
-            res.status(200).json({
-                message: "User data updated successfully"
-            });
-        } catch (err: any) {
-            await connection.rollback();
-            console.log(err);
-            res.status(500).json({
-                message: err.message
-            });
-        }
-    } catch (err: any) {
-        console.log(err);
-        res.status(500).json({
-            message: err.message
-        });
-    }
-
-}
+export default createApiRoute<UserData, Response>(
+    "PUT",
+    (data) => data.name !== undefined || data.surname !== undefined || data.email !== undefined || data.dateOfBirth !== undefined || data.iban !== undefined || data.phoneNumber !== undefined || data.profilePicture !== undefined,
+    async (connection, data) => {
+        await updateUserData(connection, data);
+        return {
+            message: "User data updated successfully"
+        };
+    },
+    AuthLevel.STUDENT
+);

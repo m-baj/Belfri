@@ -1,6 +1,6 @@
-import type { NextApiRequest, NextApiResponse } from "next";
-import Connection from "@/utils/database/Connection";
+import { createApiRoute } from "@/utils/api/createApiRoute";
 import { activateUser } from "@/utils/database/queries/user/activate/activate";
+
 
 interface ActivationData {
     token: string;
@@ -47,44 +47,15 @@ interface ActivationResponse {
  *         description: An error occurred while connecting to the database or during the activation process.
  */
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse<ActivationResponse>) {
-    if (req.method !== "POST") {
-        res.status(405).json({
-            message: "Method not allowed"
-        });
-        return;
+export default createApiRoute<ActivationData, ActivationResponse>(
+    "POST",
+    (data) => data.token !== undefined,
+    async (connection, data) => {
+
+        await activateUser(connection, data.token);
+
+        return {
+            message: "User activated"
+        };
     }
-
-    const data = req.body as ActivationData;
-
-    if (!data.token) {
-        res.status(400).json({
-            message: "Invalid request"
-        });
-        return;
-    }
-
-    try {
-        const connection = await Connection.connect()
-            try {
-                await activateUser(connection, data.token);
-
-                await connection.commit();
-
-                res.status(200).json({
-                    message: "User activated"
-                });
-            } catch (err: any) {
-                await connection.rollback();
-
-                res.status(500).json({
-                    message: err.message
-                });
-            }
-
-        } catch (err:any){
-        res.status(500).json({
-            message: err.message
-        })
-    }
-}
+);
