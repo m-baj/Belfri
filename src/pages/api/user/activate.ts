@@ -12,7 +12,7 @@ interface ActivationResponse {
 
 /**
  * @swagger
- * /api/activate:
+ * /api/user/activate:
  *   post:
  *     summary: Activate a new user
  *     description: This endpoint allows you to activate a new user.

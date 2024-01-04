@@ -9,8 +9,8 @@ export async function getSecret(
 
     const result = await connection.execute`SELECT SECRET_VALUE
                                             FROM TEST_TABLE
-                                                     JOIN USERS USING (USER_ID)
-                                            WHERE USERNAME = ${connection.getUsername()}
+                                                     JOIN USERS USING (user_id)
+                                            WHERE USER_ID = ${connection.getUserID()}
                                                 FETCH NEXT 1 ROW ONLY`;
 
     if (result && result.rows && result.rows.length > 0) {

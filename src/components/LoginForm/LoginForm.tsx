@@ -20,7 +20,7 @@ export default function LoginForm() {
 
     const handleForm = (values: any) => {
         axios
-            .post("/api/login/", {
+            .post("/api/user/login/", {
                 username: values.username,
                 passHash: sha256(values.password),
                 remember: values.remember

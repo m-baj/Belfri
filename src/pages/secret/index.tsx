@@ -9,7 +9,7 @@ export default function Loader() {
     const [secret, setSecret] = useState(null);
 
     useEffect(() => {
-        axios.get("/api/secret/", {withCredentials: true}).then((res) => {
+        axios.get("/api/user/secret/", {withCredentials: true}).then((res) => {
             setSecret(res.data.secret);
         }).catch((err) => {
             if (err.response.status == 401) {

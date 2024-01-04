@@ -18,7 +18,7 @@ interface LoginResponse {
 
 /**
  * @swagger
- * /api/login:
+ * /api/user/login:
  *   post:
  *     summary: Log in a user
  *     description: This endpoint allows you to log in a user.

@@ -8,7 +8,7 @@ export default function Logout() {
     const router = useRouter();
     useEffect(() => {
         axios
-            .post("/api/logout", { withCredentials: true })
+            .post("/api/user/logout", { withCredentials: true })
             .then(() => {
                 jscookie.remove("token");
                 jscookie.remove("username");
@@ -18,7 +18,8 @@ export default function Logout() {
             .catch((err) => {
                 jscookie.remove("token");
                 jscookie.remove("username");
-                message.error("Error: ", err.response.data.message)
+                message.error("Error: ", err.response.data.message);
+                router.push("/login");
             });
     }, [router]);
     return <></>;

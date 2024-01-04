@@ -9,7 +9,7 @@ interface Response {
 
 /**
  * @swagger
- * /api/logout:
+ * /api/user/logout:
  *   post:
  *     summary: Log out a user
  *     description: This endpoint allows you to log out a user. The user's session token should be provided in a cookie named "token".
