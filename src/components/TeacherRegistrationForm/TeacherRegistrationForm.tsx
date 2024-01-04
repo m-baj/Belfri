@@ -20,6 +20,7 @@ import {
     UserOutlined,
     UserAddOutlined,
     PictureOutlined,
+    BankOutlined
 } from "@ant-design/icons";
 import { blue } from "@ant-design/colors";
 import { useRouter } from "next/router";
@@ -41,7 +42,7 @@ interface Fields {
     education?: string;
     teachingLevel?: string;
     dateOfBirth?: string;
-    accessCode?: string;
+    iban?: string;
     acceptTerms?: boolean;
     acceptPrivacyPolicy?: boolean;
     acceptMarketing?: boolean;
@@ -92,6 +93,13 @@ export default function TeacherRegistrationForm() {
         return current && current > new Date();
     };
 
+    const validateIban = (rule: any, value: any, callback: any) => {
+        if (value && !/^[a-zA-Z]{2}[0-9]{26}$/.test(value)) {
+            callback("Invalid IBAN");
+        } else {
+            callback();
+        }
+    }
 
     return (
         <Flex vertical>
@@ -352,6 +360,26 @@ export default function TeacherRegistrationForm() {
                         prefixCls="ant-picker"
                         disabledDate={disabledDate}
                     />
+                </Form.Item>
+                <Form.Item
+                    name="uploadiban"
+                    rules={[
+                        {
+                            required: true,
+                            message: "Please upload your iban"
+                        },
+                        {
+                            validator: validateIban
+                        }
+                    ]}
+
+                >
+                    <Input
+                        size="large"
+                        placeholder="IBAN"
+                        prefix={<BankOutlined style={{ color: blue[4] }} />}
+                    />
+
                 </Form.Item>
                 <Form.Item
                     name="uploadProfilePicture"
