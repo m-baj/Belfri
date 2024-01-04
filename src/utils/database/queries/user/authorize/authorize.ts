@@ -14,10 +14,10 @@ export async function getUserAuth(
     connection: Connection,
     token: string
 ): Promise<{
-    username: string;
+    user_id: string;
     authLevel: number;
 } | null> {
-    const result = await connection.execute`SELECT USERNAME, AUTH_LEVEL, EXPIRATION
+    const result = await connection.execute`SELECT USER_ID, AUTH_LEVEL, EXPIRATION
                                             FROM TOKENS
                                                      JOIN USERS USING (USER_ID)
                                             WHERE TOKEN = ${token}`;
@@ -31,7 +31,7 @@ export async function getUserAuth(
             return null;
         }
         return {
-            username: result.rows[0].username,
+            user_id: result.rows[0].user_id,
             authLevel: result.rows[0].auth_level
         };
     }

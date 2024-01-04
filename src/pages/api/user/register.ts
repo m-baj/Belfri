@@ -18,7 +18,7 @@ interface RegistrationResponse {
 
 /**
  * @swagger
- * /api/register:
+ * /api/user/register:
  *   post:
  *     summary: Register a new user
  *     description: This endpoint allows you to register a new user.

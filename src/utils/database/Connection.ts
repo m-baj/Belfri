@@ -8,7 +8,7 @@ provides methods for executing SQL queries and managing authorization levels. */
 export default class Connection {
     private connection: PostgreSQL.VercelPoolClient;
     private authLevel: AuthLevel = AuthLevel.GUEST;
-    private username: string | null = null;
+    private user_id: string | null = null;
 
     constructor(connection: PostgreSQL.VercelPoolClient) {
         this.connection = connection;
@@ -39,7 +39,7 @@ export default class Connection {
         const result = await getUserAuth(this, token);
         if (result) {
             this.authLevel = result.authLevel;
-            this.username = result.username;
+            this.user_id = result.user_id;
             return true;
         }
         return false;
@@ -49,7 +49,7 @@ export default class Connection {
         return this.authLevel >= leastLevel;
     }
 
-    public getUsername(): string | null {
-        return this.username;
+    public getUserID(): string | null {
+        return this.user_id;
     }
 }

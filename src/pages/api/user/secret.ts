@@ -10,7 +10,7 @@ interface Response {
 
 /**
  * @swagger
- * /api/secret:
+ * /api/user/secret:
  *   get:
  *     summary: Retrieve a secret number
  *     description: This endpoint allows you to retrieve a secret number if the user is authorized. The user's session token should be provided in a cookie named "token".

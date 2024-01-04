@@ -16,7 +16,7 @@ interface ActivationEmailData {
 
 /**
  * @swagger
- * /api/send-activation-email:
+ * /api/user/send-activation-email:
  *   post:
  *     summary: Send an activation email to a new user
  *     description: This endpoint allows you to send an activation email to a new user.

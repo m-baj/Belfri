@@ -37,12 +37,12 @@ export async function registerTeacher(
     if (
         result.rows === undefined ||
         result.rows.length === 0 ||
-        result.rows[0].USER_ID === undefined
+        result.rows[0].user_id === undefined
     ) {
         throw new Error("Error creating user");
     }
 
-    const newUserId = result.rows[0].USER_ID;
+    const newUserId = result.rows[0].user_id;
 
     await connection.execute`
         INSERT INTO TEACHERS (USER_ID, IBAN_NUMBER, PHONE_NUMBER, PROFILE_PICTURE)

@@ -21,12 +21,12 @@ interface RegistrationResponse {
 
 /**
  * @swagger
- * /api/teacher-register:
+ * /api/user/teacher-register:
  *   post:
  *     summary: Register a new teacher
  *     description: This endpoint allows you to register a new teacher.
  *     tags:
- *       - Teacher
+ *       - User
  *     requestBody:
  *       required: true
  *       content:
@@ -118,8 +118,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
                 const response = await fetch(data.profilePictureUrl);
                 const blob = new Buffer(await response.arrayBuffer());
 
-                console.log(blob);
-
                 const activation_token = await registerTeacher(
                     connection,
                     data.username,
@@ -132,8 +130,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
                     data.phoneNumber,
                     blob
                 );
-
-                console.log("here2");
 
                 await connection.commit();
 
