@@ -13,14 +13,13 @@ import Connection from "../../../Connection";
  * @returns {Promise<void>} - A Promise that resolves when the token has been successfully removed.
  */
 export async function removeToken(
-    connection: Connection,
-    token: string
+    connection: Connection
 ): Promise<void> {
     if (!connection.isAuthorized()) {
         throw new Error("Unauthorized");
     }
-    
+
     await connection.execute`DELETE
                              FROM tokens
-                             WHERE token = ${token}`;
+                             WHERE user_id = ${connection.getUserID()}`;
 }

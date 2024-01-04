@@ -1,5 +1,4 @@
-import type { NextApiRequest, NextApiResponse } from "next";
-import Connection from "@/utils/database/Connection";
+import { createApiRoute } from "@/utils/api/createApiRoute";
 import { registerUser } from "@/utils/database/queries/user/register/register";
 
 interface RegistrationData {
@@ -72,60 +71,24 @@ interface RegistrationResponse {
  *         description: An error occurred while connecting to the database or during the registration process.
  */
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse<RegistrationResponse>) {
-    if (req.method !== "POST") {
-        res.status(405).json({
-            message: "Method not allowed"
-        });
-        return;
+
+export default createApiRoute<RegistrationData, RegistrationResponse>(
+    "POST",
+    (data) => data.name !== undefined && data.surname !== undefined && data.username !== undefined && data.email !== undefined && data.passHash !== undefined && data.dateOfBirth !== undefined,
+    async (connection, data) => {
+        const activation_token = await registerUser(
+            connection,
+            data.username,
+            data.passHash,
+            data.email,
+            data.name,
+            data.surname,
+            data.dateOfBirth
+        );
+
+        return {
+            message: "User registered",
+            activation_token: activation_token
+        };
     }
-
-    const data = req.body as RegistrationData;
-
-    if (
-        !data.name ||
-        !data.surname ||
-        !data.username ||
-        !data.email ||
-        !data.passHash ||
-        !data.dateOfBirth
-    ) {
-        res.status(400).json({
-            message: "Invalid request"
-        });
-        return;
-    }
-
-    try {
-        const connection = await Connection.connect()
-        try {
-            const activation_token = await registerUser(
-                connection,
-                data.username,
-                data.passHash,
-                data.email,
-                data.name,
-                data.surname,
-                data.dateOfBirth
-            );
-
-            await connection.commit();
-
-            res.status(200).json({
-                message: "User registered",
-                activation_token: activation_token
-            });
-        } catch (err: any) {
-            await connection.rollback();
-
-            res.status(500).json({
-                message: err.message
-            });
-        }
-    } catch(err: any){
-        res.status(500).json({
-            message: err.message
-        });
-    }
-
-}
+);

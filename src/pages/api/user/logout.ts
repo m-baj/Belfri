@@ -1,7 +1,8 @@
-// Next.js API route support: https://nextjs.org/docs/api-routes/introduction
+import { createApiRoute } from "@/utils/api/createApiRoute";
+import { AuthLevel } from "@/utils/etc/AuthLevel";
 import Connection from "@/utils/database/Connection";
 import { removeToken } from "@/utils/database/queries/user/logout/logout";
-import type { NextApiRequest, NextApiResponse } from "next";
+
 
 interface Response {
     message: string;
@@ -41,44 +42,15 @@ interface Response {
  *       in: cookie
  *       name: token
  */
-export default async function handler(
-    req: NextApiRequest,
-    res: NextApiResponse<Response>
-) {
-    if (req.method !== "POST") {
-        res.status(405).json({
-            message: "Method not allowed"
-        });
-        return;
-    }
 
-    if (!req.cookies.token) {
-        res.status(401).json({
-            message: "Unauthorized"
-        });
-        return;
-    }
-
-    try {
-        const connection = await Connection.connect()
-        try {
-            await connection.authorize(req.cookies.token as string);
-            await removeToken(connection, req.cookies.token as string);
-
-            await connection.commit();
-            res.status(200).json({
-                message: "Logged out"
-            });
-        } catch (err: any) {
-            await connection.rollback()
-            res.status(500).json({
-                message: err.message
-                })
-        }
-    } catch (err:any){
-        res.status(500).json({
-                message: err.message
-            });
-    }
-
-}
+export default createApiRoute<{}, Response>(
+    "POST",
+    () => true,
+    async (connection, data) => {
+        await removeToken(connection);
+        return {
+            message: "Logged out"
+        };
+    },
+    AuthLevel.STUDENT
+);
