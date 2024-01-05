@@ -20,12 +20,10 @@ const options = [
 
 export default function PageHeader() {
     const [screenWidth, setScreenWidth] = useState<number>(0);
-
     useEffect(() => {
         const handleResize = () => {
             setScreenWidth(window.innerWidth);
         };
-
         if (typeof window !== 'undefined') {
             handleResize();
 
@@ -37,9 +35,31 @@ export default function PageHeader() {
         }
     } , []);
 
+    const [isScrolled, setIsScrolled] = useState<boolean>(false);
+    useEffect(() => {
+        const handleScroll = () => {
+            if (typeof window !== 'undefined') {
+                if (window.scrollY > 0) {
+                    setIsScrolled(true);
+                } else {
+                    setIsScrolled(false);
+                }
+            }
+        };
+        if (typeof window !== 'undefined') {
+            handleScroll();
+
+            window.addEventListener('scroll', handleScroll);
+
+            return () => {
+                window.removeEventListener('scroll', handleScroll);
+            };
+        }
+    }, []);
+
     if (screenWidth >= 850) {
         return (
-            <Flex justify='space-evenly' align='center' style={{ width: '100%', height: '100%' }}>
+            <Flex justify='space-evenly' align='center' style={{ width: '100%', height: isScrolled ? '70px' : '120px' }}>
                 <Typography.Title style={{ color: blue[4], paddingRight: '3%' }}>
                     {config.appName}
                 </Typography.Title>
@@ -63,8 +83,8 @@ export default function PageHeader() {
         );
     } else {
         return (
-            <Flex vertical>
-                <Flex justify='space-evenly' align='center' style={{ width: '100%', height: 70 }}>
+            <Flex vertical style={{ marginBottom: '25px' }}>
+                <Flex justify='space-evenly' align='center' style={{ width: '100%', height: '70px' }}>
                     <Typography.Title style={{ color: blue[4] }}>
                         {config.appName}
                     </Typography.Title>
