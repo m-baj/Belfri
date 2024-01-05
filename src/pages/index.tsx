@@ -1,9 +1,9 @@
 import PageHeader from "@/components/PageHeader/PageHeader";
-import { useUser } from "@/hooks/useUser";
+// import { useUser } from "@/hooks/useUser";
 import { blue } from "@ant-design/colors";
-import { Flex, Layout } from "antd";
+import { Layout } from "antd";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+// import { useEffect, useState } from "react";
 
 
 const { Header, Footer, Content } = Layout;
@@ -14,7 +14,7 @@ export default function Home() {
 
     return (
         <body style={{ margin: 0 }}>
-            <Header style={{ height: '120px', background: blue[1], padding: 0 }}>
+            <Header style={{ height: '120px', background: '#e6f7ff', padding: 0 }}>
                 <PageHeader />
             </Header>
             <Content>

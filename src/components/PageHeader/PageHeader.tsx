@@ -45,8 +45,8 @@ export default function PageHeader() {
                 </Typography.Title>
                 <Flex style={{ width: '40%' }}>
                     <Space.Compact style={{ width: '100%' }}>
-                        <Select showSearch placeholder='Select city' options={options} style={{ width: '30%' }} />
-                        <Search placeholder='Enter subject' onSearch={value => console.log(value)} style={{ width: '70%' }} />
+                        <Select showSearch placeholder='Select city' options={options} style={{ width: '35%' }} />
+                        <Search placeholder='Enter subject' onSearch={value => console.log(value)} style={{ width: '65%' }} />
                     </Space.Compact>
                 </Flex>
                 <Flex style={{ paddingLeft: '3%' }}>
