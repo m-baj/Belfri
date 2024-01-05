@@ -1,7 +1,7 @@
 import PageHeader from "@/components/PageHeader/PageHeader";
 // import { useUser } from "@/hooks/useUser";
 import { blue } from "@ant-design/colors";
-import { Layout } from "antd";
+import { Layout, Divider } from "antd";
 import Link from "next/link";
 // import { useEffect, useState } from "react";
 
@@ -14,13 +14,10 @@ export default function Home() {
 
     return (
         <body style={{ margin: 0 }}>
-            <Header style={{ height: '120px', background: '#e6f7ff', padding: 0 }}>
-                <PageHeader />
-            </Header>
-            <Content>
-                {/* {username} : {token}<br /> */}
-                <Link href="/logout">Logout</Link>
-            </Content>
+            <PageHeader />
+            <Divider style={{ margin: 0 }} />
+            {/* {username} : {token}<br /> */}
+            <Link href="/logout">Logout</Link>
         </body>
     );
 }
