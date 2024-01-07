@@ -2,8 +2,8 @@ import Connection from "@/utils/database/Connection";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { AuthLevel } from "@/utils/etc/AuthLevel";
 
-export function createApiRoute<Request, Response>(method: "POST" | "GET" | "PUT" | "DELETE", condition: (data: Request) => boolean, logic: (connection: Connection, data: Request) => Promise<Response & {
-    message: string,
+export function createApiRoute<Request, Response>(methods: Array<"POST" | "GET" | "PUT" | "DELETE">, condition: (data: Request) => boolean, logic: (connection: Connection, data: Request, method: string) => Promise<Response & {
+    message: string;
     status?: number
 }>, authLevel: AuthLevel = AuthLevel.GUEST): (req: NextApiRequest, res: NextApiResponse<Response>) => Promise<void> {
 
@@ -15,7 +15,14 @@ export function createApiRoute<Request, Response>(method: "POST" | "GET" | "PUT"
         req: NextApiRequest,
         res: NextApiResponse<ResponseWithMessage>
     ) {
-        if (req.method !== method) {
+        if (req.method == undefined) {
+            res.status(405).json({
+                message: "Method not allowed"
+            } as ResponseWithMessage);
+            return;
+        }
+
+        if (!methods.includes(req.method as any)) {
             res.status(405).json({
                 message: "Method not allowed"
             } as ResponseWithMessage);
@@ -31,7 +38,6 @@ export function createApiRoute<Request, Response>(method: "POST" | "GET" | "PUT"
 
         const data = req.body as Request;
 
-
         if (!condition(data)) {
             res.status(400).json({
                 message: "Invalid request"
@@ -46,7 +52,7 @@ export function createApiRoute<Request, Response>(method: "POST" | "GET" | "PUT"
                     await connection.authorize(req.cookies.token as string);
                 }
 
-                const response = await logic(connection, data);
+                const response = await logic(connection, data, req.method);
 
                 await connection.commit();
 

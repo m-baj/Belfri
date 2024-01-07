@@ -69,14 +69,17 @@ interface Response {
  *       name: token
  */
 export default createApiRoute<Request, Response>(
-    ["POST"],
+    ["GET", "DELETE", "PUT"],
     (data) => (data.categoryID !== undefined, data.cityID !== undefined, data.name !== undefined, data.description !== undefined),
-    async (connection, data) => {
-        await addOffer(connection, data);
-
-        return {
-            message: "Successfully added an offer"
-        };
+    async (connection, data, method) => {
+        switch (method) {
+            case "GET":
+                return await addOffer(connection, data);
+            case "PUT":
+                return await addOffer(connection, data);
+            case "DELETE":
+                return await addOffer(connection, data);
+        }
     },
     AuthLevel.TUTOR
 );

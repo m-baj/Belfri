@@ -84,7 +84,7 @@ interface RegistrationResponse {
  */
 
 export default createApiRoute<RegistrationData, RegistrationResponse>(
-    "POST",
+    ["POST"],
     (data) => data.name !== undefined && data.surname !== undefined && data.username !== undefined && data.email !== undefined && data.passHash !== undefined && data.dateOfBirth !== undefined && data.iban !== undefined && data.phoneNumber !== undefined && data.profilePictureUrl !== undefined,
     async (connection, data) => {
         // profile picture URL to blob

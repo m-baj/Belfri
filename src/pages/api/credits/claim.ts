@@ -58,7 +58,7 @@ interface Response {
  */
 
 export default createApiRoute<Request, Response>(
-    "PUT",
+    ["PUT"],
     (data) => data.token !== undefined,
     async (connection, data) => {
         await claimCredits(connection, data.token);
