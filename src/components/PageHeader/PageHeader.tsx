@@ -2,7 +2,8 @@ import React, { useState, useEffect } from "react";
 import { Flex, Typography, Button, Select, Input, Tooltip, Space } from "antd";
 import { blue } from "@ant-design/colors";
 import config from "@/configs/app.config";
-import { BellOutlined, SettingOutlined } from "@ant-design/icons";
+import { BellOutlined, SettingOutlined, DashboardOutlined } from "@ant-design/icons";
+import { Avatar, Badge } from "antd";
 
 const { Search } = Input;
 
@@ -16,7 +17,6 @@ const options = [
       label: 'Grodzisk Mazowiecki',
     },
   ];
-
 
 export default function PageHeader() {
     const [screenWidth, setScreenWidth] = useState<number>(0);
@@ -69,15 +69,16 @@ export default function PageHeader() {
                         <Search placeholder='Enter subject' onSearch={value => console.log(value)} style={{ width: '65%' }} />
                     </Space.Compact>
                 </Flex>
-                <Flex style={{ paddingLeft: '3%' }}>
-                    <Space.Compact>
-                        <Tooltip title="Notifications">
-                            <Button type="default" icon={<BellOutlined />} shape='round' size='large' />
+                <Flex justify='space-around' style={{ width: '15%', paddingLeft: '3%' }}>
+                    {/*It's possible to add a link user will be redirected after clicking on the badge with <a href='#'> */}
+                    <Badge count={5}>
+                        <Tooltip title="hours remaining">
+                            <Button shape="circle" size='large' icon={<DashboardOutlined/>} />
                         </Tooltip>
-                        <Tooltip title="Settings">
-                            <Button type="default" icon={<SettingOutlined />} shape='round' size='large' />
-                        </Tooltip>
-                    </Space.Compact>
+                    </Badge>
+                    <Tooltip title="Settings">
+                        <Button type="default" icon={<SettingOutlined />} shape='round' size='large' />
+                    </Tooltip>
                 </Flex>
             </Flex>
         );
@@ -97,11 +98,10 @@ export default function PageHeader() {
                         </Tooltip>
                     </Space.Compact>
                 </Flex>
-                <Flex justify='center'>
-                    <Space.Compact style={{ width: '85%' }}>
-                        <Select showSearch placeholder='Select city' options={options} style={{ width: '30%' }} />
-                        <Search placeholder='Enter subject' onSearch={value => console.log(value)} style={{ width: '70%' }} />
-                    </Space.Compact>
+                <Flex style={{ paddingLeft: '3%' }}>
+                    <Tooltip title="Settings">
+                        <Button type="default" icon={<SettingOutlined />} shape='round' size='large' />
+                    </Tooltip>
                 </Flex>
             </Flex>
         );
