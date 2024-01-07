@@ -48,7 +48,7 @@ interface ActivationResponse {
  */
 
 export default createApiRoute<ActivationData, ActivationResponse>(
-    "POST",
+    ["POST"],
     (data) => data.token !== undefined,
     async (connection, data) => {
 

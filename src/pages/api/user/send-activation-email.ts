@@ -57,7 +57,7 @@ interface ActivationEmailData {
  */
 
 export default createApiRoute<ActivationEmailData, { message: string }>(
-    "POST",
+    ["POST"],
     (data) => data.name !== undefined && data.email !== undefined && data.activation_token !== undefined,
     async (connection, data) => {
         const email_contents = await generateEmailText(activationEmailTemplate, {

@@ -64,7 +64,7 @@ interface LoginResponse {
  */
 
 export default createApiRoute<LoginData, LoginResponse>(
-    "POST",
+    ["POST"],
     (data) => data.username !== undefined && data.passHash !== undefined,
     async (connection, data) => {
         const result = await getToken(

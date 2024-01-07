@@ -9,7 +9,7 @@ import {
     message,
     Select,
     DatePicker,
-    Upload,
+    Upload
 } from "antd";
 import {
     EditOutlined,
@@ -20,6 +20,7 @@ import {
     UserOutlined,
     UserAddOutlined,
     PictureOutlined,
+    BankOutlined
 } from "@ant-design/icons";
 import { blue } from "@ant-design/colors";
 import { useRouter } from "next/router";
@@ -27,6 +28,8 @@ import Password from "antd/es/input/Password";
 import { PasswordInput } from "antd-password-input-strength";
 import { useState } from "react";
 import { Option } from "antd/lib/mentions";
+import axios from "axios";
+import { sha256 } from "js-sha256";
 
 interface Fields {
     name?: string;
@@ -41,10 +44,11 @@ interface Fields {
     education?: string;
     teachingLevel?: string;
     dateOfBirth?: string;
-    accessCode?: string;
+    iban?: string;
     acceptTerms?: boolean;
     acceptPrivacyPolicy?: boolean;
     acceptMarketing?: boolean;
+    uploadProfilePicture?: any;
 }
 
 export default function TeacherRegistrationForm() {
@@ -52,8 +56,44 @@ export default function TeacherRegistrationForm() {
     const router = useRouter();
 
     const handleForm = (values: any) => {
-        console.log(values);
-        // router.push("/login");
+        // I want to consol.log my post request here
+        console.log({
+            "name": values.name,
+            "surname": values.surname,
+            "username": values.username,
+            "email": values.email,
+            "passHash": sha256(String(values.password)),
+            "dateOfBirth": values.dateOfBirth ? values.dateOfBirth.format("YYYY-MM-DD") : undefined,
+            "iban": values.iban,
+            "phoneNumber": values.prefix + values.phoneNumber,
+            // "profilePictureUrl": values.uploadProfilePicture?.[0]?.response?.url,
+            "profilePictureUrl": "https://www.pngitem.com/pimgs/m/146-1468479_my-profile-icon-blank-profile-picture-circle-hd.png"
+        })
+        axios
+            .post("/api/user/teacher-register/", {
+                "name": values.name,
+                "surname": values.surname,
+                "username": values.username,
+                "email": values.email,
+                "passHash": sha256(String(values.password)),
+                "dateOfBirth": values.dateOfBirth ? values.dateOfBirth.format("YYYY-MM-DD") : undefined,
+                "iban": values.iban,
+                "phoneNumber": values.prefix + values.phoneNumber,
+                // "profilePictureUrl": values.uploadProfilePicture?.[0]?.response?.url,
+                "profilePictureUrl": "https://www.pngitem.com/pimgs/m/146-1468479_my-profile-icon-blank-profile-picture-circle-hd.png"
+            })
+            .then((res) => {
+                console.log(res);
+                if (res.status == 200) {
+                    router.push("/login");
+                } else {
+                    console.log(res);
+                }
+            })
+            .catch((err) => {
+                console.log(err);
+                message.error(err.response.data.message).then(r => console.log(r));
+            });
     };
 
     const prefixSelector = (
@@ -85,13 +125,20 @@ export default function TeacherRegistrationForm() {
         } else {
             callback();
         }
-    }
+    };
 
     const disabledDate = (current: any) => {
         // Can not select days before today and today
         return current && current > new Date();
     };
 
+    const validateIban = (rule: any, value: any, callback: any) => {
+        if (value && !/^[a-zA-Z]{2}[0-9]{26}$/.test(value)) {
+            callback("Invalid IBAN");
+        } else {
+            callback();
+        }
+    };
 
     return (
         <Flex vertical>
@@ -113,8 +160,8 @@ export default function TeacherRegistrationForm() {
                     rules={[
                         {
                             required: true,
-                            message: "Please input your name!",
-                        },
+                            message: "Please input your name!"
+                        }
                     ]}
                 >
                     <Input
@@ -128,8 +175,8 @@ export default function TeacherRegistrationForm() {
                     rules={[
                         {
                             required: true,
-                            message: "Please input your surname!",
-                        },
+                            message: "Please input your surname!"
+                        }
                     ]}
                 >
                     <Input
@@ -138,36 +185,36 @@ export default function TeacherRegistrationForm() {
                         prefix={<EditOutlined style={{ color: blue[4] }} />}
                     />
                 </Form.Item>
-                <Form.Item<Fields>
-                    name="gender"
-                    rules={[
-                        {
-                            required: true,
-                            message: "Please input your gender!",
-                        },
-                    ]}
-                >
-                    <Select
-                        placeholder="Select your gender"
-                        size="large"
-                        onChange={handleForm}
-                        options={[
-                            { value: "male", label: "Male" },
-                            { value: "female", label: "Female" },
-                            { value: "other", label: "Other" },
-                        ]}
-                    />
-                </Form.Item>
+                {/*<Form.Item<Fields>*/}
+                {/*    name="gender"*/}
+                {/*    rules={[*/}
+                {/*        {*/}
+                {/*            required: true,*/}
+                {/*            message: "Please input your gender!",*/}
+                {/*        },*/}
+                {/*    ]}*/}
+                {/*>*/}
+                {/*    <Select*/}
+                {/*        placeholder="Select your gender"*/}
+                {/*        size="large"*/}
+                {/*        onChange={handleForm}*/}
+                {/*        options={[*/}
+                {/*            { value: "male", label: "Male" },*/}
+                {/*            { value: "female", label: "Female" },*/}
+                {/*            { value: "other", label: "Other" },*/}
+                {/*        ]}*/}
+                {/*    />*/}
+                {/*</Form.Item>*/}
                 <Form.Item<Fields>
                     name="email"
                     rules={[
                         {
                             required: true,
-                            message: "Please input your email!",
+                            message: "Please input your email!"
                         },
                         {
-                            validator: validateEmail,
-                        },
+                            validator: validateEmail
+                        }
                     ]}
                 >
                     <Input
@@ -181,8 +228,8 @@ export default function TeacherRegistrationForm() {
                     rules={[
                         {
                             required: true,
-                            message: "Please input your phone number!",
-                        },
+                            message: "Please input your phone number!"
+                        }
                     ]}
                 >
                     <Input
@@ -198,8 +245,8 @@ export default function TeacherRegistrationForm() {
                     rules={[
                         {
                             required: true,
-                            message: "Please input your username!",
-                        },
+                            message: "Please input your username!"
+                        }
                     ]}
                 >
                     <Input
@@ -213,11 +260,11 @@ export default function TeacherRegistrationForm() {
                     rules={[
                         {
                             required: true,
-                            message: "Please input your password!",
+                            message: "Please input your password!"
                         },
                         {
-                            validator: validatePassword,
-                        },
+                            validator: validatePassword
+                        }
                     ]}
                 >
                     <PasswordInput
@@ -232,7 +279,7 @@ export default function TeacherRegistrationForm() {
                     rules={[
                         {
                             required: true,
-                            message: "Please confirm your password",
+                            message: "Please confirm your password"
                         },
                         ({ getFieldValue }) => ({
                             validator(_, value) {
@@ -245,8 +292,8 @@ export default function TeacherRegistrationForm() {
                                 return Promise.reject(
                                     new Error("Passwords must be identical!")
                                 );
-                            },
-                        }),
+                            }
+                        })
                     ]}
                     dependencies={["password"]}
                 >
@@ -256,129 +303,148 @@ export default function TeacherRegistrationForm() {
                         prefix={<LockOutlined style={{ color: blue[4] }} />}
                     />
                 </Form.Item>
-                <Form.Item<Fields>
-                    name="subject"
-                    rules={[
-                        {
-                            required: true,
-                            message: "Please input your subject!",
-                        },
-                    ]}
-                >
-                    <Select
-                        mode="multiple"
-                        style={{ width: style.width }}
-                        placeholder="Select subjects"
-                        size="large"
-                        onChange={handleForm}
-                        options={[
-                            { value: "math", label: "Math" },
-                            { value: "science", label: "Science" },
-                            { value: "english", label: "English" },
-                            { value: "history", label: "History" },
-                            { value: "geography", label: "Geography" },
-                            { value: "music", label: "Music" },
-                            { value: "art", label: "Art" },
-                            {
-                                value: "computerScience",
-                                label: "Computer Science",
-                            },
-                            {
-                                value: "physicalEducation",
-                                label: "Physical Education",
-                            },
-                            { value: "other", label: "Other" },
-                        ]}
-                    />
-                </Form.Item>
-                <Form.Item<Fields>
-                    name="education"
-                    rules={[
-                        {
-                            required: true,
-                            message: "Please input your education!",
-                        },
-                    ]}
-                >
-                    <Select
-                        style={{ width: style.width }}
-                        placeholder="Select education"
-                        size="large"
-                        onChange={handleForm}
-                        options={[
-                            { value: "primary", label: "Primary" },
-                            { value: "secondary", label: "Secondary" },
-                            { value: "high", label: "High" },
-                        ]}
-                    />
-                </Form.Item>
-                <Form.Item<Fields>
-                    name="teachingLevel"
-                    rules={[
-                        {
-                            required: true,
-                            message: "Please input your teaching level!",
-                        },
-                    ]}
-                >
-                    <Select
-                        mode="multiple"
-                        style={{ width: style.width }}
-                        placeholder="Select teaching level"
-                        size="large"
-                        onChange={handleForm}
-                        options={[
-                            { value: "primary", label: "Primary" },
-                            { value: "secondary", label: "Secondary" },
-                            { value: "high", label: "High" },
-                        ]}
-                    />
-                </Form.Item>
+                {/*<Form.Item<Fields>*/}
+                {/*    name="subject"*/}
+                {/*    rules={[*/}
+                {/*        {*/}
+                {/*            required: true,*/}
+                {/*            message: "Please input your subject!",*/}
+                {/*        },*/}
+                {/*    ]}*/}
+                {/*>*/}
+                {/*    <Select*/}
+                {/*        mode="multiple"*/}
+                {/*        style={{ width: style.width }}*/}
+                {/*        placeholder="Select subjects"*/}
+                {/*        size="large"*/}
+                {/*        onChange={handleForm}*/}
+                {/*        options={[*/}
+                {/*            { value: "math", label: "Math" },*/}
+                {/*            { value: "science", label: "Science" },*/}
+                {/*            { value: "english", label: "English" },*/}
+                {/*            { value: "history", label: "History" },*/}
+                {/*            { value: "geography", label: "Geography" },*/}
+                {/*            { value: "music", label: "Music" },*/}
+                {/*            { value: "art", label: "Art" },*/}
+                {/*            {*/}
+                {/*                value: "computerScience",*/}
+                {/*                label: "Computer Science",*/}
+                {/*            },*/}
+                {/*            {*/}
+                {/*                value: "physicalEducation",*/}
+                {/*                label: "Physical Education",*/}
+                {/*            },*/}
+                {/*            { value: "other", label: "Other" },*/}
+                {/*        ]}*/}
+                {/*    />*/}
+                {/*</Form.Item>*/}
+                {/*<Form.Item<Fields>*/}
+                {/*    name="education"*/}
+                {/*    rules={[*/}
+                {/*        {*/}
+                {/*            required: true,*/}
+                {/*            message: "Please input your education!",*/}
+                {/*        },*/}
+                {/*    ]}*/}
+                {/*>*/}
+                {/*    <Select*/}
+                {/*        style={{ width: style.width }}*/}
+                {/*        placeholder="Select education"*/}
+                {/*        size="large"*/}
+                {/*        onChange={handleForm}*/}
+                {/*        options={[*/}
+                {/*            { value: "primary", label: "Primary" },*/}
+                {/*            { value: "secondary", label: "Secondary" },*/}
+                {/*            { value: "high", label: "High" },*/}
+                {/*        ]}*/}
+                {/*    />*/}
+                {/*</Form.Item>*/}
+                {/*<Form.Item<Fields>*/}
+                {/*    name="teachingLevel"*/}
+                {/*    rules={[*/}
+                {/*        {*/}
+                {/*            required: true,*/}
+                {/*            message: "Please input your teaching level!",*/}
+                {/*        },*/}
+                {/*    ]}*/}
+                {/*>*/}
+                {/*    <Select*/}
+                {/*        mode="multiple"*/}
+                {/*        style={{ width: style.width }}*/}
+                {/*        placeholder="Select teaching level"*/}
+                {/*        size="large"*/}
+                {/*        onChange={handleForm}*/}
+                {/*        options={[*/}
+                {/*            { value: "primary", label: "Primary" },*/}
+                {/*            { value: "secondary", label: "Secondary" },*/}
+                {/*            { value: "high", label: "High" },*/}
+                {/*        ]}*/}
+                {/*    />*/}
+                {/*</Form.Item>*/}
                 <Form.Item<Fields>
                     name="dateOfBirth"
                     style={{ width: style.width }}
                     rules={[
                         {
                             required: true,
-                            message: "Please input your date of birth!",
-                        },
+                            message: "Please input your date of birth!"
+                        }
                     ]}
                 >
                     <DatePicker
                         size="large"
                         placeholder="Date of birth"
-                        onChange={handleForm}
                         style={{ width: "100%" }}
                         prefixCls="ant-picker"
                         disabledDate={disabledDate}
                     />
                 </Form.Item>
-                <Form.Item
-                    name="uploadProfilePicture"
+                <Form.Item<Fields>
+                    name="iban"
                     rules={[
                         {
                             required: true,
-                            message: "Please upload your profile picture!",
+                            message: "Please upload your iban"
                         },
+                        {
+                            validator: validateIban
+                        }
                     ]}
+
                 >
-                    <Upload
-                        name="profilePicture"
-                        action="/upload.do"
-                        listType="picture"
-                        maxCount={1}
-                        onChange={handleForm}
-                        style={{ width: style.width }}
-                    >
-                        <Button
-                            icon={
-                                <PictureOutlined style={{ color: blue[4] }} />
-                            }
-                        >
-                            Upload profile picture
-                        </Button>
-                    </Upload>
+                    <Input
+                        size="large"
+                        placeholder="IBAN"
+                        prefix={<BankOutlined style={{ color: blue[4] }} />}
+                    />
+
                 </Form.Item>
+                {/*<Form.Item*/}
+                {/*    name="uploadProfilePicture"*/}
+                {/*    rules={[*/}
+                {/*        {*/}
+                {/*            required: true,*/}
+                {/*            message: "Please upload your profile picture!"*/}
+                {/*        }*/}
+                {/*    ]}*/}
+                {/*>*/}
+                {/*    /!*<Upload*!/*/}
+                {/*    /!*    name="profilePicture"*!/*/}
+                {/*    /!*    action="/api/upload"*!/*/}
+                {/*    /!*    listType="picture"*!/*/}
+                {/*    /!*    maxCount={1}*!/*/}
+                {/*    /!*    onChange={handleForm}*!/*/}
+                {/*    /!*    style={{ width: style.width }}*!/*/}
+                {/*    /!*>*!/*/}
+                {/*    /!*    <Button*!/*/}
+                {/*    /!*        icon={*!/*/}
+                {/*    /!*            <PictureOutlined style={{ color: blue[4] }} />*!/*/}
+                {/*    /!*        }*!/*/}
+                {/*    /!*    >*!/*/}
+                {/*    /!*        Upload profile picture*!/*/}
+                {/*    /!*    </Button>*!/*/}
+                {/*    /!*</Upload>*!/*/}
+                {/*</Form.Item>*/}
                 <Flex vertical align="left">
                     <Form.Item<Fields>
                         style={{ marginBottom: "0px" }}
@@ -387,8 +453,8 @@ export default function TeacherRegistrationForm() {
                         rules={[
                             {
                                 required: true,
-                                message: "Please accept privacy policy!",
-                            },
+                                message: "Please accept privacy policy!"
+                            }
                         ]}
                     >
                         <Checkbox required>
@@ -402,8 +468,8 @@ export default function TeacherRegistrationForm() {
                         rules={[
                             {
                                 required: true,
-                                message: "Please accept terms!",
-                            },
+                                message: "Please accept terms!"
+                            }
                         ]}
                     >
                         <Checkbox required>
@@ -416,8 +482,8 @@ export default function TeacherRegistrationForm() {
                         rules={[
                             {
                                 required: true,
-                                message: "Please accept marketing!",
-                            },
+                                message: "Please accept marketing!"
+                            }
                         ]}
                     >
                         <Checkbox>

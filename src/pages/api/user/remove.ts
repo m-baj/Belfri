@@ -43,7 +43,7 @@ interface Response {
 
 
 export default createApiRoute<{}, Response>(
-    "DELETE",
+    ["DELETE"],
     () => true,
     async (connection, data) => {
         await removeUser(connection);

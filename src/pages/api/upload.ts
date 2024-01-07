@@ -1,66 +1,61 @@
-import fs from "fs/promises";
-import { NextApiRequest, NextApiResponse } from "next";
+import type { NextApiRequest, NextApiResponse } from "next";
+import formidable, { File } from "formidable";
+import fs from "fs";
 
-/**
- * @swagger
- * /api/upload:
- *   post:
- *     summary: Upload a file
- *     description: This endpoint allows a user to upload a file. The user must be authorized to upload a file.
- *     tags:
- *       - Upload
- *     requestBody:
- *       required: true
- *       content:
- *         application/octet-stream:
- *           schema:
- *             type: string
- *             format: binary
- *             description: The file to be uploaded.
- *     responses:
- *       200:
- *         description: File uploaded successfully
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                   description: The status of the upload process.
- *                 message:
- *                   type: string
- *                   description: A message about the result of the upload process.
- *                 fileName:
- *                   type: string
- *                   description: The name of the uploaded file.
- *       400:
- *         description: Invalid request headers
- *       405:
- *         description: Method not allowed, only POST requests are accepted.
- *       500:
- *         description: An error occurred while uploading the file.
- */
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-    if (req.method === "POST") {
-        try {
-            const buffer = await req.body;
+const form = formidable({ multiples: true });
 
-            if (req.headers["content-disposition"] !== undefined) {
-                const fileName = `${Date.now()}-${req.headers["content-disposition"].split("filename=")[1]}`;
-                const filePath = `./public/uploads/${fileName}`;
+type Data = {
+    message?: string;
+} | any[];
 
-                await fs.writeFile(filePath, buffer);
-
-                res.status(200).json({ success: true, message: "File uploaded successfully", fileName });
-            } else {
-                res.status(400).json({ success: false, message: "Invalid request headers" });
-            }
-        } catch (error) {
-            console.error(error);
-            res.status(500).json({ success: false, message: "Internal Server Error" });
-        }
-    } else {
-        res.status(405).json({ success: false, message: "Method Not Allowed" });
+const handler = async (
+    req: NextApiRequest,
+    res: NextApiResponse<Data>
+): Promise<void> => {
+    if (req.method !== "POST") {
+        return res.status(405).json({ message: "Method not allowed" });
     }
-}
+
+    try {
+        const [fileContent, filename] = await new Promise<[string, string]>((resolve, reject) => {
+            form.parse(req, (err, _fields, files) => {
+                if (err) {
+                    reject(err);
+                    return;
+                }
+
+                const file = (Object.values(files)[0] as File[])?.[0];
+
+                if (!file) {
+                    reject("No file found");
+                    return;
+                }
+
+                const fileContent = fs.readFileSync(file.filepath, { encoding: "utf8" });
+
+                fs.unlinkSync(file.filepath);
+
+                const fname = file.originalFilename;
+
+                if (!fname) {
+                    reject("No filename found");
+                    return;
+                }
+
+                resolve([fileContent, fname]);
+            });
+        });
+
+        const writeFilename = `${Date.now()}-${filename}`;
+        const filePath = `./public/uploads/${writeFilename}`;
+        console.log(`Writing file to ${filePath}`);
+        fs.writeFileSync(filePath, fileContent);
+
+        res.status(200).send({ message: "ok" });
+    } catch (err) {
+        console.error(err);
+        res.status(400).send({ message: "Bad Request" });
+    }
+};
+
+export default handler;
