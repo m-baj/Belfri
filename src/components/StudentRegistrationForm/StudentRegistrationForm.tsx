@@ -6,13 +6,12 @@ import {
     Input,
     Button,
     Typography,
-    Space,
+    Space, message
 } from "antd";
 import { useRouter } from "next/router";
 import style from "./StudentRegistrationForm.module.css";
 import {
     EditOutlined,
-    KeyOutlined,
     LockOutlined,
     MailOutlined,
     UserOutlined,
@@ -21,9 +20,9 @@ import { blue } from "@ant-design/colors";
 import config from "@/configs/app.config";
 import { PasswordInput } from "antd-password-input-strength";
 import axios from "axios";
-import { useState } from "react";
 import { RangePickerProps } from "antd/es/date-picker";
 import dayjs from "dayjs";
+import { sha256 } from "js-sha256";
 
 interface Fields {
     username?: string;
@@ -32,7 +31,6 @@ interface Fields {
     email?: string;
     password?: string;
     passwordConfirm?: string;
-    accessKey?: string;
     birthdate?: string;
     acceptTerms?: boolean;
     acceptPrivacy?: boolean;
@@ -62,35 +60,33 @@ export default function StudentRegistrationForm() {
     };
 
     const handleForm = (values: any) => {
+        console.log(values);
         axios
-            .post("/api/register/", {
-                username: values.username,
-                name: values.name,
-                surname: values.surname,
-                email: values.email,
-                password: values.password,
-                accessKey: values.accessKey,
-                birthdate: values.birthdate,
+            .post("/api/user/register/", {
+                "name": values.name,
+                "surname": values.surname,
+                "username": values.username,
+                "email": values.email,
+                "passHash": sha256(values.password),
+                "dateOfBirth": values.birthdate.format("YYYY-MM-DD"),
             })
             .then((res) => {
                 console.log(res);
                 if (res.status == 200) {
-                    router.push("/login");
-                } else {
-                    console.log(res);
+                    console.log(res.data.activation_token)
+                    router.push({
+                        pathname: "/register/activate",
+                        query: { email: values.email, token: res.data.activation_token, name: values.name },
+                    }).then(r => console.log(r));
                 }
             })
             .catch((err) => {
-                if (err.response.status == 400) {
-                    form.setFields([
-                        {
-                            name: "accessKey",
-                            errors: [err.response.data.message],
-                        },
-                    ]);
-                } else {
-                    console.log(err.response);
-                }
+                console.log(err);
+                message.error(err.response.data.message).then(r => console.log(r));
+                // if (err.response.status in [400, 405, 500]) {
+                //     message.error(err.response.data.message);
+                //     console.log(err.response.data.message);
+                // }
             });
     };
 
@@ -183,9 +179,9 @@ export default function StudentRegistrationForm() {
                             required: true,
                             message: "Please input your password",
                         },
-                        {
-                            validator: validatePassword,
-                        },
+                        // {
+                        //     validator: validatePassword,
+                        // },
                     ]}
                     style={{ width: "100%" }}
                 >
@@ -227,22 +223,6 @@ export default function StudentRegistrationForm() {
                     />
                 </Form.Item>
                 <Form.Item<Fields>
-                    name="accessKey"
-                    rules={[
-                        {
-                            required: true,
-                            message: "Please input your access code",
-                        },
-                    ]}
-                >
-                    <Input
-                        className={style.input}
-                        placeholder="Access key"
-                        size="large"
-                        prefix={<KeyOutlined style={{ color: blue[4] }} />}
-                    />
-                </Form.Item>
-                <Form.Item<Fields>
                     name="birthdate"
                     rules={[
                         {
@@ -272,7 +252,7 @@ export default function StudentRegistrationForm() {
                                         ? Promise.resolve()
                                         : Promise.reject(
                                               new Error(
-                                                  "Should accept agreement"
+                                                  "You have to accept terms and conditions"
                                               )
                                           ),
                             },
@@ -296,7 +276,7 @@ export default function StudentRegistrationForm() {
                                         ? Promise.resolve()
                                         : Promise.reject(
                                               new Error(
-                                                  "Should accept agreement"
+                                                  "You have to accept privacy policy"
                                               )
                                           ),
                             },

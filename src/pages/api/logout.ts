@@ -62,7 +62,7 @@ export default function handler(
     Connection.connect()
         .then(async (connection) => {
             await connection.authorize(req.cookies.token as string);
-            await removeToken(connection, req.cookies.token as string);
+            await removeToken(connection);
 
             await connection.commit();
             res.status(200).json({
