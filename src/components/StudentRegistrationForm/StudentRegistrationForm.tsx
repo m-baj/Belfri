@@ -59,6 +59,23 @@ export default function StudentRegistrationForm() {
         return current && current >= dayjs().endOf("day");
     };
 
+    const sendEmail = (name: string, email: string, token: string) => {
+        axios
+            .post("/api/user/send-activation-email", {
+                "name": name,
+                "email": email,
+                "activation_token": token,
+            })
+            .then((response) => {
+                if (response.status === 200) {
+                    message.success("Email sent");
+                }
+            })
+            .catch((error) => {
+                message.error("Error: " + error.response.data.message);
+            });
+    }
+
     const handleForm = (values: any) => {
         console.log(values);
         axios
@@ -73,7 +90,8 @@ export default function StudentRegistrationForm() {
             .then((res) => {
                 console.log(res);
                 if (res.status == 200) {
-                    console.log(res.data.activation_token)
+                    console.log(res.data.activation_token);
+                    sendEmail(values.name, values.email, res.data.activation_token)
                     router.push({
                         pathname: "/register/activate",
                         query: { email: values.email, token: res.data.activation_token, name: values.name },
@@ -83,10 +101,6 @@ export default function StudentRegistrationForm() {
             .catch((err) => {
                 console.log(err);
                 message.error(err.response.data.message).then(r => console.log(r));
-                // if (err.response.status in [400, 405, 500]) {
-                //     message.error(err.response.data.message);
-                //     console.log(err.response.data.message);
-                // }
             });
     };
 
@@ -179,9 +193,9 @@ export default function StudentRegistrationForm() {
                             required: true,
                             message: "Please input your password",
                         },
-                        // {
-                        //     validator: validatePassword,
-                        // },
+                        {
+                            validator: validatePassword,
+                        },
                     ]}
                     style={{ width: "100%" }}
                 >
