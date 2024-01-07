@@ -8,7 +8,7 @@ interface OfferData {
     description: string;
 }
 
-export async function getOffer(connection: Connection, offerID: number): Promise<OfferData> {
+export async function getSingleOffer(connection: Connection, offerID: number): Promise<OfferData> {
     if (!connection.isAuthorized()) {
         throw new Error("Unauthorized");
     }

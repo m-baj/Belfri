@@ -27,6 +27,10 @@ export default class Connection {
         return await this.connection.sql(query, ...params);
     }
 
+    public async executeString(query: string): Promise<PostgreSQL.QueryResult<PostgreSQL.QueryResultRow>> {
+        return await this.connection.query(query);
+    }
+
     public async commit(): Promise<void> {
         await this.connection.query("COMMIT");
     }

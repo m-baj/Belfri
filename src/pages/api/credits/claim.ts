@@ -58,7 +58,10 @@ interface Response {
  */
 
 export default createApiRoute<Request, Response>(
-    ["PUT"],
+    [{
+        name: "PUT",
+        authLevel: AuthLevel.STUDENT
+    }],
     (data) => data.token !== undefined,
     async (connection, data) => {
         await claimCredits(connection, data.token);
@@ -66,6 +69,5 @@ export default createApiRoute<Request, Response>(
         return {
             message: "Successfully claimed credits"
         };
-    },
-    AuthLevel.STUDENT
+    }
 );

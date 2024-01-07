@@ -2,10 +2,15 @@ import Connection from "@/utils/database/Connection";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { AuthLevel } from "@/utils/etc/AuthLevel";
 
-export function createApiRoute<Request, Response>(methods: Array<"POST" | "GET" | "PUT" | "DELETE">, condition: (data: Request) => boolean, logic: (connection: Connection, data: Request, method: string) => Promise<Response & {
+interface Method {
+    name: "POST" | "GET" | "PUT" | "DELETE";
+    authLevel?: AuthLevel;
+}
+
+export function createApiRoute<Request, Response>(methods: Array<Method>, condition: (data: Request) => boolean, logic: (connection: Connection, data: Request, method: string) => Promise<Response & {
     message: string;
     status?: number
-}>, authLevel: AuthLevel = AuthLevel.GUEST): (req: NextApiRequest, res: NextApiResponse<Response>) => Promise<void> {
+}>): (req: NextApiRequest, res: NextApiResponse<Response>) => Promise<void> {
 
     type ResponseWithMessage = Response & {
         message: string
@@ -22,11 +27,17 @@ export function createApiRoute<Request, Response>(methods: Array<"POST" | "GET" 
             return;
         }
 
-        if (!methods.includes(req.method as any)) {
+        if (methods.find(method => method.name == req.method) == undefined) {
             res.status(405).json({
                 message: "Method not allowed"
             } as ResponseWithMessage);
             return;
+        }
+
+        let authLevel = methods.find(method => method.name == req.method)?.authLevel;
+
+        if (authLevel == undefined) {
+            authLevel = AuthLevel.GUEST;
         }
 
         if (authLevel > AuthLevel.GUEST && !req.cookies.token) {
@@ -50,6 +61,13 @@ export function createApiRoute<Request, Response>(methods: Array<"POST" | "GET" 
             try {
                 if (authLevel > AuthLevel.GUEST) {
                     await connection.authorize(req.cookies.token as string);
+
+                    if (!connection.isAuthorized(authLevel)) {
+                        res.status(401).json({
+                            message: "Unauthorized"
+                        } as ResponseWithMessage);
+                        return;
+                    }
                 }
 
                 const response = await logic(connection, data, req.method);
