@@ -16,10 +16,18 @@ type Request = PutRequest & {
     offerID: number;
 };
 
-
-interface Response {
-    message: string;
+interface OfferData {
+    teacherID: number;
+    categoryID: number;
+    cityID: number;
+    name: string;
+    description: string;
 }
+
+type Response = {
+    message: string;
+} | OfferData;
+
 
 /**
  * @swagger
@@ -49,9 +57,22 @@ interface Response {
  *                 offer:
  *                   type: object
  *                   properties:
- *                     id:
+ *                     teacherID:
  *                       type: number
- *                       description: The ID of the offer.
+ *                       description: The ID of the teacher.
+ *                     categoryID:
+ *                       type: number
+ *                       description: The ID of the category.
+ *                     cityID:
+ *                       type: number
+ *                       description: The ID of the city.
+ *                     name:
+ *                       type: string
+ *                       description: The name of the offer.
+ *                     description:
+ *                       type: string
+ *                       description: The description of the offer.
+ *
  *       400:
  *         description: Invalid request, some required fields are missing.
  *       401:
