@@ -91,7 +91,7 @@ export default function StudentRegistrationForm() {
     };
 
     return (
-        <Flex vertical align="center">
+        <Flex vertical>
             <Typography.Title style={{ color: blue[4], textAlign: "center" }}>
                 Create student account
             </Typography.Title>
