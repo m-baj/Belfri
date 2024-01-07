@@ -42,6 +42,7 @@
     "raw-loader": "^4.0.2",
     "react": "^18",
     "react-dom": "^18",
+    "sha256": "^0.2.0",
     "swagger-ui-react": "^5.10.5",
     "vercel": "^33.0.1",
     "yarn": "^1.22.21"

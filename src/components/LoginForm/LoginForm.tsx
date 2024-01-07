@@ -20,7 +20,7 @@ export default function LoginForm() {
     
     const handleForm = (values: any) => {
         console.log(sha256(values.password));
-        axios.post("/api/login/", {
+        axios.post("/api/user/login/", {
             username: values.username,
             passHash: sha256(values.password),
         }).then((res) => {
@@ -107,9 +107,21 @@ export default function LoginForm() {
                         <Button type="primary" htmlType="submit">
                             Submit
                         </Button>
-                        <Button type="link">Register</Button>
+                        <Button
+                            type="link"
+                            onClick={() => router.push("/register/student")}
+                        >
+                            Register as a student
+                        </Button>
+                        <Button
+                            type="link"
+                            onClick={() => router.push("/register/teacher")}
+                        >
+                            Register as a teacher
+                        </Button>
                     </Flex>
                 </Form.Item>
+
             </Form>
         </Flex>
     );
