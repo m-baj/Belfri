@@ -3,12 +3,14 @@ import { Button, Input, Modal } from "antd";
 import { CreditCardOutlined } from "@ant-design/icons";
 import { blue } from "@ant-design/colors";
 
-export default function CreditsCodeInput() {
-    // const [loading, setLoading] = useState(false);
-    const [open, setOpen] = useState(false);
+interface ModalProps {
+    open: boolean;
+    setOpen: (open: boolean) => void;
+}
+export default function CreditsCodeModal(props: ModalProps) {
 
     const showModal = () => {
-        setOpen(true);
+        props.setOpen(true);
     };
 
     const handleOk = () => {
@@ -18,18 +20,16 @@ export default function CreditsCodeInput() {
         //     setOpen(false);
         // }, 3000);
         // temporary solution
-        setOpen(false)
+        props.setOpen(false)
     };
 
     const handleCancel = () => {
-        setOpen(false);
+        props.setOpen(false);
     };
 
     return (
-        <>
-            <Button type="primary" onClick={showModal}>modal</Button>
             <Modal
-                open={open}
+                open={props.open}
                 title="Add credits code"
                 onOk={handleOk}
                 onCancel={handleCancel}
@@ -45,6 +45,5 @@ export default function CreditsCodeInput() {
             >
                 <Input placeholder="Enter your credits code" prefix={<CreditCardOutlined style={{color: blue[4]}}/>} />
             </Modal>
-        </>
     );
 };

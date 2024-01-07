@@ -4,7 +4,7 @@ import { blue } from "@ant-design/colors";
 import config from "@/configs/app.config";
 import { SettingOutlined, DashboardOutlined } from "@ant-design/icons";
 import { Badge } from "antd";
-import CreditsCodeInput from "@/components/CreditsCodeInput/CreditsCodeInput";
+import CreditsCodeModal from "@/components/CreditsCodeModal/CreditsCodeModal";
 
 const { Search } = Input;
 
@@ -60,14 +60,6 @@ export default function PageHeader() {
 
     const [isCreditsCodeInputVisible, setIsCreditsCodeInputVisible] = useState<boolean>(false);
 
-    const handleCreditsCodeInputClick = () => {
-        setIsCreditsCodeInputVisible(true);
-    }
-
-    const closeCreditsCodeInput = () => {
-        setIsCreditsCodeInputVisible(false);
-    }
-
     if (screenWidth >= 850) {
         return (
             <Flex justify='space-evenly' align='center' style={{ width: '100%', height: isScrolled ? '70px' : '120px' }}>
@@ -83,14 +75,16 @@ export default function PageHeader() {
                 <Flex justify='space-around' style={{ width: '15%' }}>
                     <Badge count={5}>
                         <Tooltip title="Credits remaining">
-                            <Button shape="circle" size='large' icon={<DashboardOutlined/>} />
+                            <Button shape="circle" size='large' icon={<DashboardOutlined/>} onClick={()=>{
+                                setIsCreditsCodeInputVisible(true);
+                            }}/>
                         </Tooltip>
                     </Badge>
                     <Tooltip title="Settings">
                         <Button type="default" icon={<SettingOutlined />} shape='round' size='large'/>
                     </Tooltip>
                 </Flex>
-                <CreditsCodeInput visible={isCreditsCodeInputVisible} close={closeCreditsCodeInput}/>
+                <CreditsCodeModal open={isCreditsCodeInputVisible} setOpen={setIsCreditsCodeInputVisible}/>
             </Flex>
         );
     } else {
@@ -103,7 +97,9 @@ export default function PageHeader() {
                     <Flex justify='space-between' style={{ width: '25%' }}>
                         <Badge count={5}>
                             <Tooltip title="hours remaining">
-                                <Button shape="circle" size='large' icon={<DashboardOutlined/>} />
+                                <Button shape="circle" size='large' icon={<DashboardOutlined/>} onClick={()=>{
+                                    setIsCreditsCodeInputVisible(true);
+                                }}/>
                             </Tooltip>
                         </Badge>
                         <Tooltip title="Settings" >
@@ -117,6 +113,7 @@ export default function PageHeader() {
                         <Search placeholder='Enter subject' onSearch={value => console.log(value)} style={{ width: '70%' }} />
                     </Space.Compact>
                 </Flex>
+                <CreditsCodeModal open={isCreditsCodeInputVisible} setOpen={setIsCreditsCodeInputVisible}/>
             </Flex>
         );
     }
