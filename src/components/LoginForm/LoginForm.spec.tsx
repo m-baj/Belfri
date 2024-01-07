@@ -5,8 +5,8 @@ import { render } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import mockAxios from "jest-mock-axios";
 import mockRouter from "next-router-mock";
-import '@/utils/tests/setupTests';
-import {sha256} from 'js-sha256'
+import "@/utils/tests/setupTests";
+import { sha256 } from "js-sha256";
 
 jest.mock("next/router", () => jest.requireActual("next-router-mock"));
 
@@ -14,14 +14,13 @@ afterEach(() => {
     mockAxios.reset();
 });
 
-
 describe("LoginForm", () => {
     it("renders", () => {
         render(<LoginForm />);
     });
 
     it("renders a form", () => {
-        const { getByTestId} = render(<LoginForm />);
+        const { getByTestId } = render(<LoginForm />);
         const form = getByTestId("login-form");
         expect(form).toBeInTheDocument();
     });
@@ -49,19 +48,19 @@ describe("LoginForm", () => {
         const testPassword = "Admin123@#!";
         const testUsername = "admin";
 
-        const { getByPlaceholderText, getByText, getByRole } = render(<LoginForm />);
+        const { getByPlaceholderText, getByText } = render(<LoginForm />);
 
-        const usernameInput = getByRole("textbox", { name: /Username/ });
-        const passwordInput = getByRole("textbox", { name: /Password/ });
-        const submitButton = getByRole("button", { name: /Submit/ });
+        const usernameInput = getByPlaceholderText("Username");
+        const passwordInput = getByPlaceholderText("Password");
+        const submitButton = getByText("Submit");
 
         user.type(usernameInput, testUsername);
         user.type(passwordInput, testPassword);
         await user.click(submitButton);
 
         expect(mockAxios.post).toHaveBeenCalledWith("/api/login/", {
-                username: testUsername,
-                passHash: sha256(testPassword),
+            username: testUsername,
+            passHash: sha256(testPassword),
         });
 
         mockAxios.mockResponse({

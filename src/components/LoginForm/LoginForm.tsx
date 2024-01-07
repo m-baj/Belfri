@@ -8,7 +8,6 @@ import { sha256 } from "js-sha256";
 import { useRouter } from "next/router";
 import jscookie from "js-cookie";
 
-
 interface Fields {
     username?: string;
     password?: string;
@@ -20,30 +19,17 @@ export default function LoginForm() {
     const router = useRouter();
 
     const handleForm = (values: any) => {
+        console.log(sha256(values.password));
         axios
-            .post("/api/user/login/", {
+            .post("/api/login/", {
                 username: values.username,
                 passHash: sha256(values.password),
-                remember: values.remember
             })
             .then((res) => {
                 if (res.status == 200) {
                     const token = res.data.token;
-                    const expiration_date = res.data.expiration_date;
-                    const auth_level = res.data.auth_level;
-                    const options = {
-                        expires: values.remember ? 7 : undefined
-                    };
-                    jscookie.set("token", token, options);
-                    jscookie.set("username", values.username, options);
-                    jscookie.set("expiration", expiration_date, options);
-                    jscookie.set("auth_level", auth_level, options);
-
-                    const next = router.query.next;
-                    if (next) {
-                        router.push(next as string);
-                        return;
-                    }
+                    jscookie.set("token", token, { expires: 1 });
+                    jscookie.set("username", values.username), { expires: 1 };
                     router.push("/");
                 } else {
                     message.error("Login failed");
@@ -54,15 +40,15 @@ export default function LoginForm() {
                     form.setFields([
                         {
                             name: "password",
-                            errors: [err.response.data.message]
-                        }
+                            errors: [err.response.data.message],
+                        },
                     ]);
                 } else {
                     message.error(
                         "Login failed due to server error: " +
-                        err.response.status +
-                        " " +
-                        err.response.data.message
+                            err.response.status +
+                            " " +
+                            err.response.data.message
                     );
                 }
             });
@@ -77,7 +63,7 @@ export default function LoginForm() {
             <Form
                 data-testid="login-form"
                 form={form}
-                name="loginorm"
+                name="loginform"
                 className={style.LoginForm}
                 initialValues={{ remember: true }}
                 autoCapitalize="off"
@@ -88,14 +74,14 @@ export default function LoginForm() {
                     rules={[
                         {
                             required: true,
-                            message: "Please input your username!"
-                        }
+                            message: "Please input your username!",
+                        },
                     ]}
                 >
                     <Input
                         size="large"
                         placeholder="Username"
-                        prefix={<UserOutlined color="blue" />}
+                        prefix={<UserOutlined style={{ color: blue[4] }} />}
                     />
                 </Form.Item>
                 <Form.Item<Fields>
@@ -103,14 +89,14 @@ export default function LoginForm() {
                     rules={[
                         {
                             required: true,
-                            message: "Please input your password!"
-                        }
+                            message: "Please input your password!",
+                        },
                     ]}
                 >
                     <Input.Password
                         size="large"
                         placeholder="Password"
-                        prefix={<LockOutlined color="blue" />}
+                        prefix={<LockOutlined style={{ color: blue[4] }} />}
                     />
                 </Form.Item>
                 <Flex justify="space-evenly">
@@ -128,18 +114,7 @@ export default function LoginForm() {
                         <Button type="primary" htmlType="submit">
                             Submit
                         </Button>
-                        <Button
-                            type="link"
-                            onClick={() => router.push("/register/student")}
-                        >
-                            Register as a student
-                        </Button>
-                        <Button
-                            type="link"
-                            onClick={() => router.push("/register/teacher")}
-                        >
-                            Register as a teacher
-                        </Button>
+                        <Button type="link">Register</Button>
                     </Flex>
                 </Form.Item>
             </Form>
