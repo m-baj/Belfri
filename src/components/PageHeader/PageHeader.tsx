@@ -3,7 +3,7 @@ import { Flex, Typography, Button, Select, Input, Tooltip, Space } from "antd";
 import { blue } from "@ant-design/colors";
 import config from "@/configs/app.config";
 import { BellOutlined, SettingOutlined, DashboardOutlined } from "@ant-design/icons";
-import { Avatar, Badge } from "antd";
+import { Badge } from "antd";
 
 const { Search } = Input;
 
@@ -69,7 +69,7 @@ export default function PageHeader() {
                         <Search placeholder='Enter subject' onSearch={value => console.log(value)} style={{ width: '65%' }} />
                     </Space.Compact>
                 </Flex>
-                <Flex justify='space-around' style={{ width: '15%', paddingLeft: '3%' }}>
+                <Flex justify='space-around' style={{ width: '15%' }}>
                     {/*It's possible to add a link user will be redirected after clicking on the badge with <a href='#'> */}
                     <Badge count={5}>
                         <Tooltip title="hours remaining">
@@ -89,19 +89,23 @@ export default function PageHeader() {
                     <Typography.Title style={{ color: blue[4] }}>
                         {config.appName}
                     </Typography.Title>
-                    <Space.Compact>
-                        <Tooltip title="Notifications">
-                            <Button type="default" icon={<BellOutlined />} shape='circle' />
+                    <Flex justify='space-between' style={{ width: '25%' }}>
+                        {/*It's possible to add a link user will be redirected after clicking on the badge with <a href='#'> */}
+                        <Badge count={5}>
+                            <Tooltip title="hours remaining">
+                                <Button shape="circle" size='large' icon={<DashboardOutlined/>} />
+                            </Tooltip>
+                        </Badge>
+                        <Tooltip title="Settings" >
+                            <Button type="default" icon={<SettingOutlined />} shape='circle' size='large' />
                         </Tooltip>
-                        <Tooltip title="Settings">
-                            <Button type="default" icon={<SettingOutlined />} shape='circle' />
-                        </Tooltip>
-                    </Space.Compact>
+                    </Flex>
                 </Flex>
-                <Flex style={{ paddingLeft: '3%' }}>
-                    <Tooltip title="Settings">
-                        <Button type="default" icon={<SettingOutlined />} shape='round' size='large' />
-                    </Tooltip>
+                <Flex justify='center'>
+                    <Space.Compact style={{ width: '85%' }}>
+                        <Select showSearch placeholder='Select city' options={options} style={{ width: '30%' }} />
+                        <Search placeholder='Enter subject' onSearch={value => console.log(value)} style={{ width: '70%' }} />
+                    </Space.Compact>
                 </Flex>
             </Flex>
         );
