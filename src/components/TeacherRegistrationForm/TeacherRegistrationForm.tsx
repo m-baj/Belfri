@@ -9,7 +9,7 @@ import {
     message,
     Select,
     DatePicker,
-    Upload,
+    Upload
 } from "antd";
 import {
     EditOutlined,
@@ -66,7 +66,8 @@ export default function TeacherRegistrationForm() {
                 "dateOfBirth": values.dateOfBirth ? values.dateOfBirth.format("YYYY-MM-DD") : undefined,
                 "iban": values.iban,
                 "phoneNumber": values.prefix + values.phoneNumber,
-                "profilePictureUrl": values.uploadProfilePicture?.[0]?.response?.url,
+                // "profilePictureUrl": values.uploadProfilePicture?.[0]?.response?.url,
+                "profilePictureUrl": "https://www.pngitem.com/pimgs/m/146-1468479_my-profile-icon-blank-profile-picture-circle-hd.png"
             })
             .then((res) => {
                 console.log(res);
@@ -117,7 +118,7 @@ export default function TeacherRegistrationForm() {
         } else {
             callback();
         }
-    }
+    };
 
     const disabledDate = (current: any) => {
         // Can not select days before today and today
@@ -130,7 +131,7 @@ export default function TeacherRegistrationForm() {
         } else {
             callback();
         }
-    }
+    };
 
     return (
         <Flex vertical>
@@ -152,8 +153,8 @@ export default function TeacherRegistrationForm() {
                     rules={[
                         {
                             required: true,
-                            message: "Please input your name!",
-                        },
+                            message: "Please input your name!"
+                        }
                     ]}
                 >
                     <Input
@@ -167,8 +168,8 @@ export default function TeacherRegistrationForm() {
                     rules={[
                         {
                             required: true,
-                            message: "Please input your surname!",
-                        },
+                            message: "Please input your surname!"
+                        }
                     ]}
                 >
                     <Input
@@ -202,11 +203,11 @@ export default function TeacherRegistrationForm() {
                     rules={[
                         {
                             required: true,
-                            message: "Please input your email!",
+                            message: "Please input your email!"
                         },
                         {
-                            validator: validateEmail,
-                        },
+                            validator: validateEmail
+                        }
                     ]}
                 >
                     <Input
@@ -220,8 +221,8 @@ export default function TeacherRegistrationForm() {
                     rules={[
                         {
                             required: true,
-                            message: "Please input your phone number!",
-                        },
+                            message: "Please input your phone number!"
+                        }
                     ]}
                 >
                     <Input
@@ -237,8 +238,8 @@ export default function TeacherRegistrationForm() {
                     rules={[
                         {
                             required: true,
-                            message: "Please input your username!",
-                        },
+                            message: "Please input your username!"
+                        }
                     ]}
                 >
                     <Input
@@ -252,11 +253,11 @@ export default function TeacherRegistrationForm() {
                     rules={[
                         {
                             required: true,
-                            message: "Please input your password!",
+                            message: "Please input your password!"
                         },
                         {
-                            validator: validatePassword,
-                        },
+                            validator: validatePassword
+                        }
                     ]}
                 >
                     <PasswordInput
@@ -271,7 +272,7 @@ export default function TeacherRegistrationForm() {
                     rules={[
                         {
                             required: true,
-                            message: "Please confirm your password",
+                            message: "Please confirm your password"
                         },
                         ({ getFieldValue }) => ({
                             validator(_, value) {
@@ -284,8 +285,8 @@ export default function TeacherRegistrationForm() {
                                 return Promise.reject(
                                     new Error("Passwords must be identical!")
                                 );
-                            },
-                        }),
+                            }
+                        })
                     ]}
                     dependencies={["password"]}
                 >
@@ -379,8 +380,8 @@ export default function TeacherRegistrationForm() {
                     rules={[
                         {
                             required: true,
-                            message: "Please input your date of birth!",
-                        },
+                            message: "Please input your date of birth!"
+                        }
                     ]}
                 >
                     <DatePicker
@@ -412,32 +413,32 @@ export default function TeacherRegistrationForm() {
                     />
 
                 </Form.Item>
-                <Form.Item
-                    name="uploadProfilePicture"
-                    rules={[
-                        {
-                            required: true,
-                            message: "Please upload your profile picture!",
-                        },
-                    ]}
-                >
-                    <Upload
-                        name="profilePicture"
-                        action="/api/upload"
-                        listType="picture"
-                        maxCount={1}
-                        onChange={handleForm}
-                        style={{ width: style.width }}
-                    >
-                        <Button
-                            icon={
-                                <PictureOutlined style={{ color: blue[4] }} />
-                            }
-                        >
-                            Upload profile picture
-                        </Button>
-                    </Upload>
-                </Form.Item>
+                {/*<Form.Item*/}
+                {/*    name="uploadProfilePicture"*/}
+                {/*    rules={[*/}
+                {/*        {*/}
+                {/*            required: true,*/}
+                {/*            message: "Please upload your profile picture!"*/}
+                {/*        }*/}
+                {/*    ]}*/}
+                {/*>*/}
+                {/*    /!*<Upload*!/*/}
+                {/*    /!*    name="profilePicture"*!/*/}
+                {/*    /!*    action="/api/upload"*!/*/}
+                {/*    /!*    listType="picture"*!/*/}
+                {/*    /!*    maxCount={1}*!/*/}
+                {/*    /!*    onChange={handleForm}*!/*/}
+                {/*    /!*    style={{ width: style.width }}*!/*/}
+                {/*    /!*>*!/*/}
+                {/*    /!*    <Button*!/*/}
+                {/*    /!*        icon={*!/*/}
+                {/*    /!*            <PictureOutlined style={{ color: blue[4] }} />*!/*/}
+                {/*    /!*        }*!/*/}
+                {/*    /!*    >*!/*/}
+                {/*    /!*        Upload profile picture*!/*/}
+                {/*    /!*    </Button>*!/*/}
+                {/*    /!*</Upload>*!/*/}
+                {/*</Form.Item>*/}
                 <Flex vertical align="left">
                     <Form.Item<Fields>
                         style={{ marginBottom: "0px" }}
@@ -446,8 +447,8 @@ export default function TeacherRegistrationForm() {
                         rules={[
                             {
                                 required: true,
-                                message: "Please accept privacy policy!",
-                            },
+                                message: "Please accept privacy policy!"
+                            }
                         ]}
                     >
                         <Checkbox required>
@@ -461,8 +462,8 @@ export default function TeacherRegistrationForm() {
                         rules={[
                             {
                                 required: true,
-                                message: "Please accept terms!",
-                            },
+                                message: "Please accept terms!"
+                            }
                         ]}
                     >
                         <Checkbox required>
@@ -475,8 +476,8 @@ export default function TeacherRegistrationForm() {
                         rules={[
                             {
                                 required: true,
-                                message: "Please accept marketing!",
-                            },
+                                message: "Please accept marketing!"
+                            }
                         ]}
                     >
                         <Checkbox>

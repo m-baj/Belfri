@@ -73,7 +73,7 @@ interface RegistrationResponse {
 
 
 export default createApiRoute<RegistrationData, RegistrationResponse>(
-    "POST",
+    ["POST"],
     (data) => data.name !== undefined && data.surname !== undefined && data.username !== undefined && data.email !== undefined && data.passHash !== undefined && data.dateOfBirth !== undefined,
     async (connection, data) => {
         const activation_token = await registerUser(

@@ -93,7 +93,7 @@ interface UserData {
  */
 
 export default createApiRoute<UserData, Response>(
-    "PUT",
+    ["PUT"],
     (data) => data.name !== undefined || data.surname !== undefined || data.email !== undefined || data.dateOfBirth !== undefined || data.iban !== undefined || data.phoneNumber !== undefined || data.profilePicture !== undefined,
     async (connection, data) => {
         await updateUserData(connection, data);
