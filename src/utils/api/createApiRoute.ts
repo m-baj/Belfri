@@ -61,7 +61,7 @@ export function createApiRoute<Request, Response>(method: "POST" | "GET" | "PUT"
 
             } catch (err: any) {
                 await connection.rollback();
-                res.status(500).json({
+                res.status(400).json({
                     message: err.message
                 } as ResponseWithMessage);
             }
