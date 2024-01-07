@@ -28,6 +28,8 @@ import Password from "antd/es/input/Password";
 import { PasswordInput } from "antd-password-input-strength";
 import { useState } from "react";
 import { Option } from "antd/lib/mentions";
+import axios from "axios";
+import { sha256 } from "js-sha256";
 
 interface Fields {
     name?: string;
@@ -53,8 +55,36 @@ export default function TeacherRegistrationForm() {
     const router = useRouter();
 
     const handleForm = (values: any) => {
-        console.log(values);
-        // router.push("/login");
+        axios
+            .post("/api/user/teacher-register/", {
+                "name": values.name,
+                "surname": values.surname,
+                "username": values.username,
+                "email": values.email,
+                "passHash": sha256(values.password),
+                "dateOfBirth": values.dateOfBirth,
+                "iban": values.iban,
+                "phoneNumber": values.prefix + values.phoneNumber,
+                "profilePictureUrl": values.uploadProfilePicture[0].response.url,
+            })
+            .then((res) => {
+                console.log(res);
+                if (res.status == 200) {
+                    router.push("/login");
+                } else {
+                    console.log(res);
+                }
+            })
+            .catch((err) => {
+                if (err.response.status == 400) {
+                    message.error(err.response.data.message);
+                } else {
+                    message.error(
+                        "Registration failed due to server error: " +
+                        err.response.data.message
+                    );
+                }
+            });
     };
 
     const prefixSelector = (
