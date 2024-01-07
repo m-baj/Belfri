@@ -394,7 +394,6 @@ export default function TeacherRegistrationForm() {
                     <DatePicker
                         size="large"
                         placeholder="Date of birth"
-                        onChange={handleForm}
                         style={{ width: "100%" }}
                         prefixCls="ant-picker"
                         disabledDate={disabledDate}
