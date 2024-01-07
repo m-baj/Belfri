@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, from 'react';
 import { Button, Input, Modal } from "antd";
 import { CreditCardOutlined } from "@ant-design/icons";
 import { blue } from "@ant-design/colors";
@@ -9,17 +9,7 @@ interface ModalProps {
 }
 export default function CreditsCodeModal(props: ModalProps) {
 
-    const showModal = () => {
-        props.setOpen(true);
-    };
-
     const handleOk = () => {
-        // setLoading(true);
-        // setTimeout(() => {
-        //     setLoading(false);
-        //     setOpen(false);
-        // }, 3000);
-        // temporary solution
         props.setOpen(false)
     };
 
