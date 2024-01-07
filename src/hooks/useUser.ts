@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import jscookie from "js-cookie";
+import { AuthLevel } from "@/utils/etc/AuthLevel";
 
 /**
  * The `useUser` function is a custom hook in TypeScript that manages user authentication and redirects
@@ -14,12 +15,20 @@ import jscookie from "js-cookie";
 interface useUserProps {
     redirectTo?: string;
     loggedIn?: boolean;
+    requiredAuthLevel?: AuthLevel;
+}
+
+interface useUserReturn {
+    token: string | null;
+    username: string | null;
+    loading: boolean;
 }
 
 export function useUser({
-    redirectTo = "/login",
-    loggedIn = true,
-}: useUserProps = {}) {
+                            redirectTo = "/login",
+                            loggedIn = true,
+                            requiredAuthLevel = AuthLevel.GUEST
+                        }: useUserProps = {}): useUserReturn {
     const [token, setToken] = useState<string | null>(null);
     const [username, setUsername] = useState<string | null>(null);
     const [loading, setLoading] = useState(true);
@@ -28,23 +37,34 @@ export function useUser({
     useEffect(() => {
         const sessionToken = jscookie.get("token");
         const sessionUsername = jscookie.get("username");
+        const sessionExpiration = jscookie.get("expiration");
+        const sessionAuthLevel = jscookie.get("auth_level");
 
         if (loggedIn) {
-            if (sessionToken && sessionUsername) {
+            // user is required to be logged in
+            if (sessionToken && sessionUsername && sessionExpiration && sessionAuthLevel) {
+                if (requiredAuthLevel > parseInt(sessionAuthLevel) || new Date(sessionExpiration) < new Date()) {
+                    router.push("/401");
+                }
                 setToken(sessionToken);
                 setUsername(sessionUsername);
                 setLoading(false);
             } else {
-                router.push(redirectTo);
+                if (router.pathname !== "/") {
+                    router.push(redirectTo + "?next=" + router.pathname);
+                } else {
+                    router.push(redirectTo);
+                }
             }
         } else {
-            if (sessionToken && sessionUsername) {
+            // user is required to be logged out
+            if (sessionToken && sessionUsername && sessionExpiration && sessionAuthLevel) {
                 router.push(redirectTo);
             } else {
                 setLoading(false);
             }
         }
-    }, [token, username, router, redirectTo, loggedIn]);
+    }, [token, username, router, redirectTo, loggedIn, requiredAuthLevel]);
 
     return { token, username, loading };
 }

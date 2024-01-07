@@ -1,4 +1,4 @@
-import Connection from "../Connection";
+import Connection from "../../../Connection";
 
 /**
  * The function `getUserAuth` retrieves the username and authentication level of a user based on a
@@ -14,24 +14,27 @@ export async function getUserAuth(
     connection: Connection,
     token: string
 ): Promise<{
-    username: string;
+    user_id: string;
     authLevel: number;
 } | null> {
-    try {
-        const result = await connection.execute(
-            "SELECT USERNAME, AUTH_LEVEL FROM TOKENS JOIN USERS USING(USER_ID) WHERE TOKEN = :token",
-            [token]
-        );
+    const result = await connection.execute`SELECT USER_ID, AUTH_LEVEL, EXPIRATION
+                                            FROM TOKENS
+                                                     JOIN USERS USING (USER_ID)
+                                            WHERE TOKEN = ${token}`;
 
-        if (result && result.rows && result.rows.length > 0) {
-            return {
-                username: result.rows[0][0],
-                authLevel: result.rows[0][1],
-            };
+    if (result && result.rows && result.rows.length > 0) {
+        const expiration = result.rows[0].expiration;
+        if (expiration < Date.now()) {
+            await connection.execute`DELETE
+                                     FROM TOKENS
+                                     WHERE TOKEN = ${token}`;
+            return null;
         }
-
-        return null;
-    } catch (err) {
-        throw err;
+        return {
+            user_id: result.rows[0].user_id,
+            authLevel: result.rows[0].auth_level
+        };
     }
+
+    return null;
 }

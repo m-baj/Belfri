@@ -2,11 +2,13 @@ import PageHeader from "@/components/PageHeader/PageHeader";
 // import { useUser } from "@/hooks/useUser";
 import { Divider } from "antd";
 import Link from "next/link";
-// import { useEffect, useState } from "react";
+import LoadingComponent from "@/components/LoadingComponent/LoadingComponent";
 
 export default function Home() {
-    // const { token, username } = useUser();
-
+    const { token, username , loading} = useUser();
+    if(loading){
+        return <LoadingComponent/>
+    }
     return (
         <body style={{ margin: 0 }}>
             <PageHeader />

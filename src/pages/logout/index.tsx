@@ -1,12 +1,26 @@
 import { useRouter } from "next/router";
 import { useEffect } from "react";
+import jscookie from "js-cookie";
+import axios from "axios";
+import { message } from "antd";
 
 export default function Logout() {
-    const router = useRouter(); 
-    useEffect(()=>{
-        sessionStorage.removeItem("token");
-        sessionStorage.removeItem("username");
-        router.push("/login");
-    }, [router])
+    const router = useRouter();
+    useEffect(() => {
+        axios
+            .post("/api/user/logout", { withCredentials: true })
+            .then(() => {
+                jscookie.remove("token");
+                jscookie.remove("username");
+
+                router.push("/login");
+            })
+            .catch((err) => {
+                jscookie.remove("token");
+                jscookie.remove("username");
+                message.error("Error: ", err.response.data.message);
+                router.push("/login");
+            });
+    }, [router]);
     return <></>;
 }
