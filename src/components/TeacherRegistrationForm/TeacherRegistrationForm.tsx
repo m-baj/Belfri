@@ -56,6 +56,19 @@ export default function TeacherRegistrationForm() {
     const router = useRouter();
 
     const handleForm = (values: any) => {
+        // I want to consol.log my post request here
+        console.log({
+            "name": values.name,
+            "surname": values.surname,
+            "username": values.username,
+            "email": values.email,
+            "passHash": sha256(String(values.password)),
+            "dateOfBirth": values.dateOfBirth ? values.dateOfBirth.format("YYYY-MM-DD") : undefined,
+            "iban": values.iban,
+            "phoneNumber": values.prefix + values.phoneNumber,
+            // "profilePictureUrl": values.uploadProfilePicture?.[0]?.response?.url,
+            "profilePictureUrl": "https://www.pngitem.com/pimgs/m/146-1468479_my-profile-icon-blank-profile-picture-circle-hd.png"
+        })
         axios
             .post("/api/user/teacher-register/", {
                 "name": values.name,
@@ -78,14 +91,8 @@ export default function TeacherRegistrationForm() {
                 }
             })
             .catch((err) => {
-                if (err.response.status == 400) {
-                    message.error(err.response.data.message);
-                } else {
-                    message.error(
-                        "Registration failed due to server error: " +
-                        err.response.data.message
-                    );
-                }
+                console.log(err);
+                message.error(err.response.data.message).then(r => console.log(r));
             });
     };
 
@@ -393,8 +400,8 @@ export default function TeacherRegistrationForm() {
                         disabledDate={disabledDate}
                     />
                 </Form.Item>
-                <Form.Item
-                    name="uploadiban"
+                <Form.Item<Fields>
+                    name="iban"
                     rules={[
                         {
                             required: true,
