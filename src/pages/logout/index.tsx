@@ -16,6 +16,7 @@ export default function Logout() {
                 router.push("/login");
             })
             .catch((err) => {
+                console.log(err);
                 jscookie.remove("token");
                 jscookie.remove("username");
                 message.error("Error: ", err.response.data.message);

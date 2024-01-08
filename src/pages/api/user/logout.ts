@@ -44,7 +44,7 @@ interface Response {
  */
 
 export default createApiRoute<{}, Response>(
-    "POST",
+    [{ name: "POST", authLevel: AuthLevel.STUDENT }],
     () => true,
     async (connection, data) => {
         await removeToken(connection);

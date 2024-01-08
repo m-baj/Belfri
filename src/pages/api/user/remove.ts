@@ -43,13 +43,12 @@ interface Response {
 
 
 export default createApiRoute<{}, Response>(
-    "DELETE",
+    [{ name: "DELETE", authLevel: AuthLevel.STUDENT }],
     () => true,
     async (connection, data) => {
         await removeUser(connection);
         return {
             message: "User removed successfully"
         };
-    },
-    AuthLevel.STUDENT
+    }
 );

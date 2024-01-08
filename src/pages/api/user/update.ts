@@ -93,13 +93,12 @@ interface UserData {
  */
 
 export default createApiRoute<UserData, Response>(
-    "PUT",
+    [{ name: "PUT", authLevel: AuthLevel.STUDENT }],
     (data) => data.name !== undefined || data.surname !== undefined || data.email !== undefined || data.dateOfBirth !== undefined || data.iban !== undefined || data.phoneNumber !== undefined || data.profilePicture !== undefined,
     async (connection, data) => {
         await updateUserData(connection, data);
         return {
             message: "User data updated successfully"
         };
-    },
-    AuthLevel.STUDENT
+    }
 );

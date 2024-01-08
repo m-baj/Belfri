@@ -50,4 +50,4 @@ make
 ### API documentation
 
 When logged in as admin, you can access the API documentation
-at [`localhost:3000/api-docs`](http://localhost:3000/api-docs)
+at [`localhost:3000/api-docs`](http://localhost:3000/api-doc)
