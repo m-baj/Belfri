@@ -2,6 +2,7 @@ import React from 'react';
 import { Card, Statistic, Typography, Row, Col, Avatar } from "antd";
 import { gold } from "@ant-design/colors";
 import { CarOutlined, HomeOutlined, LaptopOutlined, StarOutlined } from "@ant-design/icons";
+import { router } from "next/client";
 export interface OfferData {
     offer_id: number;
     teacher_id: number;
@@ -27,11 +28,15 @@ export interface OfferFormProps {
 
 export default function OfferCard(props: OfferFormProps) {
     return (
-        <Card>
+        <Card
+            hoverable
+            // style={{ marginBottom: 15, height: 194 }}
+            // onClick={() => router.push(`/offer/${props.offer.offer_id}`)} -> Narazie z tym nie działa
+        >
             <Row>
                 <Col span={13}>
                     <Row>
-                        <Typography.Title level={5}>
+                        <Typography.Title level={3}>
                             {props.offer.name} &nbsp;
                         </Typography.Title>
                     </Row>

@@ -32,10 +32,8 @@ const testOfferFormProps: OfferFormProps = {
 
 export default function TestOfferForm() {
     return (
-        <Flex justify="center" align="center" style={{ height: "100vh" }}>
-            <div>
+        <Flex justify="center" align="center" style={{ height: "100vh", width: "50Svh" }}>
                 <OfferCard {...testOfferFormProps} />
-            </div>
         </Flex>
     );
 }
