@@ -1,5 +1,6 @@
 import { createApiRoute } from "@/utils/api/createApiRoute";
 import { activateUser } from "@/utils/database/queries/user/activate/activate";
+import { AuthLevel } from "@/utils/etc/AuthLevel";
 
 
 interface ActivationData {
@@ -48,7 +49,10 @@ interface ActivationResponse {
  */
 
 export default createApiRoute<ActivationData, ActivationResponse>(
-    "POST",
+    [{
+        name: "POST",
+        authLevel: AuthLevel.GUEST
+    }],
     (data) => data.token !== undefined,
     async (connection, data) => {
 

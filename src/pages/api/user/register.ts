@@ -1,5 +1,6 @@
 import { createApiRoute } from "@/utils/api/createApiRoute";
 import { registerUser } from "@/utils/database/queries/user/register/register";
+import { AuthLevel } from "@/utils/etc/AuthLevel";
 
 interface RegistrationData {
     name: string;
@@ -73,7 +74,7 @@ interface RegistrationResponse {
 
 
 export default createApiRoute<RegistrationData, RegistrationResponse>(
-    "POST",
+    [{ name: "POST", authLevel: AuthLevel.GUEST }],
     (data) => data.name !== undefined && data.surname !== undefined && data.username !== undefined && data.email !== undefined && data.passHash !== undefined && data.dateOfBirth !== undefined,
     async (connection, data) => {
         const activation_token = await registerUser(
