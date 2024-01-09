@@ -1,29 +1,32 @@
 import { createApiRoute } from "@/utils/api/createApiRoute";
 import { AuthLevel } from "@/utils/etc/AuthLevel";
-import { searchTeachers } from "@/utils/database/queries/teacher/search/search";
+import { searchCity } from "@/utils/database/queries/city/search/search";
 
 
 interface Request {
     search?: string;
-    cityID?: number;
-    categoryID?: number;
     first?: number;
     count?: number;
 }
 
+interface City {
+    cityID: number;
+    name: string;
+}
+
 interface Response {
     message: string;
-    teachers?: Array<number>;
+    cities?: Array<City>;
 }
 
 /**
  * @swagger
- * /api/teacher:
+ * /api/city:
  *   get:
- *     summary: Search teachers
- *     description: This endpoint allows a student to search for teachers. The student must be authorized to search for teachers.
+ *     summary: Search cities
+ *     description: This endpoint allows a student to search for cities. The student must be authorized to search for cities.
  *     tags:
- *       - Teachers
+ *       - Cities
  *     security:
  *       - cookieAuth: []
  *     parameters:
@@ -34,32 +37,20 @@ interface Response {
  *         required: false
  *         description: The search string.
  *       - in: query
- *         name: cityID
- *         schema:
- *           type: number
- *         required: false
- *         description: The ID of the city.
- *       - in: query
- *         name: categoryID
- *         schema:
- *           type: number
- *         required: false
- *         description: The ID of the category.
- *       - in: query
  *         name: first
  *         schema:
  *           type: number
  *         required: false
- *         description: The index of the first teacher to return.
+ *         description: The index of the first city to return.
  *       - in: query
  *         name: count
  *         schema:
  *           type: number
  *         required: false
- *         description: The number of teachers to return.
+ *         description: The number of cities to return.
  *     responses:
  *       200:
- *         description: Successfully found teachers
+ *         description: Successfully found cities
  *         content:
  *           application/json:
  *             schema:
@@ -68,11 +59,17 @@ interface Response {
  *                 message:
  *                   type: string
  *                   description: A message about the result of the search process.
- *                 teachers:
+ *                 cities:
  *                   type: array
  *                   items:
- *                     type: number
- *                   description: An array of teacher IDs.
+ *                     type: object
+ *                     properties:
+ *                       cityID:
+ *                         type: number
+ *                         description: The ID of the city.
+ *                       name:
+ *                         type: string
+ *                         description: The name of the city.
  *       400:
  *         description: Invalid request, some required fields are missing.
  *       401:
@@ -97,11 +94,11 @@ export default createApiRoute<Request, Response>(
     async (connection, data, req) => {
         data = req.query as unknown as Request;
 
-        const teachers = await searchTeachers(connection, data);
+        const cities = await searchCity(connection, data);
 
         return {
-            message: "Successfully retrieved a teacher",
-            teachers: teachers
+            message: "Successfully retrieved cities",
+            cities: cities
         };
     }
 );
