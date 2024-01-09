@@ -51,6 +51,5 @@ export default createApiRoute<{}, Response>(
         return {
             message: "Logged out"
         };
-    },
-    AuthLevel.STUDENT
+    }
 );
