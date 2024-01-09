@@ -4,6 +4,8 @@ interface SearchData {
     search?: string;
     cityID?: number;
     categoryID?: number;
+    first?: number;
+    count?: number;
 }
 
 export async function searchTeachers(connection: Connection, search: SearchData): Promise<Array<number>> {
@@ -40,6 +42,14 @@ export async function searchTeachers(connection: Connection, search: SearchData)
 
     query += ` GROUP BY teacher_id
                ORDER BY teacher_id`;
+
+    if (search.first) {
+        query += ` OFFSET ${search.first}`;
+    }
+
+    if (search.count) {
+        query += ` FETCH NEXT ${search.count} ROWS ONLY`;
+    }
 
     const result = await connection.executeString(query);
 
