@@ -7,7 +7,7 @@ interface Method {
     authLevel?: AuthLevel;
 }
 
-export function createApiRoute<Request, Response>(methods: Array<Method>, condition: (data: Request) => boolean, logic: (connection: Connection, data: Request, method: string) => Promise<Response & {
+export function createApiRoute<Request, Response>(methods: Array<Method>, condition: (data: Request) => boolean, logic: (connection: Connection, data: Request, req: NextApiRequest) => Promise<Response & {
     message: string;
     status?: number
 }>): (req: NextApiRequest, res: NextApiResponse<Response>) => Promise<void> {
@@ -70,7 +70,7 @@ export function createApiRoute<Request, Response>(methods: Array<Method>, condit
                     }
                 }
 
-                const response = await logic(connection, data, req.method);
+                const response = await logic(connection, data, req);
 
                 await connection.commit();
 
