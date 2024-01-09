@@ -1,7 +1,19 @@
-import { Form, message, Flex, Input, Button, Typography } from "antd";
+import {
+    Form,
+    message,
+    Flex,
+    Input,
+    Button,
+    Typography
+} from "antd";
+import {
+    BookOutlined,
+    FolderOpenOutlined
+} from "@ant-design/icons";
 import { useRouter } from "next/router";
 import axios from "axios";
 import { blue } from "@ant-design/colors";
+import style from './CreateOfferForm.module.css'
 
 
 interface OfferProps {
@@ -13,6 +25,8 @@ interface OfferProps {
     description: string;
     rating: number;
 }
+
+const { TextArea } = Input;
 
 export default function CreateOfferForm() {
     const [form] = Form.useForm();
@@ -51,10 +65,47 @@ export default function CreateOfferForm() {
         });
     }
     return (
-        <Flex vertical>
+        <Flex vertical justify="center">
             <Typography.Title style={{ color: blue[4], textAlign: "center" }}>
                 Create Offer
             </Typography.Title>
+            <Form
+                className={style.createOfferForm}
+                form={form}
+                autoCapitalize="off"
+                onFinish={handleForm}
+            >
+                <Form.Item<OfferProps>
+                    name="teacher_id"
+                    rules={[
+                        {
+                            required: true,
+                            message: "Please input your teacher ID",
+                        },
+                    ]}
+                >
+                    <Input
+                        placeholder="teacher_id"
+                        size="large"
+                        prefix={<BookOutlined style={{ color: blue[4] }} />}
+                    />
+                </Form.Item>
+                <Form.Item<OfferProps>
+                    name="category_id"
+                    rules={[
+                        {
+                            required: true,
+                            message: "Please input offer category ID",
+                        }
+                    ]}
+                >
+                    <Input
+                        placeholder="category_id"
+                        size="large"
+                        prefix={<FolderOpenOutlined style={{ color: blue[4] }} />}
+                    />
+                </Form.Item>
+            </Form>
         </Flex>
     )
 }
