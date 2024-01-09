@@ -34,11 +34,13 @@ export function createApiRoute<Request, Response>(methods: Array<Method>, condit
             return;
         }
 
+
         let authLevel = methods.find(method => method.name == req.method)?.authLevel;
 
         if (authLevel == undefined) {
             authLevel = AuthLevel.GUEST;
         }
+
 
         if (authLevel > AuthLevel.GUEST && !req.cookies.token) {
             res.status(401).json({
@@ -55,18 +57,15 @@ export function createApiRoute<Request, Response>(methods: Array<Method>, condit
             } as ResponseWithMessage);
             return;
         }
-
         try {
             const connection = await Connection.connect();
             try {
                 if (authLevel > AuthLevel.GUEST) {
-                    await connection.authorize(req.cookies.token as string);
 
+                    await connection.authorize(req.cookies.token as string);
+                    console.log("ggg");
                     if (!connection.isAuthorized(authLevel)) {
-                        res.status(401).json({
-                            message: "Unauthorized"
-                        } as ResponseWithMessage);
-                        return;
+                        throw new Error("Unauthorized");
                     }
                 }
 
@@ -77,7 +76,6 @@ export function createApiRoute<Request, Response>(methods: Array<Method>, condit
                 const { status, ...rest } = response;
 
                 if (status) {
-
                     res.status(status).json(rest as ResponseWithMessage);
                 }
 
@@ -88,6 +86,8 @@ export function createApiRoute<Request, Response>(methods: Array<Method>, condit
                 res.status(400).json({
                     message: err.message
                 } as ResponseWithMessage);
+            } finally {
+                connection.close();
             }
         } catch (err: any) {
             res.status(500).json({
