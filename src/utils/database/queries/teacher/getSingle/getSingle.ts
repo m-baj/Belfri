@@ -8,6 +8,7 @@ interface TeacherData {
     phone: string;
     username: string;
     rating: number;
+    profilePicture: Buffer;
 }
 
 export async function getTeacherById(connection: Connection, id: number) {
@@ -42,6 +43,7 @@ export async function getTeacherById(connection: Connection, id: number) {
         email: userData.rows[0].email,
         phone: userData.rows[0].phone,
         username: userData.rows[0].username,
-        rating: result.rows[0].rating
+        rating: result.rows[0].rating,
+        profilePicture: result.rows[0].profile_picture
     } as TeacherData;
 }
