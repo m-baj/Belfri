@@ -15,6 +15,8 @@ interface GetRequest {
     search?: string;
     cityID?: number;
     categoryID?: number;
+    first?: number;
+    count?: number;
 }
 
 type Request = PostRequest & GetRequest;
@@ -102,6 +104,24 @@ interface Response {
  *           type: number
  *         required: false
  *         description: The ID of the city.
+ *       - in: query
+ *         name: categoryID
+ *         schema:
+ *           type: number
+ *         required: false
+ *         description: The ID of the category.
+ *       - in: query
+ *         name: first
+ *         schema:
+ *           type: number
+ *         required: false
+ *         description: The index of the first offer to return.
+ *       - in: query
+ *         name: count
+ *         schema:
+ *           type: number
+ *         required: false
+ *         description: The number of offers to return.
  *     responses:
  *       200:
  *         description: Successfully found offers

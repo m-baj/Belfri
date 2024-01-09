@@ -12,9 +12,7 @@ interface PutRequest {
     description?: string;
 }
 
-type Request = PutRequest & {
-    offerID: number;
-};
+type Request = PutRequest;
 
 interface OfferData {
     teacherID: number;
