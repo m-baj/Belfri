@@ -6,10 +6,10 @@ import { deleteOffer } from "@/utils/database/queries/offers/delete/delete";
 
 
 interface PutRequest {
-    categoryID: number;
-    cityID: number;
-    name: string;
-    description: string;
+    categoryID?: number;
+    cityID?: number;
+    name?: string;
+    description?: string;
 }
 
 type Request = PutRequest & {
@@ -22,19 +22,21 @@ interface OfferData {
     cityID: number;
     name: string;
     description: string;
+    rating: number;
 }
 
-type Response = {
+interface Response {
     message: string;
-} | OfferData;
+    data?: OfferData;
+}
 
 
 /**
  * @swagger
  * /api/offers/{id}:
  *   get:
- *     summary: Get a single offer
- *     description: This endpoint allows a student to get a single offer. The student must be authorized to get an offer.
+ *     summary: Retrieve an offer
+ *     description: This endpoint allows a student to retrieve a single offer. The student must be authorized to retrieve the offer.
  *     tags:
  *       - Offers
  *     security:
@@ -54,25 +56,24 @@ type Response = {
  *             schema:
  *               type: object
  *               properties:
- *                 offer:
+ *                 message:
+ *                   type: string
+ *                   description: A message about the result of the retrieval process.
+ *                 data:
  *                   type: object
  *                   properties:
  *                     teacherID:
  *                       type: number
- *                       description: The ID of the teacher.
  *                     categoryID:
  *                       type: number
- *                       description: The ID of the category.
  *                     cityID:
  *                       type: number
- *                       description: The ID of the city.
  *                     name:
  *                       type: string
- *                       description: The name of the offer.
  *                     description:
  *                       type: string
- *                       description: The description of the offer.
- *
+ *                     rating:
+ *                       type: number
  *       400:
  *         description: Invalid request, some required fields are missing.
  *       401:
@@ -83,7 +84,7 @@ type Response = {
  *         description: An error occurred while connecting to the database or during the retrieval process.
  *   put:
  *     summary: Update an offer
- *     description: This endpoint allows a tutor to update an offer. The tutor must be authorized to update an offer.
+ *     description: This endpoint allows a tutor to update an offer. The tutor must be authorized to update the offer.
  *     tags:
  *       - Offers
  *     security:
@@ -135,7 +136,7 @@ type Response = {
  *         description: An error occurred while connecting to the database or during the update process.
  *   delete:
  *     summary: Delete an offer
- *     description: This endpoint allows a tutor to delete an offer. The tutor must be authorized to delete an offer.
+ *     description: This endpoint allows a tutor to delete an offer. The tutor must be authorized to delete the offer.
  *     tags:
  *       - Offers
  *     security:
@@ -184,15 +185,39 @@ export default createApiRoute<Request, Response>(
         name: "PUT",
         authLevel: AuthLevel.TUTOR
     }],
-    (data) => (data.categoryID !== undefined, data.cityID !== undefined, data.name !== undefined, data.description !== undefined),
-    async (connection, data, method) => {
-        switch (method) {
-            case "GET":
-                return await getSingleOffer(connection, data.offerID);
-            case "PUT":
-                return await updateOffer(connection, data.offerID, data);
-            case "DELETE":
-                return await deleteOffer(connection, data.offerID);
+    (data) => true,
+    async (connection, data, req) => {
+        const offerID = req.query.id as unknown as number;
+        if (offerID == undefined) {
+            return {
+                status: 400,
+                message: "Invalid request"
+            };
         }
+        switch (req.method) {
+            case "GET":
+                const offer = await getSingleOffer(connection, offerID);
+                return {
+                    message: "Successfully retrieved an offer",
+                    data: offer
+                };
+            case "PUT":
+                if (data.categoryID == undefined && data.cityID == undefined && data.name == undefined && data.description == undefined) {
+                    throw new Error("Invalid request");
+                }
+
+                await updateOffer(connection, offerID, data);
+
+                return {
+                    message: "Successfully updated an offer"
+                };
+            case "DELETE":
+                await deleteOffer(connection, offerID);
+
+                return {
+                    message: "Successfully deleted an offer"
+                };
+        }
+        throw new Error("Invalid method");
     }
 );

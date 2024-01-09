@@ -43,7 +43,14 @@ export function useUser({
         if (loggedIn) {
             // user is required to be logged in
             if (sessionToken && sessionUsername && sessionExpiration && sessionAuthLevel) {
-                if (requiredAuthLevel > parseInt(sessionAuthLevel) || new Date(sessionExpiration) < new Date()) {
+                if (new Date(sessionExpiration) < new Date()) {
+                    jscookie.remove("token");
+                    jscookie.remove("username");
+                    jscookie.remove("expiration");
+                    jscookie.remove("auth_level");
+                    router.push(redirectTo);
+                }
+                if (requiredAuthLevel > parseInt(sessionAuthLevel)) {
                     router.push("/401");
                 }
                 setToken(sessionToken);

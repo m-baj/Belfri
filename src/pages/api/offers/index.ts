@@ -14,21 +14,19 @@ interface GetRequest {
     teacherID?: number;
     search?: string;
     cityID?: number;
+    categoryID?: number;
 }
 
 type Request = PostRequest & GetRequest;
 
-interface Offer {
-    id: number;
-}
-
 interface GetResponse {
-    offers: Offer[];
+    offers: Array<Number>;
 }
 
-type Response = {
+interface Response {
     message: string;
-} | GetResponse;
+    data?: GetResponse;
+}
 
 /**
  * @swagger
@@ -79,7 +77,7 @@ type Response = {
  *       500:
  *         description: An error occurred while connecting to the database or during the add process.
  *   get:
- *     summary: Search for offers
+ *     summary: Search offers
  *     description: This endpoint allows a student to search for offers. The student must be authorized to search for offers.
  *     tags:
  *       - Offers
@@ -90,16 +88,19 @@ type Response = {
  *         name: teacherID
  *         schema:
  *           type: number
+ *         required: false
  *         description: The ID of the teacher.
  *       - in: query
  *         name: search
  *         schema:
  *           type: string
+ *         required: false
  *         description: The search string.
  *       - in: query
  *         name: cityID
  *         schema:
  *           type: number
+ *         required: false
  *         description: The ID of the city.
  *     responses:
  *       200:
@@ -109,14 +110,17 @@ type Response = {
  *             schema:
  *               type: object
  *               properties:
- *                 offers:
- *                   type: array
- *                   items:
- *                     type: object
- *                     properties:
- *                       id:
+ *                 message:
+ *                   type: string
+ *                   description: A message about the result of the search process.
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     offers:
+ *                       type: array
+ *                       items:
  *                         type: number
- *                         description: The ID of the offer.
+ *                       description: An array of offer IDs.
  *       400:
  *         description: Invalid request, some required fields are missing.
  *       401:
@@ -140,13 +144,35 @@ export default createApiRoute<Request, Response>(
         name: "GET",
         authLevel: AuthLevel.STUDENT
     }],
-    (data) => (data.categoryID !== undefined, data.cityID !== undefined, data.name !== undefined, data.description !== undefined),
-    async (connection, data, method) => {
-        switch (method) {
+    (data) => true,
+    async (connection, data, req) => {
+        switch (req.method) {
             case "POST":
-                return await addOffer(connection, data);
+                if (data.categoryID == undefined || data.cityID == undefined || data.name == undefined || data.description == undefined) {
+                    throw new Error("Invalid request");
+                }
+                await addOffer(connection, data);
+
+                return {
+                    message: "Successfully added an offer"
+                };
             case "GET":
-                return await searchOffers(connection, data);
+                data = req.query as unknown as Request;
+                if (data.teacherID == undefined && data.search == undefined && data.cityID == undefined) {
+                    throw new Error("Invalid request");
+
+                }
+                console.log("aa");
+                console.log(data);
+                const offers = await searchOffers(connection, data);
+                return {
+                    message: "Successfully found offers",
+                    data: {
+                        offers: offers
+                    }
+                };
         }
+
+        throw new Error("Invalid method");
     }
 );
