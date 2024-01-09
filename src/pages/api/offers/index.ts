@@ -178,12 +178,6 @@ export default createApiRoute<Request, Response>(
                 };
             case "GET":
                 data = req.query as unknown as Request;
-                if (data.teacherID == undefined && data.search == undefined && data.cityID == undefined) {
-                    throw new Error("Invalid request");
-
-                }
-                console.log("aa");
-                console.log(data);
                 const offers = await searchOffers(connection, data);
                 return {
                     message: "Successfully found offers",
