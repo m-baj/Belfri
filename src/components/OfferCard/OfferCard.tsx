@@ -3,6 +3,7 @@ import { Card, Statistic, Typography, Row, Col, Avatar } from "antd";
 import { gold } from "@ant-design/colors";
 import { CarOutlined, HomeOutlined, LaptopOutlined, StarOutlined } from "@ant-design/icons";
 import { router } from "next/client";
+import { useRouter } from "next/router";
 export interface OfferData {
     offer_id: number;
     teacher_id: number;
@@ -27,11 +28,12 @@ export interface OfferFormProps {
 }
 
 export default function OfferCard(props: OfferFormProps) {
+    const router = useRouter();
     return (
         <Card
             hoverable
             // style={{ marginBottom: 15, height: 194 }}
-            // onClick={() => router.push(`/offer/${props.offer.offer_id}`)} -> Narazie z tym nie działa
+            onClick={() => router.push(`/login`)}
         >
             <Row>
                 <Col span={13}>
@@ -86,13 +88,6 @@ export default function OfferCard(props: OfferFormProps) {
                                         fontSize: 14.6,
                                     }}
                                 >
-                                    &nbsp;
-                                    <Typography.Text
-                                        type="secondary"
-                                        style={{ fontSize: 12.5 }}
-                                    >
-                                        ({props.offer.rating})
-                                    </Typography.Text>
                                 </div>
                             }
                         />

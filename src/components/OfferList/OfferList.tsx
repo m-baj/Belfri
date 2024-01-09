@@ -8,7 +8,7 @@ import axios from "axios";
 
 export default function OfferList() {
     const [loading, setLoading] = useState<boolean>(false);
-    const [offers, setOffers] = useState<OfferData[]>([]);
+    const [offer_ids, setOffers] = useState<number>([]);
 
     const loadMoreData = () => {
         if (loading) {
@@ -27,7 +27,7 @@ export default function OfferList() {
         <InfiniteScroll
             dataLength={offers.length}
             next={loadMoreData}
-            hasMore={offers.length < 5}
+            hasMore={offers.length < 6}
             loader={<h4>Loading...</h4>}
             endMessage={<Divider plain>It is all, nothing more 🤐</Divider>}
             >

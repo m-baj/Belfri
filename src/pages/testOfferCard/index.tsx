@@ -1,12 +1,13 @@
 import OfferCard from "@/components/OfferCard/OfferCard";
 import { OfferData, TeacherData, OfferFormProps } from "@/components/OfferCard/OfferCard";
 import { Flex } from "antd";
+import axios from "axios";
 
 const testOffer: OfferData = {
     offer_id: 1,
-    teacher_id: 2,
-    category_id: 3,
-    city_id: 4,
+    teacher_id: 1,
+    category_id: 1,
+    city_id: 1,
     name: "Test Offer",
     description: "Oferuję korepetycje z matematyki dla uczniów szkół" +
         " podstawowych i średnich. Posiadam doświadczenie w nauczaniu " +
@@ -18,7 +19,7 @@ const testOffer: OfferData = {
 };
 const testTeacher: TeacherData = {
     teacher_id: 1,
-    user_id: 2,
+    user_id: 8,
     iban_number: "Test IBAN",
     phone_number: "Test Phone Number",
     contract: "Test Contract",
@@ -30,10 +31,16 @@ const testOfferFormProps: OfferFormProps = {
     teacher: testTeacher,
 };
 
+// const testAxiosOfferFromProps: OfferFormProps = {
+//     offer: axios.get("/api/offers/1"),
+//     teacher: axios.get("/api/teachers/1"),
+// }
+
+
 export default function TestOfferForm() {
     return (
-        <Flex justify="center" align="center" style={{ height: "100vh", width: "50Svh" }}>
+        <Flex justify="center" align="center" style={{ height: "100vh", width: "50vh" }}>
                 <OfferCard {...testOfferFormProps} />
         </Flex>
-    );
+);
 }
