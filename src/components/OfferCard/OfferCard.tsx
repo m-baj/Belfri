@@ -1,46 +1,82 @@
-import React from 'react';
-import { Card, Statistic, Typography, Row, Col, Avatar } from "antd";
-import { gold } from "@ant-design/colors";
-import { CarOutlined, HomeOutlined, LaptopOutlined, StarOutlined } from "@ant-design/icons";
-import { router } from "next/client";
-import { useRouter } from "next/router";
-export interface OfferData {
-    offer_id: number;
-    teacher_id: number;
-    category_id: number;
-    city_id: number;
-    name: string;
-    description: string;
-    rating: number;
+import { Card, Typography, Row, Col, Avatar, Statistic, message, Skeleton } from "antd";
+import { StarOutlined } from '@ant-design/icons';
+import axios from 'axios';
+import { useRouter } from 'next/router';
+import { useEffect, useState } from 'react';
+
+interface OfferData {
+    title?: string;
+    description?: string;
+    teacherID?: number;
+    rating?: number;
+    name?: string;
+    surname?: string;
+    picture?: string
 }
 
-export interface TeacherData {
-    teacher_id: number;
-    user_id: number;
-    iban_number: string;
-    phone_number: string;
-    contract: string;
-    profile_picture: Buffer;
-}
-export interface OfferFormProps {
-    offer: OfferData;
-    teacher: TeacherData;
+export interface OfferCardProps {
+    id: number;
 }
 
-export default function OfferCard(props: OfferFormProps) {
+export default function OfferCard(props: OfferCardProps) {
     const router = useRouter();
+    const [offer, setOffer] = useState<OfferData>();
+    const [loading, setLoading] = useState<boolean>(true);
+
+    const loadData = async () => {
+        console.log("loading data");
+        try {
+            console.log(props.id);
+            const offerResponse = await axios.get(`/api/offers/${props.id}`, { withCredentials: true, timeout: 5000  });
+            console.log(offerResponse.data);
+            const url = `/api/teacher/${offerResponse.data.data.teacherID}`
+            console.log(url);
+            const teacherResponse = await axios.get(url, { withCredentials: true, timeout: 5000 });
+            console.log(teacherResponse.data);
+
+            const newOffer: OfferData = {
+                title: offerResponse.data.data.name,
+                description: offerResponse.data.data.description,
+                teacherID: offerResponse.data.data.teacherID,
+                rating: teacherResponse.data.data.rating,
+                name: teacherResponse.data.data.name,
+                surname: teacherResponse.data.data.surname,
+                picture: teacherResponse.data.data.profilePicture,
+            };
+
+            return newOffer;
+        } catch (err: any) {
+            console.log(err);
+            message.error(`Failed to load offers: ${err.message}`);
+        }
+    };
+
+    useEffect(() => {
+        if (!offer && loading) {
+            setLoading(false);
+            console.log("loading");
+            loadData().then((newOffer) => {
+                setOffer(newOffer);
+            }).catch(
+                (err) => {
+                    console.log(err);
+                    message.error(`Failed to load offers: ${err.message}`);
+                }
+            )
+        }
+    }, [props.id, loading]);
+
+    if (!offer) {
+        // You can render a loading state here if needed
+        return <Skeleton active/>;
+    }
+
     return (
-        <Card
-            hoverable
-            // style={{ marginBottom: 15, height: 194 }}
-            onClick={() => router.push(`/login`)}
-        >
+        <Card hoverable onClick={() => router.push(`/login`)}>
             <Row>
                 <Col span={13}>
                     <Row>
-                        <Typography.Title level={3}>
-                            {props.offer.name} &nbsp;
-                        </Typography.Title>
+                        <Typography.Title level={3}>{offer.title} &nbsp;</Typography.Title>
                     </Row>
                     <Row
                         style={{
@@ -49,9 +85,7 @@ export default function OfferCard(props: OfferFormProps) {
                             height: 110,
                         }}
                     >
-                        <Typography.Text type="secondary">
-                            {props.offer.description}
-                        </Typography.Text>
+                        <Typography.Text type="secondary">{offer.description}</Typography.Text>
                     </Row>
                     <Row></Row>
                 </Col>
@@ -62,7 +96,8 @@ export default function OfferCard(props: OfferFormProps) {
                             transform: 'translate(25%, 0)',
                         }}
                     >
-                        <Avatar size={64} src={`data:image/jpeg;base64,${props.teacher.profile_picture.toString('base64')}`} />                        <Typography.Text
+                        <Avatar size={64} icon={<img src={`data:image/png;base64,${offer.picture}`}  alt={""}/> }/>
+                        <Typography.Text
                             strong
                             style={{
                                 marginTop: 8,
@@ -70,26 +105,17 @@ export default function OfferCard(props: OfferFormProps) {
                                 whiteSpace: 'nowrap',
                             }}
                         >
-                            {props.teacher.user_id}
+                            {offer.name}
                         </Typography.Text>
                         <Statistic
                             valueStyle={{
                                 fontSize: 20,
-                                color: gold[4],
+                                color: 'gold',
                                 whiteSpace: 'nowrap',
                             }}
-                            value={props.offer.rating}
+                            value={offer.rating}
                             prefix={<StarOutlined />}
-                            suffix={
-                                <div
-                                    style={{
-                                        display: 'flex',
-                                        alignContent: 'center',
-                                        fontSize: 14.6,
-                                    }}
-                                >
-                                </div>
-                            }
+                            suffix={<div style={{ display: 'flex', alignContent: 'center', fontSize: 14.6 }}></div>}
                         />
                     </div>
                 </Col>

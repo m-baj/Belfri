@@ -83,13 +83,16 @@ export default createApiRoute<{}, Response>(
     }],
     (data) => true,
     async (connection, data, req) => {
+        console.log("Fetching teacher");
         const { id } = req.query;
+
         if (typeof id !== "string") throw new Error("Invalid ID");
         const teacherID = parseInt(id);
         if (isNaN(teacherID)) throw new Error("Invalid ID");
 
+        console.log("Running teacher");
         const teacher = await getTeacherById(connection, teacherID);
-
+        console.log("Returning teacher");
         return {
             message: "Successfully fetched teacher",
             data: {

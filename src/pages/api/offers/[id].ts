@@ -186,15 +186,15 @@ export default createApiRoute<Request, Response>(
     (data) => true,
     async (connection, data, req) => {
         const offerID = req.query.id as unknown as number;
+        console.log("api call");
         if (offerID == undefined) {
-            return {
-                status: 400,
-                message: "Invalid request"
-            };
+            throw new Error("Invalid request");
         }
         switch (req.method) {
             case "GET":
+                console.log("qqqq");
                 const offer = await getSingleOffer(connection, offerID);
+                console.log("hhhh")
                 return {
                     message: "Successfully retrieved an offer",
                     data: offer
