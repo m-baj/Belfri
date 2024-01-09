@@ -1,6 +1,7 @@
 import { createApiRoute } from "@/utils/api/createApiRoute";
 import { sendEmail } from "@/utils/etc/email/sendEmail";
 import { activationEmailTemplate, generateEmailText } from "@/utils/etc/email/generateEmailText";
+import { AuthLevel } from "@/utils/etc/AuthLevel";
 
 interface ActivationEmailData {
     name: string;
@@ -57,7 +58,7 @@ interface ActivationEmailData {
  */
 
 export default createApiRoute<ActivationEmailData, { message: string }>(
-    ["POST"],
+    [{ name: "POST", authLevel: AuthLevel.GUEST }],
     (data) => data.name !== undefined && data.email !== undefined && data.activation_token !== undefined,
     async (connection, data) => {
         const email_contents = await generateEmailText(activationEmailTemplate, {
