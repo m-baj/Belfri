@@ -50,6 +50,8 @@ export default class Connection {
     }
 
     public isAuthorized(leastLevel: AuthLevel = AuthLevel.STUDENT): boolean {
+        console.log(this.authLevel);
+        console.log(leastLevel);
         return this.authLevel >= leastLevel;
     }
 
