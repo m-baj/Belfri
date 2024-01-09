@@ -10,6 +10,8 @@ interface Request {
     search?: string;
     cityID?: number;
     categoryID?: number;
+    first?: number;
+    count?: number;
 }
 
 interface Response {
@@ -46,6 +48,18 @@ interface Response {
  *           type: number
  *         required: false
  *         description: The ID of the category.
+ *       - in: query
+ *         name: first
+ *         schema:
+ *           type: number
+ *         required: false
+ *         description: The index of the first teacher to return.
+ *       - in: query
+ *         name: count
+ *         schema:
+ *           type: number
+ *         required: false
+ *         description: The number of teachers to return.
  *     responses:
  *       200:
  *         description: Successfully found teachers
