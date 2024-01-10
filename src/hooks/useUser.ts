@@ -24,6 +24,7 @@ interface useUserReturn {
     token: string | null;
     username: string | null;
     loading: boolean;
+    auth: AuthLevel;
 }
 
 export function useUser({
@@ -34,6 +35,7 @@ export function useUser({
     const [token, setToken] = useState<string | null>(null);
     const [username, setUsername] = useState<string | null>(null);
     const [loading, setLoading] = useState(true);
+    const [auth, setAuth] = useState<AuthLevel>(AuthLevel.GUEST);
     const router = useRouter();
 
     useEffect(() => {
@@ -58,6 +60,7 @@ export function useUser({
 
                 setToken(sessionToken);
                 setUsername(sessionUsername);
+                setAuth(parseInt(sessionAuthLevel));
 
                 axios.get("/api/user/check-auth", { withCredentials: true }).then((res) => {
                     if (res.status === 200) {
@@ -96,5 +99,5 @@ export function useUser({
         }
     }, [token, username, router, redirectTo, loggedIn, requiredAuthLevel]);
 
-    return { token, username, loading };
+    return { token, username, loading, auth };
 }

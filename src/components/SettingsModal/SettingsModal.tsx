@@ -1,5 +1,8 @@
 import React from "react";
 import { Modal, Button } from "antd";
+import { useRouter } from "next/router";
+import { useUser } from "@/hooks/useUser";
+import { AuthLevel } from "@/utils/etc/AuthLevel";
 
 interface ModalProps {
     open: boolean;
@@ -7,6 +10,8 @@ interface ModalProps {
 }
 
 export default function SettingsModal(props: ModalProps) {
+    const router = useRouter();
+    const { auth } = useUser();
     return (
         <Modal
             open={props.open}
@@ -15,16 +20,24 @@ export default function SettingsModal(props: ModalProps) {
             footer={null}
             width={300}
         >
+            {auth && auth >= AuthLevel.TUTOR ? (<>
+                <Button
+                    onClick={() => {
+                        router.push("/createOffer");
+                        props.setOpen(false);
+                    }}
+                >
+                    Add Offer
+                </Button> <br /><br /></>) : null}
             <Button
                 type="primary"
                 onClick={() => {
-                    if (typeof window !== "undefined") {
-                        window.location.href = "/logout";
-                    }
+                    router.push("/logout");
+                    props.setOpen(false);
                 }}
             >
                 Logout
             </Button>
         </Modal>
-    )
+    );
 }
