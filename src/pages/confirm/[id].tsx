@@ -6,12 +6,14 @@ import { useUser } from "@/hooks/useUser";
 import { AuthLevel } from "@/utils/etc/AuthLevel";
 
 export default function Accept() {
-    useUser({
+    const { loading } = useUser({
         requiredAuthLevel: AuthLevel.TUTOR
     });
     const router = useRouter();
     const id = router.query.id;
     useEffect(() => {
+        if (loading) return;
+        if (id == undefined) return;
         axios
             .post("/api/lesson/confirm/", {
                 lessonID: id
@@ -25,6 +27,6 @@ export default function Accept() {
             }).finally(() => {
             router.push("/");
         });
-    }, [router]);
+    }, [router, loading, id]);
     return <></>;
 }
