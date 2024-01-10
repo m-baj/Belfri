@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import { Button, Input, message, Modal } from "antd";
 import { CreditCardOutlined } from "@ant-design/icons";
 import { blue } from "@ant-design/colors";
@@ -8,12 +8,15 @@ interface ModalProps {
     open: boolean;
     setOpen: (open: boolean) => void;
 }
+
 export default function CreditsCodeModal(props: ModalProps) {
-    const [creditsCode, setCreditsCode] = React.useState<string>('');
+    const [creditsCode, setCreditsCode] = React.useState<string>("");
 
     const handleOk = async () => {
         try {
-            const response = await axios.post("/api/credits/claim", { creditsCode });
+            const response = await axios.put("/api/credits/claim", {
+                token: creditsCode
+            }, { withCredentials: true });
             console.log("API response", response.data);
 
             message.success("Credits claimed successfully!");
@@ -33,27 +36,27 @@ export default function CreditsCodeModal(props: ModalProps) {
     };
 
     return (
-            <Modal
-                open={props.open}
-                title="Add credits code"
-                onOk={handleOk}
-                onCancel={handleCancel}
-                footer={[
-                    <Button key="back" size='small' onClick={handleCancel}>
-                        Return
-                    </Button>,
-                    <Button key="submit" type="primary" size='small' onClick={handleOk}>
-                        Submit
-                    </Button>
-                ]}
-                width={300}
-            >
-                <Input
-                    placeholder="Enter your credits code"
-                    prefix={<CreditCardOutlined style={{color: blue[4]}}/>}
-                    value={creditsCode}
-                    onChange={(e) => setCreditsCode(e.target.value)}
-                />
-            </Modal>
+        <Modal
+            open={props.open}
+            title="Add credits code"
+            onOk={handleOk}
+            onCancel={handleCancel}
+            footer={[
+                <Button key="back" size="small" onClick={handleCancel}>
+                    Return
+                </Button>,
+                <Button key="submit" type="primary" size="small" onClick={handleOk}>
+                    Submit
+                </Button>
+            ]}
+            width={300}
+        >
+            <Input
+                placeholder="Enter your credits code"
+                prefix={<CreditCardOutlined style={{ color: blue[4] }} />}
+                value={creditsCode}
+                onChange={(e) => setCreditsCode(e.target.value)}
+            />
+        </Modal>
     );
 };
