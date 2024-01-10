@@ -11,7 +11,7 @@ interface RegistrationData {
     dateOfBirth: Date;
     iban: string;
     phoneNumber: string;
-    profilePictureUrl: string;
+    profilePictureBase64: string;
 }
 
 interface RegistrationResponse {
@@ -59,9 +59,9 @@ interface RegistrationResponse {
  *               phoneNumber:
  *                 type: string
  *                 description: The teacher's phone number.
- *               profilePictureUrl:
+ *               profilePictureBase64:
  *                 type: string
- *                 description: The teacher's profile picture url.
+ *                 description: The teacher's profile picture, encoded in base64.
  *     responses:
  *       200:
  *         description: The teacher has been successfully registered, and an activation token is returned.
@@ -84,13 +84,19 @@ interface RegistrationResponse {
  *         description: An error occurred while connecting to the database or during the registration process.
  */
 
+export const config = {
+    api: {
+        bodyParser: {
+            sizeLimit: "4mb"
+        }
+    }
+};
+
 export default createApiRoute<RegistrationData, RegistrationResponse>(
     [{ name: "POST", authLevel: AuthLevel.GUEST }],
-    (data) => data.name !== undefined && data.surname !== undefined && data.username !== undefined && data.email !== undefined && data.passHash !== undefined && data.dateOfBirth !== undefined && data.iban !== undefined && data.phoneNumber !== undefined && data.profilePictureUrl !== undefined,
+    (data) => data.name !== undefined && data.surname !== undefined && data.username !== undefined && data.email !== undefined && data.passHash !== undefined && data.dateOfBirth !== undefined && data.iban !== undefined && data.phoneNumber !== undefined && data.profilePictureBase64 !== undefined,
     async (connection, data) => {
-        // profile picture URL to blob
-        const response = await fetch(data.profilePictureUrl);
-        const blob = new Buffer(await response.arrayBuffer());
+        const blob = Buffer.from(data.profilePictureBase64, "base64");
 
         const activation_token = await registerTeacher(
             connection,
@@ -111,3 +117,4 @@ export default createApiRoute<RegistrationData, RegistrationResponse>(
         };
     }
 );
+
