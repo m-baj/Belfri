@@ -8,7 +8,9 @@ import { OFFERS_TO_GENERATE, OFFERS_TO_GENERATE_ON_SCROLL } from "@/components/O
 interface OfferListProps {
     compact?: boolean;
     teacherID?: number;
+    skip?: number;
 }
+
 // To use this component, you need to pass in a teacherID prop,
 // which is the ID of the teacher whose offers you want to display.
 // If you want to display all offers, pass in compact={false} instead.
@@ -24,7 +26,7 @@ export default function OfferList(props: OfferListProps) {
 
         setLoading(true);
 
-        if(props.compact){
+        if (props.compact) {
             axios.get(`/api/offers?teacherID=${props.teacherID}`, { withCredentials: true })
 
                 .then((response) => {
@@ -52,9 +54,7 @@ export default function OfferList(props: OfferListProps) {
 
                     setLoading(false);
                 });
-        }
-
-        if(!props.compact) {
+        } else {
             axios.get(`/api/offers?first=${offerIDs.length}&count=${OFFERS_TO_GENERATE}`, { withCredentials: true })
                 .then((response) => {
                     const newOfferIDs = response.data.data.offers;
@@ -89,10 +89,10 @@ export default function OfferList(props: OfferListProps) {
     const loadMoreButton = hasMoreOffers ? (
         <div
             style={{
-                textAlign: 'center',
+                textAlign: "center",
                 marginTop: 12,
                 height: 32,
-                lineHeight: '32px',
+                lineHeight: "32px"
             }}
         >
             <Button onClick={loadMoreData}>Load More</Button>
@@ -100,43 +100,28 @@ export default function OfferList(props: OfferListProps) {
     ) : (
         <div
             style={{
-                textAlign: 'center',
+                textAlign: "center",
                 marginTop: 12,
                 height: 32,
-                lineHeight: '32px',
+                lineHeight: "32px"
             }}
         >
             <Button disabled={true}>No more offers</Button>
         </div>
-    )
+    );
 
-    if (!props.compact) {
-        return (
-            <>
-                <List
-                    dataSource={offerIDs}
-                    loadMore={loadMoreButton}
-                    renderItem={(item) => (
+    return (
+        <>
+            <List
+                dataSource={offerIDs}
+                loadMore={props.compact ? undefined : loadMoreButton}
+                renderItem={(item) => (item == props.skip ? <List.Item key={item} /> :
                         <List.Item key={item}>
-                            <OfferCard id={item} compact={false} />
+                            <OfferCard id={item} compact={props.compact} />
                         </List.Item>
-                    )}
-                />
-            </>
-        );
-    }
-    if (props.compact) {
-        return (
-            <>
-                <List
-                    dataSource={offerIDs}
-                    renderItem={(item) => (
-                        <List.Item key={item}>
-                            <OfferCard id={item} compact={true}  />
-                        </List.Item>
-                    )}
-                />
-            </>
-        );
-    }
+                )}
+            />
+        </>
+    );
+
 }

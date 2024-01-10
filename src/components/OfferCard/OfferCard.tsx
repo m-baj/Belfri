@@ -18,6 +18,7 @@ export interface OfferCardProps {
     id: number;
     compact?: boolean;
 }
+
 // To use this component, you need to pass in na id prop,
 // which is the ID of the offer you want to display.
 // If you want to display a compact version of the offer, pass in compact={true} instead.
@@ -30,10 +31,40 @@ export default function OfferCard(props: OfferCardProps) {
     const loadData = async () => {
         if (props.compact) {
             try {
-                const offerResponse = await axios.get(`/api/offers/${props.id}`, { withCredentials: true, timeout: 5000 });
+                const offerResponse = await axios.get(`/api/offers/${props.id}`, {
+                    withCredentials: true,
+                    timeout: 5000
+                });
 
                 const newOffer: OfferData = {
                     title: offerResponse.data.data.name,
+                    description: offerResponse.data.data.description
+                };
+
+                return newOffer;
+            } catch (err: any) {
+                console.log(err);
+                message.error(`Failed to load offers: ${err.message}`);
+            }
+        } else {
+            try {
+                const offerResponse = await axios.get(`/api/offers/${props.id}`, {
+                    withCredentials: true,
+                    timeout: 5000
+                });
+                const teacherResponse = await axios.get(`/api/teacher/${offerResponse.data.data.teacherID}`, {
+                    withCredentials: true,
+                    timeout: 5000
+                });
+
+                const newOffer: OfferData = {
+                    title: offerResponse.data.data.name,
+                    description: offerResponse.data.data.description,
+                    teacherID: offerResponse.data.data.teacherID,
+                    rating: teacherResponse.data.data.rating,
+                    name: teacherResponse.data.data.name,
+                    surname: teacherResponse.data.data.surname,
+                    picture: teacherResponse.data.data.profilePicture
                 };
 
                 return newOffer;
@@ -42,30 +73,7 @@ export default function OfferCard(props: OfferCardProps) {
                 message.error(`Failed to load offers: ${err.message}`);
             }
         }
-        else{
-        try {
-            const offerResponse = await axios.get(`/api/offers/${props.id}`, { withCredentials: true, timeout: 5000 });
-            const teacherResponse = await axios.get(`/api/teacher/${offerResponse.data.data.teacherID}`, {
-                withCredentials: true,
-                timeout: 5000
-            });
-
-            const newOffer: OfferData = {
-                title: offerResponse.data.data.name,
-                description: offerResponse.data.data.description,
-                teacherID: offerResponse.data.data.teacherID,
-                rating: teacherResponse.data.data.rating,
-                name: teacherResponse.data.data.name,
-                surname: teacherResponse.data.data.surname,
-                picture: teacherResponse.data.data.profilePicture
-            };
-
-            return newOffer;
-        } catch (err: any) {
-            console.log(err);
-            message.error(`Failed to load offers: ${err.message}`);
-        }
-    }};
+    };
 
     useEffect(() => {
         if (!offer && loading) {
@@ -89,19 +97,28 @@ export default function OfferCard(props: OfferCardProps) {
     if (props.compact) {
         return (
             <Card hoverable onClick={() => router.push(`/offers/${props.id}`)}
-            style={{ width: '100%'  }}
+                  style={{ width: "100%" }}
             >
                 <Row>
-                            <Typography.Title level={4}>{offer.title} &nbsp;</Typography.Title>
+                    <Typography.Title level={4}>{offer.title} &nbsp;</Typography.Title>
+                </Row>
+                <Row
+                    style={{
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        height: 110
+                    }}
+                >
+                    <Typography.Text type="secondary">{offer.description}</Typography.Text>
                 </Row>
             </Card>
         );
     }
 
-    if(!props.compact) {
+    if (!props.compact) {
         return (
             <Card hoverable onClick={() => router.push(`/offers/${props.id}`)}
-                  style={{ width: '100%' }}
+                  style={{ width: "100%" }}
             >
                 <Row>
                     <Col span={13}>
