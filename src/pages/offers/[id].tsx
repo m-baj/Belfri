@@ -28,7 +28,7 @@ interface AllTutorsOffers {
 
 export default function Loader() {
     const { loading } = useUser({});
-
+    const [fetching, setFetching] = useState<boolean>(true);
     const [offerDescriptionData, setDescriptionData] = useState<OfferDescriptionData>({
         name: "",
         description: "",
@@ -40,6 +40,7 @@ export default function Loader() {
         surname: "",
         pictureURL: ""
     });
+
 
     const router = useRouter();
     const { id } = router.query;
@@ -95,6 +96,8 @@ export default function Loader() {
                 teacherID: offerResponse.data.data.teacherID
             });
 
+            setFetching(false);
+
         } catch (err: any) {
             console.log(err);
             message.error(`${err.message}`);
@@ -102,12 +105,13 @@ export default function Loader() {
     };
 
     useEffect(() => {
+        if (loading) return;
         if (id) {
             loadData();
         }
-    }, [id]);
+    }, [id, loading]);
 
-    if (loading) return <LoadingComponent />;
+    if (loading || fetching) return <LoadingComponent />;
     return (
         <div>
             <Row>
