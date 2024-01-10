@@ -113,13 +113,10 @@ export default function OfferList(props: OfferListProps) {
     return (
         <>
             <List
-                split={false}
                 dataSource={offerIDs}
                 loadMore={props.compact ? undefined : loadMoreButton}
                 renderItem={(item) => (item == props.skip ? <List.Item key={item} /> :
-                        <List.Item
-
-                            key={item}>
+                        <List.Item key={item}>
                             <OfferCard id={item} compact={props.compact} />
                         </List.Item>
                 )}
