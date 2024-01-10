@@ -79,7 +79,6 @@ export default function Loader() {
     const loadData = async () => {
         try {
             const offerResponse = await axios.get(`/api/offers/${id}`, { withCredentials: true, timeout: 5000 });
-            console.log(offerResponse);
             const teacherResponse = await axios.get(`/api/teacher/${offerResponse.data.data.teacherID}`, {
                 withCredentials: true,
                 timeout: 5000
@@ -143,7 +142,7 @@ export default function Loader() {
                     <div style={{ transform: "translateY(14%)" }}>
                         <TutorInfo pictureURL={tutorData.pictureURL} name={tutorData.name}
                                    surname={tutorData.surname} />
-                        <OfferList teacherID={offerDescriptionData.teacherID} compact={true} />
+                        <OfferList teacherID={offerDescriptionData.teacherID} compact={true} skip={Number(id)} />
                     </div>
                 </Col>
             </Row>
