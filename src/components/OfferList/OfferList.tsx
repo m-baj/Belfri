@@ -9,6 +9,9 @@ interface OfferListProps {
     compact?: boolean;
     teacherID?: number;
 }
+// To use this component, you need to pass in a teacherID prop,
+// which is the ID of the teacher whose offers you want to display.
+// If you want to display all offers, pass in compact={false} instead.
 export default function OfferList(props: OfferListProps) {
     const [loading, setLoading] = useState<boolean>(false);
     const [offerIDs, setOfferIDs] = useState<number[]>([]);
@@ -127,7 +130,6 @@ export default function OfferList(props: OfferListProps) {
             <>
                 <List
                     dataSource={offerIDs}
-                    // loadMore={loadMoreButton}
                     renderItem={(item) => (
                         <List.Item key={item}>
                             <OfferCard id={item} compact={true}  />

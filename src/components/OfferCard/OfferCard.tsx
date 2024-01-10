@@ -18,7 +18,10 @@ export interface OfferCardProps {
     id: number;
     compact?: boolean;
 }
-
+// To use this component, you need to pass in a id prop,
+// which is the ID of the offer you want to display.
+// If you want to display a compact version of the offer, pass in compact={true} instead.
+// Else if you want to display a full version of the offer, pass in compact={false} instead.
 export default function OfferCard(props: OfferCardProps) {
     const router = useRouter();
     const [offer, setOffer] = useState<OfferData>();
