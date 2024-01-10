@@ -20,8 +20,25 @@ const options = [
     },
   ];
 
-export default function PageHeader() {
+interface CityOption {
+    value: string;
+    label: string;
+}
+
+interface SubjectOption {
+    value: string;
+    label: string;
+}
+
+interface PageHeaderProps {
+    cities: CityOption[];
+    subjects: SubjectOption[];
+}
+
+
+export default function PageHeader(props: PageHeaderProps) {
     const [screenWidth, setScreenWidth] = useState<number>(0);
+
     useEffect(() => {
         const handleResize = () => {
             setScreenWidth(window.innerWidth);
@@ -70,8 +87,8 @@ export default function PageHeader() {
                 </Typography.Title>
                 <Flex style={{ width: '40%' }}>
                     <Space.Compact style={{ width: '100%' }}>
-                        <Select showSearch placeholder='Select city' options={options} style={{ width: '35%' }} />
-                        <Search placeholder='Enter subject' onSearch={value => console.log(value)} style={{ width: '65%' }} />
+                        <Select showSearch placeholder='Select city' options={props.cities} style={{ width: '35%' }} />
+                        <Select showSearch placeholder='Select subject' options={props.subjects} style={{ width: '65%' }} />
                     </Space.Compact>
                 </Flex>
                 <Flex justify='space-around' style={{ width: '15%' }}>
@@ -114,8 +131,8 @@ export default function PageHeader() {
                 </Flex>
                 <Flex justify='center'>
                     <Space.Compact style={{ width: '85%' }}>
-                        <Select showSearch placeholder='Select city' options={options} style={{ width: '30%' }} />
-                        <Search placeholder='Enter subject' onSearch={value => console.log(value)} style={{ width: '70%' }} />
+                        <Select showSearch placeholder='Select city' options={props.cities} style={{ width: '30%' }} />
+                        <Select showSearch placeholder='Select subject' options={props.subjects} style={{ width: '70%' }} />
                     </Space.Compact>
                 </Flex>
                 <CreditsCodeModal open={isCreditsCodeInputVisible} setOpen={setIsCreditsCodeInputVisible}/>
