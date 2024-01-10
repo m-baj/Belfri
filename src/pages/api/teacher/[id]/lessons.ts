@@ -4,7 +4,7 @@ import { getLessons } from "@/utils/database/queries/teacher/getLessons/getLesso
 
 interface Lesson {
     lessonID: number;
-    date: Date;
+    date: string;
     duration: number;
 }
 
@@ -86,6 +86,15 @@ export default createApiRoute<{}, Response>(
 
 
         const lessons = await getLessons(connection, teacherID);
+
+        // convert date to string
+
+        console.log(lessons);
+
+        for (let i = 0; i < lessons.length; i++) {
+            lessons[i].date = lessons[i].date.toString();
+        }
+
         return {
             message: "Successfully fetched teacher",
             lessons: lessons

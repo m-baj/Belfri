@@ -1,9 +1,10 @@
-import { Calendar, Flex, Select } from "antd";
+import { Button, Calendar, Flex, Input, InputNumber, message, Select, Space } from "antd";
 import axios from "axios";
 import { useEffect, useState } from "react";
 
 interface TeacherData {
     TeacherID: number;
+    OfferID: number;
 }
 
 interface LessonTerm {
@@ -11,7 +12,7 @@ interface LessonTerm {
     end: Date;
 }
 
-export default function LessonsCalendar({ TeacherID }: TeacherData) {
+export default function LessonsCalendar({ TeacherID, OfferID }: TeacherData) {
 
     const availableHours = [
         {
@@ -68,15 +69,17 @@ export default function LessonsCalendar({ TeacherID }: TeacherData) {
     const [occupiedHours, setOccupiedHours] = useState<LessonTerm[]>([]);
     const [selectedDate, setSelectedDate] = useState<string>("");
     const [duration, setDuration] = useState<number>(1);
-
+    const [hour, setHour] = useState<number>(8);
 
     const fetchLessons = async () => {
+        console.log("fetching lessons");
         try {
             const response = await axios.get(`/api/teacher/${TeacherID}/lessons`, { withCredentials: true });
             const occupiedHours: LessonTerm[] = [];
-            for (const lesson of response.data.data.lessons) {
+            for (const lesson of response.data.lessons) {
+                console.log(lesson);
                 const date = new Date(lesson.date);
-                const duration = lesson.duration;
+                const duration1 = lesson.duration;
 
                 // floor the date to the nearest hour
                 date.setMinutes(0);
@@ -84,7 +87,7 @@ export default function LessonsCalendar({ TeacherID }: TeacherData) {
                 date.setMilliseconds(0);
 
                 const end = new Date(date);
-                end.setHours(end.getHours() + duration);
+                end.setHours(end.getHours() + duration1);
 
                 occupiedHours.push({
                     start: date,
@@ -92,6 +95,7 @@ export default function LessonsCalendar({ TeacherID }: TeacherData) {
                 });
             }
             setOccupiedHours(occupiedHours);
+            console.log(occupiedHours);
         } catch (err) {
             console.log(err);
         }
@@ -126,22 +130,72 @@ export default function LessonsCalendar({ TeacherID }: TeacherData) {
     };
 
     useEffect(() => {
-        if (isDateSelected) {
-            fetchLessons();
-        }
+
+        fetchLessons();
     }, []);
+
+    const getSelectedDate = () => {
+        const date = new Date(selectedDate);
+        date.setHours(hour + 1);
+        date.setMinutes(0);
+        date.setSeconds(0);
+        date.setMilliseconds(0);
+        return date;
+    };
 
 
     return (
         <Flex vertical>
-            <Calendar mode="month" fullscreen={false} onSelect={
-                (value) => {
-                    console.log(value);
-                    setDateSelected(true);
-                    setSelectedDate(value.format("YYYY-MM-DD"));
-                }
-            } />
-            <Select placeholder="Click on the date first" options={getAvailableHours()} disabled={!isDateSelected} />
+
+            <Space direction={"vertical"}>
+                <Calendar mode="month" fullscreen={false} onSelect={
+                    (value) => {
+                        console.log(value);
+                        setDateSelected(true);
+                        setSelectedDate(value.format("YYYY-MM-DD"));
+                    }
+                } />
+                <Space style={{
+                    width: "100%"
+
+                }}>
+                    <Select placeholder="Click on the date first" options={getAvailableHours()}
+                            disabled={!isDateSelected} value={hour} onChange={
+                        (value) => {
+                            setHour(Number(value));
+                        }
+                    } />
+                    <InputNumber onChange={(value) => setDuration(Number(value))} min={1} max={4} defaultValue={1}
+                                 disabled={!isDateSelected} suffix={"h"} />
+
+
+                </Space>
+                <Button style={{
+                    width: "100%"
+
+                }} onClick={
+
+                    async () => {
+                        console.log(
+                            getSelectedDate().toISOString()
+                        );
+                        try {
+                            await axios.post(`/api/lesson/schedule`, {
+                                offerID: OfferID,
+                                date: getSelectedDate().toISOString(),
+                                duration: duration
+                            }, { withCredentials: true });
+                            message.success("Successfully scheduled lesson. Wait for confirmaton from the tutor");
+                        } catch (err) {
+                            message.error("Failed to add lesson");
+                            console.log(err);
+                        }
+                    }
+                } type="primary" disabled={!isDateSelected}>Schedule</Button>
+
+            </Space>
+
+
         </Flex>
     );
 }

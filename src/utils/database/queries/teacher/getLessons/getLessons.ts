@@ -20,7 +20,7 @@ export async function getLessons(connection: Connection, teacherID: number) {
         return result.rows.map(row => {
             return {
                 lessonID: row.lesson_id,
-                date: row.date,
+                date: row.DATE,
                 duration: row.duration
             };
         });

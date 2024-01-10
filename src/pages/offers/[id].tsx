@@ -93,7 +93,11 @@ export default function Loader() {
                 }}
                 >
                     <div style={{ transform: "translateY(70px)" }}>
-                        <LessonsCalendar />
+                        <LessonsCalendar OfferID={
+                            Number(id)
+                        } TeacherID={
+                            offerDescriptionData.teacherID
+                        } />
                     </div>
                 </Col>
                 <Col span={12} offset={1}>
