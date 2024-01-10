@@ -9,7 +9,7 @@ interface Method {
 
 export function createApiRoute<Request, Response>(methods: Array<Method>, condition: (data: Request) => boolean, logic: (connection: Connection, data: Request, req: NextApiRequest) => Promise<Response & {
     message: string;
-    status?: number
+    status?: number;
 }>): (req: NextApiRequest, res: NextApiResponse<Response>) => Promise<void> {
 
     type ResponseWithMessage = Response & {
