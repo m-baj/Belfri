@@ -8,7 +8,7 @@ export default function Logout() {
     useEffect(() => {
         const { token } = router.query;
         axios
-            .post("/api/activate", { token })
+            .post("/api/user/activate", { token })
             .then((res) => {
                 message.success(res.data.message);
                 router.push("/login");

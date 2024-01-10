@@ -63,7 +63,6 @@ export function createApiRoute<Request, Response>(methods: Array<Method>, condit
                 if (authLevel > AuthLevel.GUEST) {
 
                     await connection.authorize(req.cookies.token as string);
-                    console.log("ggg");
                     if (!connection.isAuthorized(authLevel)) {
                         throw new Error("Unauthorized");
                     }

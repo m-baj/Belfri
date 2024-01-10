@@ -7,6 +7,8 @@ import { Badge } from "antd";
 import CreditsCodeModal from "@/components/CreditsCodeModal/CreditsCodeModal";
 import SettingsModal from "@/components/SettingsModal/SettingsModal";
 import axios from "axios";
+import { useRouter } from "next/router";
+import Link from "next/link";
 
 const { Search } = Input;
 
@@ -31,9 +33,14 @@ interface SubjectOption {
     label: string;
 }
 
-interface PageHeaderProps {
-    cities: CityOption[];
-    subjects: SubjectOption[];
+interface City {
+    cityID: number;
+    name: string;
+}
+
+interface Subject {
+    categoryID: number;
+    name: string;
 }
 
 
@@ -41,6 +48,9 @@ export default function PageHeader() {
     const [screenWidth, setScreenWidth] = useState<number>(0);
     const [cityOptions, setCityOptions] = useState<CityOption[]>([]);
     const [subjectOptions, setSubjectOptions] = useState<SubjectOption[]>([]);
+    const [city, setCity] = useState<string>("");
+    const [subject, setSubject] = useState<string>("");
+    const router = useRouter();
     const [credits, setCredits] = useState<number>(0);
 
     useEffect(() => {
@@ -62,12 +72,12 @@ export default function PageHeader() {
             console.log(load_cities);
             console.log(load_subjects);
 
-            const newCityOptions = load_cities.map((city: any) => ({
+            const newCityOptions = load_cities.map((city: City) => ({
                 value: city.cityID.toString(),
                 label: city.name
             }));
 
-            const newSubjectOptions = load_subjects.map((subject: any) => ({
+            const newSubjectOptions = load_subjects.map((subject: Subject) => ({
                 value: subject.categoryID.toString(),
                 label: subject.name
             }));
@@ -123,22 +133,41 @@ export default function PageHeader() {
     const [isCreditsCodeInputVisible, setIsCreditsCodeInputVisible] = useState<boolean>(false);
     const [isSettingsModalVisible, setIsSettingsModalVisible] = useState<boolean>(false);
 
+    const handleCityChange = (value: string) => {
+        console.log(value);
+        setCity(value);
+    };
+
+    const handleSearch = (value: string) => {
+        console.log(value);
+        setSubject(value);
+
+        router.push({
+            pathname: "/",
+            query: { search: value, city: city }
+
+        });
+    };
+
     if (screenWidth >= 850) {
         return (
             <Flex justify="space-evenly" align="center"
                   style={{ width: "100%", height: isScrolled ? "70px" : "120px" }}>
-                <Typography.Title style={{ color: blue[4], paddingRight: "3%" }}>
-                    {config.appName}
+                <Typography.Title>
+                    <Link href="/" style={{ color: blue[4] }}>
+                        {config.appName}
+                    </Link>
                 </Typography.Title>
                 <Flex style={{ width: "40%" }}>
                     <Space.Compact style={{ width: "100%" }}>
-                        <Select showSearch placeholder="Select city" options={cityOptions} style={{ width: "35%" }} />
-                        <Search placeholder="Enter subject" onSearch={value => console.log(value)}
+                        <Select showSearch placeholder="Select city" options={cityOptions} style={{ width: "35%" }}
+                                onChange={handleCityChange} />
+                        <Search placeholder="Enter subject" onSearch={value => handleSearch(value)}
                                 style={{ width: "65%" }} />
                     </Space.Compact>
                 </Flex>
                 <Flex justify="space-around" style={{ width: "15%" }}>
-                    <Badge showZero count={credits > 0 ? credits : "0"}>
+                    <Badge showZero={true} count={credits}>
                         <Tooltip title="Credits remaining">
                             <Button shape="circle" size="large" icon={<DashboardOutlined />} onClick={() => {
                                 setIsCreditsCodeInputVisible(true);
@@ -159,11 +188,13 @@ export default function PageHeader() {
         return (
             <Flex vertical style={{ marginBottom: "25px" }}>
                 <Flex justify="space-evenly" align="center" style={{ width: "100%", height: "70px" }}>
-                    <Typography.Title style={{ color: blue[4] }}>
-                        {config.appName}
+                    <Typography.Title>
+                        <Link href="/" style={{ color: blue[4] }}>
+                            {config.appName}
+                        </Link>
                     </Typography.Title>
                     <Flex justify="space-between" style={{ width: "25%" }}>
-                        <Badge showZero count={credits > 0 ? credits : "0"}>
+                        <Badge showZero={true} count={credits}>
                             <Tooltip title="hours remaining">
                                 <Button shape="circle" size="large" icon={<DashboardOutlined />} onClick={() => {
                                     setIsCreditsCodeInputVisible(true);
@@ -177,8 +208,9 @@ export default function PageHeader() {
                 </Flex>
                 <Flex justify="center">
                     <Space.Compact style={{ width: "85%" }}>
-                        <Select showSearch placeholder="Select city" options={cityOptions} style={{ width: "30%" }} />
-                        <Search placeholder="Enter subject" onSearch={value => console.log(value)}
+                        <Select showSearch placeholder="Select city" options={cityOptions} style={{ width: "30%" }}
+                                onChange={handleCityChange} />
+                        <Search placeholder="Enter subject" onSearch={value => handleSearch(value)}
                                 style={{ width: "70%" }} />
                     </Space.Compact>
                 </Flex>

@@ -27,7 +27,6 @@ export default function OfferCard(props: OfferCardProps) {
     const router = useRouter();
     const [offer, setOffer] = useState<OfferData>();
     const [loading, setLoading] = useState<boolean>(true);
-
     const loadData = async () => {
         if (props.compact) {
             try {
@@ -35,12 +34,10 @@ export default function OfferCard(props: OfferCardProps) {
                     withCredentials: true,
                     timeout: 5000
                 });
-
                 const newOffer: OfferData = {
                     title: offerResponse.data.data.name,
                     description: offerResponse.data.data.description
                 };
-
                 return newOffer;
             } catch (err: any) {
                 console.log(err);
@@ -56,7 +53,6 @@ export default function OfferCard(props: OfferCardProps) {
                     withCredentials: true,
                     timeout: 5000
                 });
-
                 const newOffer: OfferData = {
                     title: offerResponse.data.data.name,
                     description: offerResponse.data.data.description,
@@ -66,7 +62,6 @@ export default function OfferCard(props: OfferCardProps) {
                     surname: teacherResponse.data.data.surname,
                     picture: teacherResponse.data.data.profilePicture
                 };
-
                 return newOffer;
             } catch (err: any) {
                 console.log(err);
@@ -74,7 +69,6 @@ export default function OfferCard(props: OfferCardProps) {
             }
         }
     };
-
     useEffect(() => {
         if (!offer && loading) {
             setLoading(false);
@@ -88,12 +82,10 @@ export default function OfferCard(props: OfferCardProps) {
             );
         }
     }, [props.id, loading]);
-
     if (!offer) {
         // You can render a loading state here if needed
         return <Skeleton active />;
     }
-
     if (props.compact) {
         return (
             <Card hoverable onClick={() => router.push(`/offers/${props.id}`)}
@@ -114,7 +106,6 @@ export default function OfferCard(props: OfferCardProps) {
             </Card>
         );
     }
-
     if (!props.compact) {
         return (
             <Card hoverable onClick={() => router.push(`/offers/${props.id}`)}
@@ -140,7 +131,7 @@ export default function OfferCard(props: OfferCardProps) {
                         <div
                             style={{
                                 textAlign: "center",
-                                transform: "translate(50%, 25%)"
+                                transform: "translate(25%, 0)"
                             }}
                         >
                             <Avatar size={64} icon={<img src={`data:image/png;base64,${offer.picture}`} alt={""} />} />
