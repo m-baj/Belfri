@@ -1,21 +1,18 @@
 import { Flex, List, Typography } from "antd";
 import { blue } from "@ant-design/colors";
+import { int } from "@es-joy/jsdoccomment";
+import axios from "axios";
+
+interface OtherOffersProps {
+    offersData: int[];
+}
+
+export default function OtherOffers({offersData}: OtherOffersProps) {
+
+    axios
 
 
 
-export default function OtherOfferts() {
-
-    const offersData = [
-            {
-                title: "Matematyka",
-            },
-            {
-                title: "Fizyka",
-            },
-            {
-                title: "Chemia",
-            },
-        ];
     return (
         <Flex vertical style={{justifyContent: "center"}}>
             <Typography.Title style={{color: blue[4]}} level={4}>Other offers</Typography.Title>
