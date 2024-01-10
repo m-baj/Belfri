@@ -58,7 +58,13 @@ export function useUser({
                 setLoading(false);
             } else {
                 if (router.pathname !== "/") {
-                    router.push(redirectTo + "?next=" + router.pathname);
+                    if (router.asPath.includes("[id") || router.query.id) {
+                        if (router.query.id !== undefined) {
+                            router.push(redirectTo + "?next=" + router.asPath);
+                        }
+                    } else {
+                        router.push(redirectTo + "?next=" + router.pathname);
+                    }
                 } else {
                     router.push(redirectTo);
                 }
