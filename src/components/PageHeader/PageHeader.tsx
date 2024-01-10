@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { Flex, Typography, Button, Select, Input, Tooltip, Space } from "antd";
+import { Flex, Typography, Button, Select, Input, Tooltip, Space, message } from "antd";
 import { blue } from "@ant-design/colors";
 import config from "@/configs/app.config";
 import { SettingOutlined, DashboardOutlined } from "@ant-design/icons";
 import { Badge } from "antd";
 import CreditsCodeModal from "@/components/CreditsCodeModal/CreditsCodeModal";
 import SettingsModal from "@/components/SettingsModal/SettingsModal";
+import axios from "axios";
 
 const { Search } = Input;
 
@@ -38,8 +39,40 @@ interface PageHeaderProps {
 
 export default function PageHeader(props: PageHeaderProps) {
     const [screenWidth, setScreenWidth] = useState<number>(0);
+    const [cityOptions, setCityOptions] = useState<CityOption[]>([]);
+    const [subjectOptions, setSubjectOptions] = useState<SubjectOption[]>([]);
+
+    const loadData = async () => {
+        try{
+            const citiesResponse = await axios.get("/api/city", { withCredentials: true});
+            const subjectsResponse = await axios.get("/api/category/search", { withCredentials: true});
+            const load_cities = citiesResponse.data.cities;
+            const load_subjects = subjectsResponse.data.categories;
+            console.log(load_cities);
+            console.log(load_subjects);
+
+            const newCityOptions = load_cities.map((city) => ({
+                value: city.cityID.toString(),
+                label: city.name,
+            }));
+
+            const newSubjectOptions = load_subjects.map((subject) => ({
+                value: subject.categoryID.toString(),
+                label: subject.name,
+            }));
+
+            setCityOptions(newCityOptions);
+            setSubjectOptions(newSubjectOptions);
+            console.log(cityOptions);
+            console.log(subjectOptions);
+        } catch (err: any) {
+            console.log(err);
+            message.error(`Failed to load offers: ${err.message}`);
+        }
+    }
 
     useEffect(() => {
+        loadData();        // loadData();
         const handleResize = () => {
             setScreenWidth(window.innerWidth);
         };
@@ -87,8 +120,8 @@ export default function PageHeader(props: PageHeaderProps) {
                 </Typography.Title>
                 <Flex style={{ width: '40%' }}>
                     <Space.Compact style={{ width: '100%' }}>
-                        <Select showSearch placeholder='Select city' options={props.cities} style={{ width: '35%' }} />
-                        <Select showSearch placeholder='Select subject' options={props.subjects} style={{ width: '65%' }} />
+                        <Select showSearch placeholder='Select city' options={cityOptions} style={{ width: '35%' }} />
+                        <Select showSearch placeholder='Select subject' options={subjectOptions} style={{ width: '65%' }} />
                     </Space.Compact>
                 </Flex>
                 <Flex justify='space-around' style={{ width: '15%' }}>
@@ -131,8 +164,8 @@ export default function PageHeader(props: PageHeaderProps) {
                 </Flex>
                 <Flex justify='center'>
                     <Space.Compact style={{ width: '85%' }}>
-                        <Select showSearch placeholder='Select city' options={props.cities} style={{ width: '30%' }} />
-                        <Select showSearch placeholder='Select subject' options={props.subjects} style={{ width: '70%' }} />
+                        <Select showSearch placeholder='Select city' options={cityOptions} style={{ width: '30%' }} />
+                        <Select showSearch placeholder='Select subject' options={subjectOptions} style={{ width: '70%' }} />
                     </Space.Compact>
                 </Flex>
                 <CreditsCodeModal open={isCreditsCodeInputVisible} setOpen={setIsCreditsCodeInputVisible}/>
