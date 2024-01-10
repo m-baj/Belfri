@@ -131,7 +131,7 @@ export default function OfferCard(props: OfferCardProps) {
                         <div
                             style={{
                                 textAlign: "center",
-                                transform: "translate(25%, 0)"
+                                transform: "translate(50%, 25%)"
                             }}
                         >
                             <Avatar size={64} icon={<img src={`data:image/png;base64,${offer.picture}`} alt={""} />} />
