@@ -30,7 +30,7 @@ export async function respondLesson(connection: Connection, lessonID: number, ac
                                                 FROM OFFERS
                                                 WHERE TEACHER_ID = ${teacher_id})`;
 
-    const lessonData = await connection.execute`SELECT USERS.NAME, USERS.SURNAME, USERS.EMAIL
+    const lessonData = await connection.execute`SELECT USERS.NAME, USERS.SURNAME, USERS.EMAIL, duration
                                                 FROM LESSONS
                                                          JOIN USERS USING (USER_ID)
                                                 WHERE LESSON_ID = ${lessonID}
@@ -90,4 +90,14 @@ export async function respondLesson(connection: Connection, lessonID: number, ac
     });
 
     await sendEmail(userEmail, "Lesson response", emailContent);
+
+    if (!accept) {
+        // pay credits back
+        const duration = lessonData.rows[0].duration;
+
+        await connection.execute`UPDATE credits
+                                 SET current_value = current_value + ${duration}
+                                 WHERE credits_id = (SELECT credits_id FROM users WHERE user_id = ${user_id})`;
+    }
+
 }

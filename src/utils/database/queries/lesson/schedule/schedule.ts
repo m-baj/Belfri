@@ -16,6 +16,26 @@ export async function scheduleLesson(connection: Connection, data: ScheduleData)
 
     const user_id = connection.getUserID();
 
+    const userData = await connection.execute`SELECT USERS.NAME, credits.current_value
+                                              FROM USERS
+                                                       JOIN credits USING (credits_id)
+                                              WHERE USER_ID = ${user_id}
+                                                  FETCH NEXT 1 ROW ONLY`;
+
+    if (!userData || !userData.rows || userData.rows.length == 0) {
+        throw new Error("No user found");
+    }
+
+    const credits = userData.rows[0].current_value;
+
+    if (credits < data.duration) {
+        throw new Error("Not enough credits");
+    }
+
+    await connection.execute`UPDATE credits
+                             SET current_value = current_value - ${data.duration}
+                             WHERE credits_id = (SELECT credits_id FROM users WHERE user_id = ${user_id})`;
+
     const result = await connection.execute`INSERT INTO LESSONS (OFFER_ID, USER_ID, "DATE", DURATION)
                                             VALUES (${data.offerID}, ${user_id}, ${data.date}, ${data.duration})
                                             RETURNING LESSON_ID`;
@@ -37,16 +57,9 @@ export async function scheduleLesson(connection: Connection, data: ScheduleData)
     const teacherName = teacherData.rows[0].name + " " + teacherData.rows[0].surname;
     const teacherEmail = teacherData.rows[0].email;
 
-    const userData = await connection.execute`SELECT USERS.NAME
-                                              FROM USERS
-                                              WHERE USER_ID = ${user_id}
-                                                  FETCH NEXT 1 ROW ONLY`;
-
-    if (!userData || !userData.rows || userData.rows.length == 0) {
-        throw new Error("No user found");
-    }
 
     const userName = userData.rows[0].name;
+
 
     const offerData = await connection.execute`SELECT name
                                                FROM OFFERS
