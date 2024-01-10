@@ -2,7 +2,6 @@ import { useRouter } from "next/router";
 import { useEffect } from "react";
 import jscookie from "js-cookie";
 import axios from "axios";
-import { message } from "antd";
 
 export default function Logout() {
     const router = useRouter();
@@ -19,7 +18,6 @@ export default function Logout() {
                 console.log(err);
                 jscookie.remove("token");
                 jscookie.remove("username");
-                message.error("Error: ", err.response.data.message);
                 router.push("/login");
             });
     }, [router]);
