@@ -100,7 +100,7 @@ export default function OfferCard(props: OfferCardProps) {
 
     if(!props.compact) {
         return (
-            <Card hoverable onClick={() => router.push(`/login`)}
+            <Card hoverable onClick={() => router.push(`/offers/${props.id}`)}
                   style={{ width: '100%' }}
             >
                 <Row>
