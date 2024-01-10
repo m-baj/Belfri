@@ -24,7 +24,7 @@ export default function Home() {
         return (
             <body style={{ margin: 0 }}>
                 <PageHeader />
-                <Typography.Title style={{ textAlign: "center"}}> Search results for {router.query.search}</Typography.Title>
+                <Typography.Title level={2} style={{ textAlign: "center"}}> Search results for {router.query.search}</Typography.Title>
                 <Row>
                     <Col span={12} offset={6}>
                         <OfferList search_or_teacherID={true} search={router.query.search} city={router.query.city}/>
@@ -37,7 +37,7 @@ export default function Home() {
         return (
             <body style={{ margin: 0 }}>
             <PageHeader />
-            <Typography.Title style={{ textAlign: "center", color: blue[4] }}> Latest offers </Typography.Title>
+            <Typography.Title level={2} style={{ textAlign: "center" }}> Latest offers </Typography.Title>
             <Row>
                 <Col span={12} offset={6}>
                     <OfferList />
