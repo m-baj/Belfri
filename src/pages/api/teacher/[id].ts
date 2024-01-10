@@ -99,7 +99,7 @@ export default createApiRoute<{}, Response>(
                 phone: teacher.phone,
                 username: teacher.username,
                 rating: teacher.rating,
-                profilePicture: teacher.profilePicture.toString("base64")
+                profilePicture: teacher.profilePicture ? teacher.profilePicture.toString("base64") : ""
             }
         };
     }

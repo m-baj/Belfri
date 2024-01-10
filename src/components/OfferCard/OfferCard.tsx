@@ -43,6 +43,7 @@ export default function OfferCard(props: OfferCardProps) {
 
             return newOffer;
         } catch (err: any) {
+            console.log(err);
             message.error(`Failed to load offers: ${err.message}`);
         }
     };
@@ -67,7 +68,9 @@ export default function OfferCard(props: OfferCardProps) {
     }
 
     return (
-        <Card hoverable onClick={() => router.push(`/login`)}>
+        <Card hoverable onClick={() => router.push(`/login`)}
+        style={{ width: '100%'  }}
+        >
             <Row>
                 <Col span={13}>
                     <Row>
