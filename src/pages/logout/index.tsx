@@ -21,9 +21,6 @@ export default function Logout() {
                 console.log(err);
                 jscookie.remove("token");
                 jscookie.remove("username");
-                jscookie.remove("expiration");
-                jscookie.remove("auth_level");
-                message.error("Error: ", err.response.data.message);
                 router.push("/login");
             });
     }, [router]);

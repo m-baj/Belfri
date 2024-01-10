@@ -16,19 +16,18 @@ export async function getUserAuth(
 ): Promise<{
     user_id: string;
     authLevel: number;
-} | null> {
+}> {
     const result = await connection.execute`SELECT USER_ID, AUTH_LEVEL, EXPIRATION
                                             FROM TOKENS
                                                      JOIN USERS USING (USER_ID)
                                             WHERE TOKEN = ${token}`;
-
     if (result && result.rows && result.rows.length > 0) {
         const expiration = result.rows[0].expiration;
         if (expiration < Date.now()) {
             await connection.execute`DELETE
                                      FROM TOKENS
                                      WHERE TOKEN = ${token}`;
-            return null;
+            throw new Error("Token expired");
         }
         return {
             user_id: result.rows[0].user_id,
@@ -36,5 +35,5 @@ export async function getUserAuth(
         };
     }
 
-    return null;
+    throw new Error("Invalid token");
 }
