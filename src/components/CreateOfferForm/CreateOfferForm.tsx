@@ -24,6 +24,16 @@ interface OfferProps {
     description: string;
 }
 
+interface Categories {
+    categoryID: number;
+    name: string;
+}
+
+interface Cities {
+    cityID: number;
+    name: string;
+}
+
 const { TextArea } = Input;
 const { Option } = Select;
 
@@ -31,13 +41,26 @@ export default function CreateOfferForm() {
     const [form] = Form.useForm();
     const router = useRouter();
 
+    const [categories, setCategories] = useState<Categories[]>([]);
+    const [cities, setCities] = useState<Cities[]>([]);
+
+    const getCategoryID = (categoryName: string) => {
+        for (let i = 0; i < categories.length; i++) {
+            if (categories[i].name === categoryName) {
+                return categories[i].categoryID;
+            }
+        }
+    }
+
+    const getCityID = (cityName: string) => {
+        for (let i = 0; i < cities.length; i++) {
+            if (cities[i].name === cityName) {
+                return cities[i].cityID;
+            }
+        }
+    }
+
     const handleForm = (values: OfferProps) => {
-        console.log({
-            "categoryID": values.categoryID,
-            "cityID": values.cityID,
-            "name": values.name,
-            "description": values.description,
-        })
         axios.post("/api/offers", {
             "categoryID": values.categoryID,
             "cityID": values.cityID,
@@ -48,7 +71,7 @@ export default function CreateOfferForm() {
             {
                 console.log(res);
                 if (res.status === 200) {
-                    router.push("/offers");
+                    router.push("/");
                 } else {
                     console.log(res);
                 }
@@ -58,9 +81,6 @@ export default function CreateOfferForm() {
                 message.error(err.response.data.message).then(r=>console.log(r));
             });
     }
-
-    const CategorySelect = () => {
-        const [categories, setCategories] = useState([]);
 
         useEffect(() => {
             const fetchCategories = async () => {
@@ -82,27 +102,6 @@ export default function CreateOfferForm() {
             });
         }, []);
 
-        return (
-            <Select
-                suffixIcon={<FolderOpenOutlined style={{ color: blue[4] }} />}
-                placeholder="Select category"
-                size="large"
-                onChange={value => {
-                    console.log(`Selected category: ${value}`);
-                }}
-            >
-                {categories.map(category => (
-                    <Option key={category.categoryID} value={category.name}>
-                        {category.name}
-                    </Option>
-                ))}
-            </Select>
-        );
-    }
-
-    const CitySelect = () => {
-        const [cities, setCities] = useState([]);
-
         useEffect(() => {
             const fetchCities = async () => {
                 try {
@@ -122,24 +121,6 @@ export default function CreateOfferForm() {
                 console.error('Error fetching cities:', err);
             });
         }, []);
-
-        return (
-            <Select
-                suffixIcon={<HomeOutlined style={{ color: blue[4] }} />}
-                placeholder="Select city"
-                size="large"
-                onChange={value => {
-                    console.log(`Selected city: ${value}`);
-                }}
-            >
-                {cities.map(city => (
-                    <Option key={city.cityID} value={city.name}>
-                        {city.name}
-                    </Option>
-                ))}
-            </Select>
-        );
-    };
 
     return (
         <Flex vertical>
@@ -162,7 +143,20 @@ export default function CreateOfferForm() {
                             }
                         ]}
                     >
-                        <CategorySelect />
+                        <Select
+                            suffixIcon={<FolderOpenOutlined style={{ color: blue[4] }} />}
+                            placeholder="Select category"
+                            size="large"
+                            onChange={value => {
+                                console.log(`Selected category: ${value}`);
+                            }}
+                        >
+                            {categories.map(category => (
+                                <Option key={category.categoryID} value={category.categoryID}>
+                                    {category.name}
+                                </Option>
+                            ))}
+                        </Select>
                     </Form.Item>
                     <Form.Item<OfferProps>
                         name="cityID"
@@ -173,7 +167,20 @@ export default function CreateOfferForm() {
                             }
                         ]}
                     >
-                        <CitySelect />
+                        <Select
+                            suffixIcon={<HomeOutlined style={{ color: blue[4] }} />}
+                            placeholder="Select city"
+                            size="large"
+                            onChange={value => {
+                                console.log(`Selected city: ${value}`);
+                            }}
+                        >
+                            {cities.map(city => (
+                                <Option key={city.cityID} value={city.cityID}>
+                                    {city.name}
+                                </Option>
+                            ))}
+                        </Select>
                     </Form.Item>
                     <Form.Item<OfferProps>
                         name="name"
@@ -209,7 +216,7 @@ export default function CreateOfferForm() {
                             <Button type="primary" size="large" htmlType="submit">
                                 Submit
                             </Button>
-                            <Button type={"link"} size="large" onClick={() => router.push("/offers")}>
+                            <Button type={"link"} size="large" onClick={() => router.push("/")}>
                                 Cancel
                             </Button>
                         </Form.Item>
