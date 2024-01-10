@@ -121,7 +121,7 @@ export default function PageHeader(props: PageHeaderProps) {
                 <Flex style={{ width: '40%' }}>
                     <Space.Compact style={{ width: '100%' }}>
                         <Select showSearch placeholder='Select city' options={cityOptions} style={{ width: '35%' }} />
-                        <Select showSearch placeholder='Select subject' options={subjectOptions} style={{ width: '65%' }} />
+                        <Search placeholder='Enter subject' onSearch={value => console.log(value)} style={{ width: '65%' }} />
                     </Space.Compact>
                 </Flex>
                 <Flex justify='space-around' style={{ width: '15%' }}>
@@ -165,7 +165,7 @@ export default function PageHeader(props: PageHeaderProps) {
                 <Flex justify='center'>
                     <Space.Compact style={{ width: '85%' }}>
                         <Select showSearch placeholder='Select city' options={cityOptions} style={{ width: '30%' }} />
-                        <Select showSearch placeholder='Select subject' options={subjectOptions} style={{ width: '70%' }} />
+                        <Search placeholder='Enter subject' onSearch={value => console.log(value)} style={{ width: '70%' }} />
                     </Space.Compact>
                 </Flex>
                 <CreditsCodeModal open={isCreditsCodeInputVisible} setOpen={setIsCreditsCodeInputVisible}/>
