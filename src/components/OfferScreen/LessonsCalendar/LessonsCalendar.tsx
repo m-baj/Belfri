@@ -6,7 +6,12 @@ interface TeacherData {
     TeacherID: number;
 }
 
-export default function LessonsCalendar( { TeacherID }: TeacherData) {
+interface LessonTerm {
+    start: Date;
+    end: Date;
+}
+
+export default function LessonsCalendar({ TeacherID }: TeacherData) {
 
     const availableHours = [
         {
@@ -57,29 +62,68 @@ export default function LessonsCalendar( { TeacherID }: TeacherData) {
         {
             label: "23:00", value: 23
         }
-    ]
+    ];
 
     const [isDateSelected, setDateSelected] = useState<boolean>(false);
-    const [occupiedHours, setOccupiedHours] = useState<string[]>([]);
+    const [occupiedHours, setOccupiedHours] = useState<LessonTerm[]>([]);
     const [selectedDate, setSelectedDate] = useState<string>("");
 
 
     const fetchLessons = async () => {
         try {
             const response = await axios.get(`/api/teacher/${TeacherID}/lessons`, { withCredentials: true });
-            setOccupiedHours(response.data.data.lessons);
-            console.log(response.data);
+            const occupiedHours: LessonTerm[] = [];
+            for (const lesson of response.data.data.lessons) {
+                const date = new Date(lesson.date);
+                const duration = lesson.duration;
+
+                // floor the date to the nearest hour
+                date.setMinutes(0);
+                date.setSeconds(0);
+                date.setMilliseconds(0);
+
+                const end = new Date(date);
+                end.setHours(end.getHours() + duration);
+
+                occupiedHours.push({
+                    start: date,
+                    end: end
+                });
+            }
+            setOccupiedHours(occupiedHours);
         } catch (err) {
             console.log(err);
         }
-    }
+    };
 
-    const isOccupied = (value: any) => {
+    const isOccupied = (hour: number) => {
+        const queryDate = new Date(selectedDate);
+        queryDate.setHours(hour);
+        queryDate.setMinutes(0);
+        queryDate.setSeconds(0);
+        queryDate.setMilliseconds(0);
 
-    }
+        for (const occupiedHour of occupiedHours) {
+            if (queryDate >= occupiedHour.start && queryDate < occupiedHour.end) {
+                return true;
+            }
+        }
+
+        return false;
+    };
+
+    const getAvailableHours = () => {
+        const availableHoursOptions = [];
+        for (const hour of availableHours) {
+            if (!isOccupied(hour.value)) {
+                availableHoursOptions.push(hour);
+            }
+        }
+        return availableHoursOptions;
+    };
 
     useEffect(() => {
-    if (isDateSelected) {
+        if (isDateSelected) {
             fetchLessons();
         }
     }, []);
@@ -93,8 +137,8 @@ export default function LessonsCalendar( { TeacherID }: TeacherData) {
                     setDateSelected(true);
                     setSelectedDate(value.format("YYYY-MM-DD"));
                 }
-            }/>
-            <Select placeholder="Click on the date first" options={availableHours} disabled={!isDateSelected}/>
+            } />
+            <Select placeholder="Click on the date first" options={getAvailableHours()} disabled={!isDateSelected} />
         </Flex>
-    )
+    );
 }
