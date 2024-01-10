@@ -5,6 +5,7 @@ import config from "@/configs/app.config";
 import { SettingOutlined, DashboardOutlined } from "@ant-design/icons";
 import { Badge } from "antd";
 import CreditsCodeModal from "@/components/CreditsCodeModal/CreditsCodeModal";
+import SettingsModal from "@/components/SettingsModal/SettingsModal";
 
 const { Search } = Input;
 
@@ -59,6 +60,7 @@ export default function PageHeader() {
     }, []);
 
     const [isCreditsCodeInputVisible, setIsCreditsCodeInputVisible] = useState<boolean>(false);
+    const [isSettingsModalVisible, setIsSettingsModalVisible] = useState<boolean>(false);
 
     if (screenWidth >= 850) {
         return (
@@ -81,10 +83,13 @@ export default function PageHeader() {
                         </Tooltip>
                     </Badge>
                     <Tooltip title="Settings">
-                        <Button type="default" icon={<SettingOutlined />} shape='round' size='large'/>
+                        <Button type="default" icon={<SettingOutlined />} shape='round' size='large' onClick={() =>{
+                            setIsSettingsModalVisible(true);
+                        }}/>
                     </Tooltip>
                 </Flex>
                 <CreditsCodeModal open={isCreditsCodeInputVisible} setOpen={setIsCreditsCodeInputVisible}/>
+                <SettingsModal open={isSettingsModalVisible} setOpen={setIsSettingsModalVisible}/>
             </Flex>
         );
     } else {
