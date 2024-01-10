@@ -67,6 +67,7 @@ export default function LessonsCalendar({ TeacherID }: TeacherData) {
     const [isDateSelected, setDateSelected] = useState<boolean>(false);
     const [occupiedHours, setOccupiedHours] = useState<LessonTerm[]>([]);
     const [selectedDate, setSelectedDate] = useState<string>("");
+    const [duration, setDuration] = useState<number>(1);
 
 
     const fetchLessons = async () => {
@@ -97,18 +98,20 @@ export default function LessonsCalendar({ TeacherID }: TeacherData) {
     };
 
     const isOccupied = (hour: number) => {
-        const queryDate = new Date(selectedDate);
-        queryDate.setHours(hour);
-        queryDate.setMinutes(0);
-        queryDate.setSeconds(0);
-        queryDate.setMilliseconds(0);
+        const date = new Date(selectedDate);
+        date.setHours(hour);
+        date.setMinutes(0);
+        date.setSeconds(0);
+        date.setMilliseconds(0);
 
-        for (const occupiedHour of occupiedHours) {
-            if (queryDate >= occupiedHour.start && queryDate < occupiedHour.end) {
+        const end = new Date(date);
+        end.setHours(end.getHours() + duration);
+
+        for (const lesson of occupiedHours) {
+            if (lesson.start <= date && lesson.end >= end) {
                 return true;
             }
         }
-
         return false;
     };
 
