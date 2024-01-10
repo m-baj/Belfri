@@ -10,6 +10,7 @@
     "test": "jest --watch"
   },
   "dependencies": {
+    "@ant-design/colors": "^7.0.0",
     "@ant-design/icons": "^5.2.6",
     "@react-buddy/ide-toolbox-next": "^2.4.1",
     "@react-buddy/palette-antd": "^5.3.1",
