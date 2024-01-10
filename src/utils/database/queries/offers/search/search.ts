@@ -52,5 +52,5 @@ export async function searchOffers(connection: Connection, search: SearchData): 
         return result.rows.map(row => row.offer_id);
     }
 
-    throw new Error("No offers found");
+    return [];
 }

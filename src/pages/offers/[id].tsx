@@ -44,37 +44,6 @@ export default function Loader() {
 
     const router = useRouter();
     const { id } = router.query;
-    // useEffect(() => {
-    //
-    //     axios
-    //         .get(`/api/offers/${id}`)
-    //         .then((res) => {
-    //             console.log(res.data);
-    //             const name = res.data.name;
-    //             const description = res.data.description;
-    //             const teacher_id = res.data.teacher_id;
-    //             console.log(teacher_id)
-    //             setDescriptionData({ name, description, teacher_id });
-    //         })
-    //         .catch((err) => {
-    //             console.log(err);
-    //             message.error("${err.message}");
-    //         });
-    //
-    //     axios
-    //         .get(`/api/teachers/${offerData.teacher_id}`)
-    //         .then((res) => {
-    //             console.log(res.data);
-    //             const name = res.data.name;
-    //             const surname = res.data.surname;
-    //             const pictureURL = res.data.pictureURL;
-    //             setTutorData({ name, surname, pictureURL });
-    //         })
-    //         .catch((err) => {
-    //             console.log(err);
-    //             message.error("${err.message}");
-    //         });
-    // });
 
     const loadData = async () => {
         try {

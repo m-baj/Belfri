@@ -32,6 +32,16 @@ interface SubjectOption {
     label: string;
 }
 
+interface City {
+    cityID: number;
+    name: string;
+}
+
+interface Subject {
+    categoryID: number;
+    name: string;
+}
+
 
 export default function PageHeader() {
     const [screenWidth, setScreenWidth] = useState<number>(0);
@@ -50,12 +60,12 @@ export default function PageHeader() {
             console.log(load_cities);
             console.log(load_subjects);
 
-            const newCityOptions = load_cities.map((city) => ({
+            const newCityOptions = load_cities.map((city: City) => ({
                 value: city.cityID.toString(),
                 label: city.name,
             }));
 
-            const newSubjectOptions = load_subjects.map((subject) => ({
+            const newSubjectOptions = load_subjects.map((subject: Subject) => ({
                 value: subject.categoryID.toString(),
                 label: subject.name,
             }));
@@ -119,7 +129,12 @@ export default function PageHeader() {
     const handleSearch = (value: string) => {
         console.log(value);
         setSubject(value);
-        router.push(`/${value}`);
+
+        router.push({
+            pathname: '/',
+            query: { search: value, city: city },
+
+        });
     }
 
     if (screenWidth >= 850) {

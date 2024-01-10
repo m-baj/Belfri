@@ -6,7 +6,7 @@ export default function OL() {
     return (
         <Flex justify="center" align="flex-top">
 
-            <OfferList search_or_teacherID={true} search={"chuj"}/>
+            <OfferList search_or_teacherID={true} search={"murzyn"}/>
 
         </Flex>
     );
