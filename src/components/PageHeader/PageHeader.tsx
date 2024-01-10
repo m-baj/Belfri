@@ -7,6 +7,8 @@ import { Badge } from "antd";
 import CreditsCodeModal from "@/components/CreditsCodeModal/CreditsCodeModal";
 import SettingsModal from "@/components/SettingsModal/SettingsModal";
 import axios from "axios";
+import { useRouter } from "next/router";
+import Link from "next/link";
 
 const { Search } = Input;
 
@@ -42,6 +44,8 @@ export default function PageHeader() {
     const [cityOptions, setCityOptions] = useState<CityOption[]>([]);
     const [subjectOptions, setSubjectOptions] = useState<SubjectOption[]>([]);
     const [credits, setCredits] = useState<number>(0);
+
+    const router = useRouter();
 
     useEffect(() => {
         axios.get("/api/credits", { withCredentials: true }).then((response) => {
@@ -127,8 +131,8 @@ export default function PageHeader() {
         return (
             <Flex justify="space-evenly" align="center"
                   style={{ width: "100%", height: isScrolled ? "70px" : "120px" }}>
-                <Typography.Title style={{ color: blue[4], paddingRight: "3%" }}>
-                    {config.appName}
+                <Typography.Title>
+                    <Link style={{ color: blue[4] }} href="/">{config.appName}</Link>
                 </Typography.Title>
                 <Flex style={{ width: "40%" }}>
                     <Space.Compact style={{ width: "100%" }}>
@@ -159,8 +163,8 @@ export default function PageHeader() {
         return (
             <Flex vertical style={{ marginBottom: "25px" }}>
                 <Flex justify="space-evenly" align="center" style={{ width: "100%", height: "70px" }}>
-                    <Typography.Title style={{ color: blue[4] }}>
-                        {config.appName}
+                    <Typography.Title>
+                        <Link style={{ color: blue[4] }} href="/">{config.appName}</Link>
                     </Typography.Title>
                     <Flex justify="space-between" style={{ width: "25%" }}>
                         <Badge showZero count={credits > 0 ? credits : "0"}>

@@ -19,7 +19,7 @@ interface OfferDescriptionData {
 interface TutorData {
     name: string;
     surname: string;
-    pictureURL: string;
+    pictureBase64: string;
 }
 
 interface AllTutorsOffers {
@@ -38,43 +38,12 @@ export default function Loader() {
     const [tutorData, setTutorData] = useState<TutorData>({
         name: "",
         surname: "",
-        pictureURL: ""
+        pictureBase64: ""
     });
 
 
     const router = useRouter();
     const { id } = router.query;
-    // useEffect(() => {
-    //
-    //     axios
-    //         .get(`/api/offers/${id}`)
-    //         .then((res) => {
-    //             console.log(res.data);
-    //             const name = res.data.name;
-    //             const description = res.data.description;
-    //             const teacher_id = res.data.teacher_id;
-    //             console.log(teacher_id)
-    //             setDescriptionData({ name, description, teacher_id });
-    //         })
-    //         .catch((err) => {
-    //             console.log(err);
-    //             message.error("${err.message}");
-    //         });
-    //
-    //     axios
-    //         .get(`/api/teachers/${offerData.teacher_id}`)
-    //         .then((res) => {
-    //             console.log(res.data);
-    //             const name = res.data.name;
-    //             const surname = res.data.surname;
-    //             const pictureURL = res.data.pictureURL;
-    //             setTutorData({ name, surname, pictureURL });
-    //         })
-    //         .catch((err) => {
-    //             console.log(err);
-    //             message.error("${err.message}");
-    //         });
-    // });
 
     const loadData = async () => {
         try {
@@ -86,7 +55,7 @@ export default function Loader() {
             setTutorData({
                 name: teacherResponse.data.data.name,
                 surname: teacherResponse.data.data.surname,
-                pictureURL: teacherResponse.data.data.pictureURL
+                pictureBase64: teacherResponse.data.data.profilePicture
             });
 
             setDescriptionData({
@@ -140,7 +109,7 @@ export default function Loader() {
                 }}
                 >
                     <div style={{ transform: "translateY(14%)" }}>
-                        <TutorInfo pictureURL={tutorData.pictureURL} name={tutorData.name}
+                        <TutorInfo pictureBase64={tutorData.pictureBase64} name={tutorData.name}
                                    surname={tutorData.surname} />
                         <OfferList teacherID={offerDescriptionData.teacherID} compact={true} skip={Number(id)} />
                     </div>
