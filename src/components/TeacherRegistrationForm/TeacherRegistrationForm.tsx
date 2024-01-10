@@ -24,12 +24,13 @@ import {
 } from "@ant-design/icons";
 import { blue } from "@ant-design/colors";
 import { useRouter } from "next/router";
-import Password from "antd/es/input/Password";
+import { UploadOutlined } from "@ant-design/icons";
 import { PasswordInput } from "antd-password-input-strength";
 import { useState } from "react";
 import { Option } from "antd/lib/mentions";
 import axios from "axios";
 import { sha256 } from "js-sha256";
+import { RcFile } from "antd/lib/upload";
 
 interface Fields {
     name?: string;
@@ -51,24 +52,52 @@ interface Fields {
     uploadProfilePicture?: any;
 }
 
+const Base64Upload = ({ form }: any) => {
+    const beforeUpload = (file: RcFile, fileList: RcFile[]) => {
+        // Check if the file is an image
+        const isImage = file.type.startsWith("image/");
+        if (!isImage) {
+            message.error("You can only upload image files!");
+        }
+
+        file.arrayBuffer().then((buffer) => {
+            const base64 = btoa(
+                new Uint8Array(buffer).reduce(
+                    (data, byte) => data + String.fromCharCode(byte),
+                    ""
+                )
+            );
+            form.setFieldsValue({ uploadProfilePicture: base64 });
+        });
+
+        return isImage;
+    };
+
+    return (
+        <>
+            <Upload
+                customRequest={(options) => {
+
+                    // @ts-ignore
+                    options.onSuccess({}, options.file);
+                }}
+                beforeUpload={beforeUpload}
+                maxCount={1}
+            >
+                <Button icon={<UploadOutlined />}>Upload Image</Button>
+            </Upload>
+        </>
+    );
+};
+
 export default function TeacherRegistrationForm() {
     const [form] = Form.useForm();
     const router = useRouter();
 
     const handleForm = (values: any) => {
-        // I want to consol.log my post request here
-        console.log({
-            "name": values.name,
-            "surname": values.surname,
-            "username": values.username,
-            "email": values.email,
-            "passHash": sha256(String(values.password)),
-            "dateOfBirth": values.dateOfBirth ? values.dateOfBirth.format("YYYY-MM-DD") : undefined,
-            "iban": values.iban,
-            "phoneNumber": values.prefix + values.phoneNumber,
-            // "profilePictureUrl": values.uploadProfilePicture?.[0]?.response?.url,
-            "profilePictureUrl": "https://www.pngitem.com/pimgs/m/146-1468479_my-profile-icon-blank-profile-picture-circle-hd.png"
-        })
+        // I want to consol.log my post request here]
+
+        console.log(values);
         axios
             .post("/api/user/teacher-register/", {
                 "name": values.name,
@@ -79,8 +108,7 @@ export default function TeacherRegistrationForm() {
                 "dateOfBirth": values.dateOfBirth ? values.dateOfBirth.format("YYYY-MM-DD") : undefined,
                 "iban": values.iban,
                 "phoneNumber": values.prefix + values.phoneNumber,
-                // "profilePictureUrl": values.uploadProfilePicture?.[0]?.response?.url,
-                "profilePictureUrl": "https://www.pngitem.com/pimgs/m/146-1468479_my-profile-icon-blank-profile-picture-circle-hd.png"
+                "profilePictureBase64": values.uploadProfilePicture
             })
             .then((res) => {
                 console.log(res);
@@ -419,32 +447,17 @@ export default function TeacherRegistrationForm() {
                     />
 
                 </Form.Item>
-                {/*<Form.Item*/}
-                {/*    name="uploadProfilePicture"*/}
-                {/*    rules={[*/}
-                {/*        {*/}
-                {/*            required: true,*/}
-                {/*            message: "Please upload your profile picture!"*/}
-                {/*        }*/}
-                {/*    ]}*/}
-                {/*>*/}
-                {/*    /!*<Upload*!/*/}
-                {/*    /!*    name="profilePicture"*!/*/}
-                {/*    /!*    action="/api/upload"*!/*/}
-                {/*    /!*    listType="picture"*!/*/}
-                {/*    /!*    maxCount={1}*!/*/}
-                {/*    /!*    onChange={handleForm}*!/*/}
-                {/*    /!*    style={{ width: style.width }}*!/*/}
-                {/*    /!*>*!/*/}
-                {/*    /!*    <Button*!/*/}
-                {/*    /!*        icon={*!/*/}
-                {/*    /!*            <PictureOutlined style={{ color: blue[4] }} />*!/*/}
-                {/*    /!*        }*!/*/}
-                {/*    /!*    >*!/*/}
-                {/*    /!*        Upload profile picture*!/*/}
-                {/*    /!*    </Button>*!/*/}
-                {/*    /!*</Upload>*!/*/}
-                {/*</Form.Item>*/}
+                <Form.Item
+                    name="uploadProfilePicture"
+                    rules={[
+                        {
+                            required: true,
+                            message: "Please upload your profile picture!"
+                        }
+                    ]}
+                >
+                    <Base64Upload form={form} />
+                </Form.Item>
                 <Flex vertical align="left">
                     <Form.Item<Fields>
                         style={{ marginBottom: "0px" }}
