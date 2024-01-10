@@ -92,7 +92,7 @@ export default function Loader() {
                     justifyContent: "top"
                 }}
                 >
-                    <div style={{ transform: "translateY(23%)" }}>
+                    <div style={{ transform: "translateY(70px)" }}>
                         <LessonsCalendar />
                     </div>
                 </Col>
@@ -108,7 +108,7 @@ export default function Loader() {
                     justifyContent: "top"
                 }}
                 >
-                    <div style={{ transform: "translateY(14%)" }}>
+                    <div style={{ transform: "translateY(70px)" }}>
                         <TutorInfo pictureBase64={tutorData.pictureBase64} name={tutorData.name}
                                    surname={tutorData.surname} />
                         <OfferList teacherID={offerDescriptionData.teacherID} compact={true} skip={Number(id)} />
