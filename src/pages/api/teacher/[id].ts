@@ -82,12 +82,11 @@ export default createApiRoute<{}, Response>(
     (data) => true,
     async (connection, data, req) => {
         const { id } = req.query;
+
         if (typeof id !== "string") throw new Error("Invalid ID");
         const teacherID = parseInt(id);
         if (isNaN(teacherID)) throw new Error("Invalid ID");
-
         const teacher = await getTeacherById(connection, teacherID);
-
         return {
             message: "Successfully fetched teacher",
             data: {
@@ -98,7 +97,7 @@ export default createApiRoute<{}, Response>(
                 phone: teacher.phone,
                 username: teacher.username,
                 rating: teacher.rating,
-                profilePicture: teacher.profilePicture.toString("base64")
+                profilePicture: teacher.profilePicture ? teacher.profilePicture.toString("base64") : ""
             }
         };
     }

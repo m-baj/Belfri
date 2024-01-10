@@ -2,6 +2,7 @@ import { createApiRoute } from "@/utils/api/createApiRoute";
 import { sendEmail } from "@/utils/etc/email/sendEmail";
 import { activationEmailTemplate, generateEmailText } from "@/utils/etc/email/generateEmailText";
 import { AuthLevel } from "@/utils/etc/AuthLevel";
+import config from "@/configs/app.config";
 
 interface ActivationEmailData {
     name: string;
@@ -63,7 +64,7 @@ export default createApiRoute<ActivationEmailData, { message: string }>(
     async (connection, data) => {
         const email_contents = await generateEmailText(activationEmailTemplate, {
             username: data.name,
-            activation_url: "http://localhost:3000/activate?token=" + data.activation_token
+            activation_url: config.url + "/activate?token=" + data.activation_token
         });
 
         await sendEmail(data.email, "Belfri Account Activation", email_contents);
