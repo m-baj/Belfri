@@ -1,4 +1,4 @@
-import React, from 'react';
+import React from 'react';
 import { Button, Input, Modal } from "antd";
 import { CreditCardOutlined } from "@ant-design/icons";
 import { blue } from "@ant-design/colors";

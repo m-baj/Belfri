@@ -1,7 +1,5 @@
 import { createApiRoute } from "@/utils/api/createApiRoute";
 import { AuthLevel } from "@/utils/etc/AuthLevel";
-import { addOffer } from "@/utils/database/queries/offers/add/add";
-import { searchOffers } from "@/utils/database/queries/offers/search/search";
 import { getTeacherById } from "@/utils/database/queries/teacher/getSingle/getSingle";
 
 interface TeacherData {
@@ -99,7 +97,7 @@ export default createApiRoute<{}, Response>(
                 phone: teacher.phone,
                 username: teacher.username,
                 rating: teacher.rating,
-                profilePicture: teacher.profilePicture.toString("base64")
+                profilePicture: teacher.profilePicture ? teacher.profilePicture.toString("base64") : ""
             }
         };
     }

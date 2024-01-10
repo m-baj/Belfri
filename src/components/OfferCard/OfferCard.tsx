@@ -16,14 +16,33 @@ interface OfferData {
 
 export interface OfferCardProps {
     id: number;
+    compact?: boolean;
 }
-
+// To use this component, you need to pass in na id prop,
+// which is the ID of the offer you want to display.
+// If you want to display a compact version of the offer, pass in compact={true} instead.
+// Else if you want to display a full version of the offer, pass in compact={false} instead.
 export default function OfferCard(props: OfferCardProps) {
     const router = useRouter();
     const [offer, setOffer] = useState<OfferData>();
     const [loading, setLoading] = useState<boolean>(true);
 
     const loadData = async () => {
+        if (props.compact) {
+            try {
+                const offerResponse = await axios.get(`/api/offers/${props.id}`, { withCredentials: true, timeout: 5000 });
+
+                const newOffer: OfferData = {
+                    title: offerResponse.data.data.name,
+                };
+
+                return newOffer;
+            } catch (err: any) {
+                console.log(err);
+                message.error(`Failed to load offers: ${err.message}`);
+            }
+        }
+        else{
         try {
             const offerResponse = await axios.get(`/api/offers/${props.id}`, { withCredentials: true, timeout: 5000 });
             const teacherResponse = await axios.get(`/api/teacher/${offerResponse.data.data.teacherID}`, {
@@ -43,9 +62,10 @@ export default function OfferCard(props: OfferCardProps) {
 
             return newOffer;
         } catch (err: any) {
+            console.log(err);
             message.error(`Failed to load offers: ${err.message}`);
         }
-    };
+    }};
 
     useEffect(() => {
         if (!offer && loading) {
@@ -66,55 +86,71 @@ export default function OfferCard(props: OfferCardProps) {
         return <Skeleton active />;
     }
 
-    return (
-        <Card hoverable onClick={() => router.push(`/login`)}>
-            <Row>
-                <Col span={13}>
-                    <Row>
-                        <Typography.Title level={3}>{offer.title} &nbsp;</Typography.Title>
-                    </Row>
-                    <Row
-                        style={{
-                            overflow: "hidden",
-                            textOverflow: "ellipsis",
-                            height: 110
-                        }}
-                    >
-                        <Typography.Text type="secondary">{offer.description}</Typography.Text>
-                    </Row>
-                    <Row></Row>
-                </Col>
-                <Col span={8}>
-                    <div
-                        style={{
-                            textAlign: "center",
-                            transform: "translate(25%, 0)"
-                        }}
-                    >
-                        <Avatar size={64} icon={<img src={`data:image/png;base64,${offer.picture}`} alt={""} />} />
-                        <Typography.Text
-                            strong
+    if (props.compact) {
+        return (
+            <Card hoverable onClick={() => router.push(`/offers/${props.id}`)}
+            style={{ width: '100%'  }}
+            >
+                <Row>
+                            <Typography.Title level={4}>{offer.title} &nbsp;</Typography.Title>
+                </Row>
+            </Card>
+        );
+    }
+
+    if(!props.compact) {
+        return (
+            <Card hoverable onClick={() => router.push(`/login`)}
+                  style={{ width: '100%' }}
+            >
+                <Row>
+                    <Col span={13}>
+                        <Row>
+                            <Typography.Title level={3}>{offer.title} &nbsp;</Typography.Title>
+                        </Row>
+                        <Row
                             style={{
-                                marginTop: 8,
-                                display: "block",
-                                whiteSpace: "nowrap"
+                                overflow: "hidden",
+                                textOverflow: "ellipsis",
+                                height: 110
                             }}
                         >
-                            {offer.name}
-                        </Typography.Text>
-                        <Statistic
-                            valueStyle={{
-                                fontSize: 20,
-                                color: "gold",
-                                whiteSpace: "nowrap"
+                            <Typography.Text type="secondary">{offer.description}</Typography.Text>
+                        </Row>
+                        <Row></Row>
+                    </Col>
+                    <Col span={8}>
+                        <div
+                            style={{
+                                textAlign: "center",
+                                transform: "translate(25%, 0)"
                             }}
-                            value={offer.rating}
-                            prefix={<StarOutlined />}
-                            suffix={<div style={{ display: "flex", alignContent: "center", fontSize: 14.6 }}></div>}
-                        />
-                    </div>
-                </Col>
-            </Row>
-        </Card>
-    );
+                        >
+                            <Avatar size={64} icon={<img src={`data:image/png;base64,${offer.picture}`} alt={""} />} />
+                            <Typography.Text
+                                strong
+                                style={{
+                                    marginTop: 8,
+                                    display: "block",
+                                    whiteSpace: "nowrap"
+                                }}
+                            >
+                                {offer.name}
+                            </Typography.Text>
+                            <Statistic
+                                valueStyle={{
+                                    fontSize: 20,
+                                    color: "gold",
+                                    whiteSpace: "nowrap"
+                                }}
+                                value={offer.rating}
+                                prefix={<StarOutlined />}
+                                suffix={<div style={{ display: "flex", alignContent: "center", fontSize: 14.6 }}></div>}
+                            />
+                        </div>
+                    </Col>
+                </Row>
+            </Card>
+        );
+    }
 }
