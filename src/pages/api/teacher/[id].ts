@@ -1,7 +1,5 @@
 import { createApiRoute } from "@/utils/api/createApiRoute";
 import { AuthLevel } from "@/utils/etc/AuthLevel";
-import { addOffer } from "@/utils/database/queries/offers/add/add";
-import { searchOffers } from "@/utils/database/queries/offers/search/search";
 import { getTeacherById } from "@/utils/database/queries/teacher/getSingle/getSingle";
 
 interface TeacherData {
@@ -12,6 +10,7 @@ interface TeacherData {
     phone: string;
     username: string;
     rating: number;
+    profilePicture: string;
 }
 
 interface Response {
@@ -58,6 +57,8 @@ interface Response {
  *                   type: string
  *                 rating:
  *                   type: number
+ *                 profilePicture:
+ *                   type: string
  *       400:
  *         description: Invalid request, some required fields are missing.
  *       401:
@@ -96,7 +97,8 @@ export default createApiRoute<{}, Response>(
                 email: teacher.email,
                 phone: teacher.phone,
                 username: teacher.username,
-                rating: teacher.rating
+                rating: teacher.rating,
+                profilePicture: teacher.profilePicture.toString("base64")
             }
         };
     }
