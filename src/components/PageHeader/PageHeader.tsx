@@ -7,6 +7,7 @@ import { Badge } from "antd";
 import CreditsCodeModal from "@/components/CreditsCodeModal/CreditsCodeModal";
 import SettingsModal from "@/components/SettingsModal/SettingsModal";
 import axios from "axios";
+import { useRouter } from "next/router";
 
 const { Search } = Input;
 
@@ -31,16 +32,14 @@ interface SubjectOption {
     label: string;
 }
 
-interface PageHeaderProps {
-    cities: CityOption[];
-    subjects: SubjectOption[];
-}
 
-
-export default function PageHeader(props: PageHeaderProps) {
+export default function PageHeader() {
     const [screenWidth, setScreenWidth] = useState<number>(0);
     const [cityOptions, setCityOptions] = useState<CityOption[]>([]);
     const [subjectOptions, setSubjectOptions] = useState<SubjectOption[]>([]);
+    const [city, setCity] = useState<string>('');
+    const [subject, setSubject] = useState<string>('');
+    const router = useRouter();
 
     const loadData = async () => {
         try{
@@ -112,6 +111,17 @@ export default function PageHeader(props: PageHeaderProps) {
     const [isCreditsCodeInputVisible, setIsCreditsCodeInputVisible] = useState<boolean>(false);
     const [isSettingsModalVisible, setIsSettingsModalVisible] = useState<boolean>(false);
 
+    const handleCityChange = (value: string) => {
+        console.log(value);
+        setCity(value);
+    }
+
+    const handleSearch = (value: string) => {
+        console.log(value);
+        setSubject(value);
+        router.push(`/${value}`);
+    }
+
     if (screenWidth >= 850) {
         return (
             <Flex justify='space-evenly' align='center' style={{ width: '100%', height: isScrolled ? '70px' : '120px' }}>
@@ -120,8 +130,8 @@ export default function PageHeader(props: PageHeaderProps) {
                 </Typography.Title>
                 <Flex style={{ width: '40%' }}>
                     <Space.Compact style={{ width: '100%' }}>
-                        <Select showSearch placeholder='Select city' options={cityOptions} style={{ width: '35%' }} />
-                        <Search placeholder='Enter subject' onSearch={value => console.log(value)} style={{ width: '65%' }} />
+                        <Select showSearch placeholder='Select city' options={cityOptions} style={{ width: '35%' }} onChange={handleCityChange}/>
+                        <Search placeholder='Enter subject' onSearch={value => handleSearch(value)} style={{ width: '65%' }} />
                     </Space.Compact>
                 </Flex>
                 <Flex justify='space-around' style={{ width: '15%' }}>
@@ -164,8 +174,8 @@ export default function PageHeader(props: PageHeaderProps) {
                 </Flex>
                 <Flex justify='center'>
                     <Space.Compact style={{ width: '85%' }}>
-                        <Select showSearch placeholder='Select city' options={cityOptions} style={{ width: '30%' }} />
-                        <Search placeholder='Enter subject' onSearch={value => console.log(value)} style={{ width: '70%' }} />
+                        <Select showSearch placeholder='Select city' options={cityOptions} style={{ width: '30%' }} onChange={handleCityChange}/>
+                        <Search placeholder='Enter subject' onSearch={value => handleSearch(value)} style={{ width: '70%' }} />
                     </Space.Compact>
                 </Flex>
                 <CreditsCodeModal open={isCreditsCodeInputVisible} setOpen={setIsCreditsCodeInputVisible}/>
