@@ -6,7 +6,7 @@ export default function OL() {
     return (
         <Flex justify="center" align="flex-top">
 
-            <OfferList />
+            <OfferList compact={true} teacherID={5}/>
 
         </Flex>
     );

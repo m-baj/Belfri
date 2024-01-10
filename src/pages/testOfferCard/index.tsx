@@ -5,6 +5,7 @@ import React from "react";
 
 const test_offer: OfferCardProps = {
     id: 2,
+    compact: true
 }
 
 
