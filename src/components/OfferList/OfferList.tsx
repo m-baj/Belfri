@@ -1,5 +1,4 @@
-import InfiniteScroll from "react-infinite-scroll-component";
-import { Divider, List, message, Skeleton, Button } from "antd";
+import { List, message, Skeleton, Button } from "antd";
 import React, { useEffect, useState } from "react";
 import OfferCard from "../OfferCard/OfferCard";
 import axios from "axios";
@@ -12,7 +11,7 @@ export default function OfferList() {
 
     const loadMoreData = () => {
         if (loading || !hasMoreOffers) {
-            return <Skeleton active />;
+            return;
         }
 
         setLoading(true);
