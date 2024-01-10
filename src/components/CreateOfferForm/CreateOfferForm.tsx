@@ -3,30 +3,29 @@ import {
     message,
     Flex,
     Input,
-    Button,
-    Typography
+    Typography,
+    Select,
+    Button
 } from "antd";
 import {
-    BookOutlined,
-    FolderOpenOutlined
+    FolderOpenOutlined,
+    HomeOutlined,
 } from "@ant-design/icons";
 import { useRouter } from "next/router";
 import axios from "axios";
 import { blue } from "@ant-design/colors";
-import style from './CreateOfferForm.module.css'
+import React, { useEffect, useState } from "react";
 
 
 interface OfferProps {
-    offer_id: number;
-    teacher_id: number;
-    category_id: number;
-    city_id: number;
+    categoryID: number;
+    cityID: number;
     name: string;
     description: string;
-    rating: number;
 }
 
 const { TextArea } = Input;
+const { Option } = Select;
 
 export default function CreateOfferForm() {
     const [form] = Form.useForm();
@@ -34,78 +33,189 @@ export default function CreateOfferForm() {
 
     const handleForm = (values: OfferProps) => {
         console.log({
-            "teacher_id": values.teacher_id,
-            "category_id": values.category_id,
-            "city_id": values.city_id,
+            "categoryID": values.categoryID,
+            "cityID": values.cityID,
             "name": values.name,
             "description": values.description,
-            "rating": values.rating,
-            })
-        axios.post("/api/offers", {
-            "teacher_id": values.teacher_id,
-            "category_id": values.category_id,
-            "city_id": values.city_id,
-            "name": values.name,
-            "description": values.description,
-            "rating": values.rating,
-            })
-            .then((res) =>
-        {
-            console.log(res);
-            if (res.status === 200) {
-                router.push("/offers");
-            } else {
-                console.log(res);
-            }
         })
-        .catch((err) => {
-            console.log(err);
-            message.error(err.response.data.message).then(r=>console.log(r));
-
-        });
+        axios.post("/api/offers", {
+            "categoryID": values.categoryID,
+            "cityID": values.cityID,
+            "name": values.name,
+            "description": values.description,
+        })
+            .then((res) =>
+            {
+                console.log(res);
+                if (res.status === 200) {
+                    router.push("/offers");
+                } else {
+                    console.log(res);
+                }
+            })
+            .catch((err) => {
+                console.log(err);
+                message.error(err.response.data.message).then(r=>console.log(r));
+            });
     }
+
+    const CategorySelect = () => {
+        const [categories, setCategories] = useState([]);
+
+        useEffect(() => {
+            const fetchCategories = async () => {
+                try {
+                    const response = await axios.get('/api/category/search');
+                    console.log(response);
+                    if (Array.isArray(response.data.categories)) {
+                        setCategories(response.data.categories);
+                    } else {
+                        console.error('Invalid data format received:', response.data.categories);
+                    }
+                } catch (error) {
+                    console.error('Error fetching categories:', error);
+                }
+            };
+
+            fetchCategories().catch((err) => {
+                console.error('Error fetching categories:', err);
+            });
+        }, []);
+
+        return (
+            <Select
+                suffixIcon={<FolderOpenOutlined style={{ color: blue[4] }} />}
+                placeholder="Select category"
+                size="large"
+                onChange={value => {
+                    console.log(`Selected category: ${value}`);
+                }}
+            >
+                {categories.map(category => (
+                    <Option key={category.categoryID} value={category.name}>
+                        {category.name}
+                    </Option>
+                ))}
+            </Select>
+        );
+    }
+
+    const CitySelect = () => {
+        const [cities, setCities] = useState([]);
+
+        useEffect(() => {
+            const fetchCities = async () => {
+                try {
+                    const response = await axios.get('/api/city');
+                    console.log(response);
+                    if (Array.isArray(response.data.cities)) {
+                        setCities(response.data.cities);
+                    } else {
+                        console.error('Invalid data format received:', response.data.cities);
+                    }
+                } catch (error) {
+                    console.error('Error fetching cities:', error);
+                }
+            };
+
+            fetchCities().catch((err) => {
+                console.error('Error fetching cities:', err);
+            });
+        }, []);
+
+        return (
+            <Select
+                suffixIcon={<HomeOutlined style={{ color: blue[4] }} />}
+                placeholder="Select city"
+                size="large"
+                onChange={value => {
+                    console.log(`Selected city: ${value}`);
+                }}
+            >
+                {cities.map(city => (
+                    <Option key={city.cityID} value={city.name}>
+                        {city.name}
+                    </Option>
+                ))}
+            </Select>
+        );
+    };
+
     return (
-        <Flex vertical justify="center">
+        <Flex vertical>
             <Typography.Title style={{ color: blue[4], textAlign: "center" }}>
                 Create Offer
             </Typography.Title>
-            <Form
-                className={style.createOfferForm}
-                form={form}
-                autoCapitalize="off"
-                onFinish={handleForm}
-            >
-                <Form.Item<OfferProps>
-                    name="teacher_id"
-                    rules={[
-                        {
-                            required: true,
-                            message: "Please input your teacher ID",
-                        },
-                    ]}
+            <Flex justify="center">
+                <Form
+                    style={{ width: "40%" }}
+                    form={form}
+                    autoCapitalize="off"
+                    onFinish={handleForm}
                 >
-                    <Input
-                        placeholder="teacher_id"
-                        size="large"
-                        prefix={<BookOutlined style={{ color: blue[4] }} />}
-                    />
-                </Form.Item>
-                <Form.Item<OfferProps>
-                    name="category_id"
-                    rules={[
-                        {
-                            required: true,
-                            message: "Please input offer category ID",
-                        }
-                    ]}
-                >
-                    <Input
-                        placeholder="category_id"
-                        size="large"
-                        prefix={<FolderOpenOutlined style={{ color: blue[4] }} />}
-                    />
-                </Form.Item>
-            </Form>
+                    <Form.Item<OfferProps>
+                        name="categoryID"
+                        rules={[
+                            {
+                                required: true,
+                                message: "Please choose offer category",
+                            }
+                        ]}
+                    >
+                        <CategorySelect />
+                    </Form.Item>
+                    <Form.Item<OfferProps>
+                        name="cityID"
+                        rules={[
+                            {
+                                required: true,
+                                message: "Please choose your city name"
+                            }
+                        ]}
+                    >
+                        <CitySelect />
+                    </Form.Item>
+                    <Form.Item<OfferProps>
+                        name="name"
+                        rules={[
+                            {
+                                required: true,
+                                message: "Please enter offer name",
+                            }
+                        ]}
+                    >
+                        <Input
+                            placeholder="Offer name"
+                            size="large"
+                        />
+                    </Form.Item>
+                    <Form.Item<OfferProps>
+                        name="description"
+                        rules={[
+                            {
+                                required: true,
+                                message: "Please enter offer description",
+                            }
+                        ]}
+                    >
+                        <TextArea
+                            style={{ fontSize: 16 }}
+                            placeholder="Offer description"
+                            autoSize={{ minRows: 5, maxRows: 8 }}
+                        />
+                    </Form.Item>
+                    <Flex justify={"center"}>
+                        <Form.Item>
+                            <Button type="primary" size="large" htmlType="submit">
+                                Submit
+                            </Button>
+                            <Button type={"link"} size="large" onClick={() => router.push("/offers")}>
+                                Cancel
+                            </Button>
+                        </Form.Item>
+                    </Flex>
+                </Form>
+            </Flex>
         </Flex>
     )
 }
