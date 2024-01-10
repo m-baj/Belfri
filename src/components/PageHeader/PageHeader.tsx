@@ -7,19 +7,20 @@ import { Badge } from "antd";
 import CreditsCodeModal from "@/components/CreditsCodeModal/CreditsCodeModal";
 import SettingsModal from "@/components/SettingsModal/SettingsModal";
 import axios from "axios";
+import { useRouter } from "next/router";
 
 const { Search } = Input;
 
 const options = [
     {
-        value: "warszawa",
-        label: "Warszawa"
+      value: 'warszawa',
+      label: 'Warszawa',
     },
     {
-        value: "grodzisk mazowiecki",
-        label: "Grodzisk Mazowiecki"
-    }
-];
+      value: 'grodzisk mazowiecki',
+      label: 'Grodzisk Mazowiecki',
+    },
+  ];
 
 interface CityOption {
     value: string;
@@ -31,45 +32,42 @@ interface SubjectOption {
     label: string;
 }
 
-interface PageHeaderProps {
-    cities: CityOption[];
-    subjects: SubjectOption[];
+interface City {
+    cityID: number;
+    name: string;
+}
+
+interface Subject {
+    categoryID: number;
+    name: string;
 }
 
 
-export default function PageHeader(props: PageHeaderProps) {
+export default function PageHeader() {
     const [screenWidth, setScreenWidth] = useState<number>(0);
     const [cityOptions, setCityOptions] = useState<CityOption[]>([]);
     const [subjectOptions, setSubjectOptions] = useState<SubjectOption[]>([]);
-    const [credits, setCredits] = useState<number>(0);
-
-    useEffect(() => {
-        axios.get("/api/credits", { withCredentials: true }).then((response) => {
-
-            setCredits(response.data.credits);
-        }).catch((error) => {
-
-            setCredits(0);
-        });
-    }, []);
+    const [city, setCity] = useState<string>('');
+    const [subject, setSubject] = useState<string>('');
+    const router = useRouter();
 
     const loadData = async () => {
-        try {
-            const citiesResponse = await axios.get("/api/city", { withCredentials: true });
-            const subjectsResponse = await axios.get("/api/category/search", { withCredentials: true });
+        try{
+            const citiesResponse = await axios.get("/api/city", { withCredentials: true});
+            const subjectsResponse = await axios.get("/api/category/search", { withCredentials: true});
             const load_cities = citiesResponse.data.cities;
             const load_subjects = subjectsResponse.data.categories;
             console.log(load_cities);
             console.log(load_subjects);
 
-            const newCityOptions = load_cities.map((city: any) => ({
+            const newCityOptions = load_cities.map((city: City) => ({
                 value: city.cityID.toString(),
-                label: city.name
+                label: city.name,
             }));
 
-            const newSubjectOptions = load_subjects.map((subject: any) => ({
+            const newSubjectOptions = load_subjects.map((subject: Subject) => ({
                 value: subject.categoryID.toString(),
-                label: subject.name
+                label: subject.name,
             }));
 
             setCityOptions(newCityOptions);
@@ -80,28 +78,28 @@ export default function PageHeader(props: PageHeaderProps) {
             console.log(err);
             message.error(`Failed to load offers: ${err.message}`);
         }
-    };
+    }
 
     useEffect(() => {
         loadData();        // loadData();
         const handleResize = () => {
             setScreenWidth(window.innerWidth);
         };
-        if (typeof window !== "undefined") {
+        if (typeof window !== 'undefined') {
             handleResize();
 
-            window.addEventListener("resize", handleResize);
+            window.addEventListener('resize', handleResize);
 
             return () => {
-                window.removeEventListener("resize", handleResize);
+                window.removeEventListener('resize', handleResize);
             };
         }
-    }, []);
+    } , []);
 
     const [isScrolled, setIsScrolled] = useState<boolean>(false);
     useEffect(() => {
         const handleScroll = () => {
-            if (typeof window !== "undefined") {
+            if (typeof window !== 'undefined') {
                 if (window.scrollY > 0) {
                     setIsScrolled(true);
                 } else {
@@ -109,13 +107,13 @@ export default function PageHeader(props: PageHeaderProps) {
                 }
             }
         };
-        if (typeof window !== "undefined") {
+        if (typeof window !== 'undefined') {
             handleScroll();
 
-            window.addEventListener("scroll", handleScroll);
+            window.addEventListener('scroll', handleScroll);
 
             return () => {
-                window.removeEventListener("scroll", handleScroll);
+                window.removeEventListener('scroll', handleScroll);
             };
         }
     }, []);
@@ -123,66 +121,79 @@ export default function PageHeader(props: PageHeaderProps) {
     const [isCreditsCodeInputVisible, setIsCreditsCodeInputVisible] = useState<boolean>(false);
     const [isSettingsModalVisible, setIsSettingsModalVisible] = useState<boolean>(false);
 
+    const handleCityChange = (value: string) => {
+        console.log(value);
+        setCity(value);
+    }
+
+    const handleSearch = (value: string) => {
+        console.log(value);
+        setSubject(value);
+
+        router.push({
+            pathname: '/',
+            query: { search: value, city: city },
+
+        });
+    }
+
     if (screenWidth >= 850) {
         return (
-            <Flex justify="space-evenly" align="center"
-                  style={{ width: "100%", height: isScrolled ? "70px" : "120px" }}>
-                <Typography.Title style={{ color: blue[4], paddingRight: "3%" }}>
+            <Flex justify='space-evenly' align='center' style={{ width: '100%', height: isScrolled ? '70px' : '120px' }}>
+                <Typography.Title style={{ color: blue[4], paddingRight: '3%' }}>
                     {config.appName}
                 </Typography.Title>
-                <Flex style={{ width: "40%" }}>
-                    <Space.Compact style={{ width: "100%" }}>
-                        <Select showSearch placeholder="Select city" options={cityOptions} style={{ width: "35%" }} />
-                        <Search placeholder="Enter subject" onSearch={value => console.log(value)}
-                                style={{ width: "65%" }} />
+                <Flex style={{ width: '40%' }}>
+                    <Space.Compact style={{ width: '100%' }}>
+                        <Select showSearch placeholder='Select city' options={cityOptions} style={{ width: '35%' }} onChange={handleCityChange}/>
+                        <Search placeholder='Enter subject' onSearch={value => handleSearch(value)} style={{ width: '65%' }} />
                     </Space.Compact>
                 </Flex>
-                <Flex justify="space-around" style={{ width: "15%" }}>
-                    <Badge showZero count={credits > 0 ? credits : "0"}>
+                <Flex justify='space-around' style={{ width: '15%' }}>
+                    <Badge count={5}>
                         <Tooltip title="Credits remaining">
-                            <Button shape="circle" size="large" icon={<DashboardOutlined />} onClick={() => {
+                            <Button shape="circle" size='large' icon={<DashboardOutlined/>} onClick={()=>{
                                 setIsCreditsCodeInputVisible(true);
-                            }} />
+                            }}/>
                         </Tooltip>
                     </Badge>
                     <Tooltip title="Settings">
-                        <Button type="default" icon={<SettingOutlined />} shape="round" size="large" onClick={() => {
+                        <Button type="default" icon={<SettingOutlined />} shape='round' size='large' onClick={() =>{
                             setIsSettingsModalVisible(true);
-                        }} />
+                        }}/>
                     </Tooltip>
                 </Flex>
-                <CreditsCodeModal open={isCreditsCodeInputVisible} setOpen={setIsCreditsCodeInputVisible} />
-                <SettingsModal open={isSettingsModalVisible} setOpen={setIsSettingsModalVisible} />
+                <CreditsCodeModal open={isCreditsCodeInputVisible} setOpen={setIsCreditsCodeInputVisible}/>
+                <SettingsModal open={isSettingsModalVisible} setOpen={setIsSettingsModalVisible}/>
             </Flex>
         );
     } else {
         return (
-            <Flex vertical style={{ marginBottom: "25px" }}>
-                <Flex justify="space-evenly" align="center" style={{ width: "100%", height: "70px" }}>
+            <Flex vertical style={{ marginBottom: '25px' }}>
+                <Flex justify='space-evenly' align='center' style={{ width: '100%', height: '70px' }}>
                     <Typography.Title style={{ color: blue[4] }}>
                         {config.appName}
                     </Typography.Title>
-                    <Flex justify="space-between" style={{ width: "25%" }}>
-                        <Badge showZero count={credits > 0 ? credits : "0"}>
+                    <Flex justify='space-between' style={{ width: '25%' }}>
+                        <Badge count={5}>
                             <Tooltip title="hours remaining">
-                                <Button shape="circle" size="large" icon={<DashboardOutlined />} onClick={() => {
+                                <Button shape="circle" size='large' icon={<DashboardOutlined/>} onClick={()=>{
                                     setIsCreditsCodeInputVisible(true);
-                                }} />
+                                }}/>
                             </Tooltip>
                         </Badge>
-                        <Tooltip title="Settings">
-                            <Button type="default" icon={<SettingOutlined />} shape="circle" size="large" />
+                        <Tooltip title="Settings" >
+                            <Button type="default" icon={<SettingOutlined />} shape='circle' size='large' />
                         </Tooltip>
                     </Flex>
                 </Flex>
-                <Flex justify="center">
-                    <Space.Compact style={{ width: "85%" }}>
-                        <Select showSearch placeholder="Select city" options={cityOptions} style={{ width: "30%" }} />
-                        <Search placeholder="Enter subject" onSearch={value => console.log(value)}
-                                style={{ width: "70%" }} />
+                <Flex justify='center'>
+                    <Space.Compact style={{ width: '85%' }}>
+                        <Select showSearch placeholder='Select city' options={cityOptions} style={{ width: '30%' }} onChange={handleCityChange}/>
+                        <Search placeholder='Enter subject' onSearch={value => handleSearch(value)} style={{ width: '70%' }} />
                     </Space.Compact>
                 </Flex>
-                <CreditsCodeModal open={isCreditsCodeInputVisible} setOpen={setIsCreditsCodeInputVisible} />
+                <CreditsCodeModal open={isCreditsCodeInputVisible} setOpen={setIsCreditsCodeInputVisible}/>
             </Flex>
         );
     }

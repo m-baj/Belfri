@@ -191,9 +191,7 @@ export default createApiRoute<Request, Response>(
         }
         switch (req.method) {
             case "GET":
-                console.log("qqqq");
                 const offer = await getSingleOffer(connection, offerID);
-                console.log("hhhh");
                 return {
                     message: "Successfully retrieved an offer",
                     data: offer
