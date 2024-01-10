@@ -27,19 +27,18 @@ interface AllTutorsOffers {
 }
 
 export default function Loader() {
-    const { loading } = useUser({
-    });
+    const { loading } = useUser({});
 
     const [offerDescriptionData, setDescriptionData] = useState<OfferDescriptionData>({
         name: "",
         description: "",
-        teacherID: 0,
+        teacherID: 0
     });
 
     const [tutorData, setTutorData] = useState<TutorData>({
         name: "",
         surname: "",
-        pictureURL: "",
+        pictureURL: ""
     });
 
     const router = useRouter();
@@ -79,69 +78,71 @@ export default function Loader() {
     const loadData = async () => {
         try {
             const offerResponse = await axios.get(`/api/offers/${id}`, { withCredentials: true, timeout: 5000 });
-            console.log(offerResponse)
-            const teacherResponse = await axios.get(`/api/teachers/${offerResponse.data.data.teacherID}`, {
+            console.log(offerResponse);
+            const teacherResponse = await axios.get(`/api/teacher/${offerResponse.data.data.teacherID}`, {
                 withCredentials: true,
                 timeout: 5000
             });
             setTutorData({
                 name: teacherResponse.data.data.name,
                 surname: teacherResponse.data.data.surname,
-                pictureURL: teacherResponse.data.data.pictureURL,
+                pictureURL: teacherResponse.data.data.pictureURL
             });
 
             setDescriptionData({
                 name: offerResponse.data.data.name,
                 description: offerResponse.data.data.description,
-                teacherID: offerResponse.data.data.teacherID,
+                teacherID: offerResponse.data.data.teacherID
             });
 
         } catch (err: any) {
             console.log(err);
             message.error(`${err.message}`);
         }
-    }
+    };
 
     useEffect(() => {
         if (id) {
             loadData();
         }
-    }, []);
+    }, [id]);
 
     if (loading) return <LoadingComponent />;
     return (
         <div>
-        <Row>
-            <PageHeader />
-        </Row>
-        <Row justify="center">
-            <Col span={4} style={{
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "top",
-            }}
-            >
-                <div style={{transform: "translateY(23%)"}}>
-                    <LessonsCalendar />
-                </div>
-            </Col>
-            <Col span={12} offset={1}>
-                <Flex justify="center" align="center">
-                <OfferDescription offerName={offerDescriptionData.name} offerDescription={offerDescriptionData.description}/>
-                </Flex>
-            </Col>
+            <Row>
+                <PageHeader />
+            </Row>
+            <Row justify="center">
+                <Col span={4} style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "top"
+                }}
+                >
+                    <div style={{ transform: "translateY(23%)" }}>
+                        <LessonsCalendar />
+                    </div>
+                </Col>
+                <Col span={12} offset={1}>
+                    <Flex justify="center" align="center">
+                        <OfferDescription offerName={offerDescriptionData.name}
+                                          offerDescription={offerDescriptionData.description} />
+                    </Flex>
+                </Col>
                 <Col span={4} offset={1} style={{
                     display: "flex",
                     flexDirection: "column",
-                    justifyContent: "top",
-                    }}
+                    justifyContent: "top"
+                }}
                 >
-                    <div style={{transform: "translateY(14%)"}}>
-                        <TutorInfo pictureURL={tutorData.pictureURL} name={tutorData.name} surname={tutorData.surname}/>
+                    <div style={{ transform: "translateY(14%)" }}>
+                        <TutorInfo pictureURL={tutorData.pictureURL} name={tutorData.name}
+                                   surname={tutorData.surname} />
                         <OfferList teacherID={offerDescriptionData.teacherID} compact={true} />
                     </div>
                 </Col>
-        </Row>
+            </Row>
         </div>
     );
 }

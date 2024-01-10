@@ -37,7 +37,7 @@ interface PageHeaderProps {
 }
 
 
-export default function PageHeader(props: PageHeaderProps) {
+export default function PageHeader() {
     const [screenWidth, setScreenWidth] = useState<number>(0);
     const [cityOptions, setCityOptions] = useState<CityOption[]>([]);
     const [subjectOptions, setSubjectOptions] = useState<SubjectOption[]>([]);
