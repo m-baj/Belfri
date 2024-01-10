@@ -59,9 +59,8 @@ export function useUser({
                 setToken(sessionToken);
                 setUsername(sessionUsername);
 
-                axios.get("/api/offers?count=1", { withCredentials: true }).then((res) => {
+                axios.get("/api/user/check-auth", { withCredentials: true }).then((res) => {
                     if (res.status === 200) {
-
                         setLoading(false);
                     }
                 }).catch((err) => {
