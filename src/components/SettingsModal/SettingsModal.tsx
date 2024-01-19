@@ -28,6 +28,14 @@ export default function SettingsModal(props: ModalProps) {
                     }}
                 >
                     Add Offer
+                </Button> <br /><br />
+                <Button
+                    onClick={() => {
+                        router.push("/doneLessons");
+                        props.setOpen(false);
+                    }}
+                >
+                    View Done Lessons
                 </Button> <br /><br /></>) : null}
             <Button
                 type="primary"
