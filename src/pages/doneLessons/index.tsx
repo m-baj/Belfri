@@ -1,5 +1,6 @@
 import { useUser } from "@/hooks/useUser";
 import LoadingComponent from "@/components/LoadingComponent/LoadingComponent";
+import LessonsPanel from "@/components/LessonsPanel/LessonsPanel";
 
 export default function Loader() {
     const { loading } = useUser({
@@ -8,9 +9,5 @@ export default function Loader() {
     });
 
     if (loading) return <LoadingComponent />;
-    return (
-        <div>
-            <h1>Done Lessons</h1>
-        </div>
-    )
+    return <LessonsPanel />;
 }
