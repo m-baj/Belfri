@@ -1,12 +1,12 @@
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
-import { message } from "antd";
+import { Card, message, Space } from "antd";
 
 interface LessonData {
     title?: string;
     category?: string;
-    studentID?: number;
+    student?: number;
     date?: string;
     time?: string;
     duration?: number;
@@ -17,28 +17,50 @@ export interface LessonDataProps {
 }
 
 export default function LessonCard(props: LessonDataProps) {
-    const router = useRouter();
-    const [lesson, setLesson] = useState<LessonData>();
-    const [loading, setLoading] = useState<boolean>(true);
+    const [lessons, setLessons] = useState([]);
 
-    const loadData = async () => {
-        try {
-            const lessonResponse = await axios.get(`/api/lessons/${props.id}`, {
-                withCredentials: true,
-                timeout: 5000
-            });
-            const newLesson: LessonData = {
-                title: lessonResponse.data.data.name,
-                category: lessonResponse.data.data.category,
-                studentID: lessonResponse.data.data.studentID,
-                date: lessonResponse.data.data.date,
-                time: lessonResponse.data.data.time,
-                duration: lessonResponse.data.data.duration
-            };
-            return newLesson;
-        } catch (err: any) {
-            console.log(err);
-            message.error(`Failed to load lessons: ${err.message}`);
-        }
-    }
-}
+    useEffect(() => {
+        const loadData = async () => {
+            try {
+                const lessonResponse = await axios.get(`/api/teacher/${props.id}/lessons`, {
+                    withCredentials: true,
+                    timeout: 5000
+                });
+
+                const newLessons = lessonResponse.data.data.map((lesson) => {
+                    const datetime = lesson.date;
+                    const date = datetime.toISOString().split('T')[0];
+                    const time = datetime.toLocaleTimeString('pl', { hour12: false, hour: '2-digit', minute: '2-digit' });
+
+                    return {
+                        title: lesson.title,
+                        category: lesson.category,
+                        student: lesson.student,
+                        date: date,
+                        time: time,
+                        duration: lesson.duration
+                    };
+                });
+
+                setLessons(newLessons);
+            } catch (err) {
+                console.error(err);
+                message.error(`Failed to load lessons: ${err.message}`);
+            }
+        };
+
+        loadData();
+    }, [props.id]);
+
+    return (
+        <Space direction="vertical" style={{ width: '100%' }}>
+            {lessons.map((lesson, index) => (
+                <Card key={index} title={lesson.title} extra={`${lesson.date} ${lesson.time}`}>
+                    <p>Category: {lesson.category}</p>
+                    <p>Student: {lesson.student}</p>
+                    <p>Duration: {lesson.duration} hours</p>
+                </Card>
+            ))}
+        </Space>
+    );
+};

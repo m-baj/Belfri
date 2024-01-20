@@ -6,7 +6,7 @@ export default function LessonsPanel() {
     return (
         <Flex vertical align='center'>
             <Typography.Title style={{ color: blue[4] }} >Your Lessons</Typography.Title>
-            tu wlecą lekcje
+            <LessonCard  id={46}/>
         </Flex>
     )
 }
