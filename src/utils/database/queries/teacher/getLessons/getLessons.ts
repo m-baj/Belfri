@@ -14,8 +14,7 @@ export async function getLessons(connection: Connection, teacherID: number) {
     const result = await connection.execute`
                                             SELECT LESSONS.LESSON_ID,
                                                    LESSONS.DURATION,
-                                                   TO_CHAR(LESSONS."DATE" AT TIME ZONE 'WET', 'DD/MM/YYYY') AS lessonDate,
-                                                   TO_CHAR(LESSONS."DATE" AT TIME ZONE 'WET', 'HH24:MI') AS lessonTime,
+                                                   LESSONS."DATE" AS lessonDate,
                                                    CATEGORIES.NAME AS categoryName
                                             FROM LESSONS
                                             JOIN OFFERS USING (OFFER_ID)
@@ -24,12 +23,13 @@ export async function getLessons(connection: Connection, teacherID: number) {
                                             `;
 
     if (result && result.rows && result.rows.length > 0) {
+        console.log(result.rows);
         return result.rows.map(row => {
             return {
                 lessonID: row.lesson_id,
                 duration: row.duration,
                 lessonDate: row.lessondate,
-                lessonTime: row.lessontime,
+                // lessonTime: row.lessontime,
                 categoryName: row.categoryname,
             };
         });
