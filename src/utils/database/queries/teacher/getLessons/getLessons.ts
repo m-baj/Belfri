@@ -13,11 +13,13 @@ export async function getLessons(connection: Connection, teacherID: number) {
                                                 LESSONS.DURATION,
                                                 OFFERS.NAME AS TITLE,
                                                 CATEGORIES.NAME AS CATEGORY,
-                                                USERS.USERNAME AS STUDENT
+                                                USERS.USERNAME AS STUDENT,
+                                                STATUSES.STATUS_NAME AS STATUS
                                             FROM LESSONS
                                             JOIN OFFERS USING (OFFER_ID)
                                             JOIN CATEGORIES ON OFFERS.CATEGORY_ID = CATEGORIES.CATEGORY_ID
                                             JOIN USERS ON LESSONS.USER_ID = USERS.USER_ID
+                                            JOIN STATUSES ON LESSONS.STATUS_ID = STATUSES.STATUS_ID
                                             WHERE OFFERS.TEACHER_ID = ${teacherID}
                                             `;
 
@@ -29,7 +31,8 @@ export async function getLessons(connection: Connection, teacherID: number) {
                 duration: row.duration,
                 title: row.title,
                 category: row.category,
-                student: row.student
+                student: row.student,
+                status: row.status
             };
         });
     }
