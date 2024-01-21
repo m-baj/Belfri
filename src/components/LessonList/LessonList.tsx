@@ -80,26 +80,29 @@ export default function LessonList(props: LessonDataProps) {
     }
     else {
         return (
-            <List itemLayout="vertical" size="large" dataSource={lessons}
+            <List
+                itemLayout="vertical"
+                size="large"
+                dataSource={lessons}
                 renderItem={item => (
                     <List.Item
                         key={item.title}
                         actions={[
-                            <Space>
-                                <Typography.Text>{item.category}</Typography.Text>
-                                <Typography.Text>{item.student}</Typography.Text>
-                                <Typography.Text>{item.date}</Typography.Text>
-                                <Typography.Text>{item.time}</Typography.Text>
-                                <Typography.Text>{item.duration}h</Typography.Text>
-                            </Space>
+                            <Card title={item.title}>
+                                <Space direction="vertical">
+                                    <Typography.Text>{item.date} {item.time}</Typography.Text>
+                                    <Typography.Text>Category: {item.category}</Typography.Text>
+                                    <Typography.Text>Student: {item.student}</Typography.Text>
+                                    <Typography.Text>Duration: {item.duration} hour(s)</Typography.Text>
+                                </Space>
+                            </Card>
                         ]}
                     >
-                        <List.Item.Meta
-                            title={item.title}
-                        />
+                        <List.Item.Meta />
                     </List.Item>
                 )}
             />
         );
+
     }
 };
