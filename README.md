@@ -1,4 +1,4 @@
-# PAP2023Z-Z30 - Platforma dla korepetytorów
+# Belfri - Platforma dla korepetytorów
 
 ## [SPECYFIKACJA](docs/SPECYFIKACJA.md)
 
